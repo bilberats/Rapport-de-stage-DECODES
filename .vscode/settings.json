@@ -1,0 +1,30 @@
+{
+  "latex-workshop.latex.tools": [
+    {
+      "name": "latexmk",
+      "command": "latexmk",
+      "args": [
+        "-xelatex",
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "%DOC%"
+      ]
+    }
+  ],
+  "cSpell.words": [
+    "basictex",
+    "biblatex",
+    "Codespaces",
+    "darwin",
+    "latexmk",
+    "makeutbmbackcover",
+    "makeutbmfrontcover",
+    "Tahoma",
+    "texlive",
+    "texliveonfly",
+    "tlmgr",
+    "usepackage",
+    "UTBM"
+  ]
+}
