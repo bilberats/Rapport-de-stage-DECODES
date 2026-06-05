@@ -151,7 +151,7 @@
 \newcommand{\@defaultrepubliclogo}{assets/images/french_republic}
 \newcommand{\@defaultubfclogo}{assets/images/ubfc}
 \newcommand{\@defaultutgrouplogo}{assets/images/ut_group}
-% \newcommand{\@defaultcompanylogo}{assets/images/company_logo}
+\newcommand{\@defaulttsplogo}{assets/images/tsp_logo}
 \newcommand{\@defaultutbmlogo}{assets/images/utbm_logo}
 
 %----------------------------------------
@@ -343,6 +343,17 @@
 		]
 		(utbm_logo) at (anchor.north east)
 		{\includegraphics[height=1.25cm]{\@defaultutbmlogo}};
+
+		% TSP logo (top right)
+		\node[
+			rectangle,
+			inner sep=0pt,
+			outer sep=0pt,
+			anchor=north,
+			shift={(-5.3cm, -0.4cm)},
+		]
+		(tsp_logo) at (anchor.north east)
+		{\includegraphics[height=2.2cm]{\@defaulttsplogo}};
 
 		% Green background
 		\node[
@@ -589,6 +600,15 @@
 		]
 		(utbm_logo) at (anchor.south west)
 		{\includegraphics[height=1.25cm]{\@defaultutbmlogo}};
+		
+		% TSP logo
+		\node[
+			utbm rectangle,
+			anchor=south,
+			shift={(5.5cm, 0.5cm)},
+		]
+		(tsp_logo) at (anchor.south west)
+		{\includegraphics[height=2.2cm]{\@defaulttsplogo}};
 
 		% UT Group logo
 		\node[
