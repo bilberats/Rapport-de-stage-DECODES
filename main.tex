@@ -98,7 +98,8 @@
 	\tableofcontents
 	\newpage
 
-	\chapter{Introduction}
+	\chapter*{Introduction}
+	\addcontentsline{toc}{chapter}{Introduction}
 
 	\textbf{Contexte :} \\
 	Les DNS sont utilisés quotidiennement.
@@ -155,50 +156,17 @@
 
 	C'est dans cet environnement de recherche et d'innovation, spécialisé dans les réseaux et les télécommunications, que s'est déroulé mon stage.
 
-	\section{Environnement et organisation du travail}
+	\section{Environnement de travail}
 
 	Ce stage s'est déroulé dans un environnement de recherche académique, sensiblement différent du cadre industriel ou entrepreneurial. Réalisé au sein du département Réseaux et Services de Télécommunications (RST) de Télécom SudParis, il s'inscrivait dans une démarche de recherche publique dont l'objectif principal est la production de connaissances et l'étude approfondie de problématiques scientifiques.
 
 	Contrairement à un contexte industriel, où les contraintes de temps et de rentabilité occupent souvent une place centrale, la recherche académique privilégie une approche davantage fondée sur l'analyse, l'expérimentation et la validation rigoureuse des résultats. Cette méthodologie favorise l'exploration de différentes pistes de travail et laisse une plus grande place à la réflexion scientifique.
 
-	\subsection{Environnement de travail}
+	Télécom SudParis est implantée sur deux sites principaux : Évry-Courcouronnes et Palaiseau. Mon activité s'est déroulée majoritairement sur le campus de Palaiseau, au sein des locaux partagés avec Télécom Paris. Ce campus récent offre un cadre de travail moderne et agréable, caractérisé par des espaces lumineux et des infrastructures adaptées aux activités d'enseignement et de recherche.
 
-	Télécom SudParis est implantée sur deux sites principaux : Évry-Courcouronnes et Palaiseau. Mon activité s'est déroulée majoritairement sur le campus de Palaiseau, au sein des locaux partagés avec Télécom Paris. Ce campus récent offre un cadre de travail moderne et agréable, bénéficiant notamment d'espaces lumineux et d'infrastructures adaptées aux activités d'enseignement et de recherche.
+	J'ai également été amené à me rendre ponctuellement sur le site d'Évry-Courcouronnes, où étaient hébergés les serveurs utilisés pour les expérimentations. Ces déplacements ont notamment permis la configuration initiale des équipements ainsi que des échanges avec les membres de l'équipe technique.
 
-	J'ai également été amené à me rendre ponctuellement sur le campus d'Évry-Courcouronnes, où étaient hébergés les serveurs utilisés pour les expérimentations menées durant le stage. Ces déplacements permettaient notamment la configuration initiale des équipements ainsi que des échanges avec certains membres de l'équipe.
-
-	Je disposais d'un espace de travail sur chacun des deux sites, partagé avec d'autres stagiaires et doctorants. L'environnement de bureau, calme et propice à la concentration, facilitait le travail de recherche et les activités de développement nécessaires au projet.
-
-	\subsection{Organisation du travail}
-
-	Le stage s'inscrivait dans le cadre du projet DECODES (\textit{Optimisation de la Consommation Énergétique des Datacenters par l'Évaluation des DNS}), mené en collaboration avec plusieurs partenaires académiques et industriels, notamment l'AFNIC, IXFrance, l'ENPC et Télécom SudParis.
-
-	L'organisation du travail reposait sur une large autonomie dans la conduite des activités de recherche. Les objectifs généraux étaient définis par les encadrants, mais le choix des méthodologies, des outils et des protocoles expérimentaux relevait en grande partie de mon initiative. Cette liberté m'a permis d'explorer différentes approches et d'adapter progressivement mes travaux en fonction des résultats obtenus.
-
-	Le suivi du stage était assuré au travers de réunions régulières avec mes encadrants, généralement organisées de manière hebdomadaire. Ces échanges permettaient de présenter l'avancement des travaux, de discuter des difficultés rencontrées et d'orienter les prochaines étapes de la recherche.
-
-	J'ai également participé à plusieurs réunions plénières du projet DECODES réunissant l'ensemble des partenaires. Ces rencontres ont constitué une opportunité de présenter les résultats intermédiaires obtenus, de recueillir des retours extérieurs et de mieux comprendre les enjeux globaux du projet.
-
-	Les travaux réalisés au cours du stage se sont articulés autour de quatre grandes phases :
-
-	\begin{enumerate}
-		\item \textbf{Étude bibliographique}
-
-		Une première phase a consisté à acquérir une compréhension approfondie du sujet à travers l'étude de la littérature scientifique relative au DNS, aux infrastructures réseau et aux méthodes de mesure de la consommation énergétique.
-
-		\item \textbf{Conception de l'environnement expérimental}
-
-		Cette étape a porté sur la mise en place des outils nécessaires aux expérimentations : développement de scripts de mesure, configuration des serveurs de test et validation des protocoles de collecte de données.
-
-		\item \textbf{Campagnes de mesures et analyse des résultats}
-
-		Les expérimentations ont ensuite été conduites de manière itérative afin d'évaluer différentes configurations et d'améliorer progressivement la qualité des mesures obtenues.
-
-		\item \textbf{Modélisation et valorisation des travaux}
-
-		Enfin, les résultats collectés ont été exploités afin de construire des modèles d'analyse et de documenter les conclusions du stage au travers de rapports, présentations et travaux de rédaction.
-
-	\end{enumerate}
+	Enfin, je disposais d'espaces de travail sur les deux sites, partagés avec d'autres stagiaires et doctorants. Cet environnement calme et collaboratif a favorisé la concentration et le bon déroulement des activités de recherche et de développement liées au projet.
 
 	\paragraph{}
 
@@ -284,15 +252,52 @@
 
 	L'ensemble des mesures et analyses présentées dans les chapitres suivants a ainsi été réalisé à partir de différentes configurations de Bind9 exécutées sur les serveurs du projet DECODES.
 
+	\chapter{Travail réalisé}
+
+	Introduction 
+
+	\section{Description du projet DECODES}
+	Décirire le sujet défini à mon arrivée et les objectifs généraux du projet.
+	Mon rôle dans le projet.
+	(organigramme des gens du projet et de leurs rôles)
+	Décrire le sujet réel (analyse de la complexité et modélisation)
+
+	\subsection{Organisation du travail}
+
+	Le stage s'inscrivait dans le cadre du projet DECODES (\textit{Datacenter Energy Consumption Optimisation by DNS EvaluationS}), mené en collaboration avec plusieurs partenaires académiques et industriels, notamment l'AFNIC, IXFrance, l'ENPC et Télécom SudParis.
+
+	L'organisation du travail reposait sur une large autonomie dans la conduite des activités de recherche. Les objectifs généraux étaient définis par les encadrants, mais le choix des méthodologies, des outils et des protocoles expérimentaux relevait en grande partie de mon initiative. Cette liberté m'a permis d'explorer différentes approches et d'adapter progressivement mes travaux en fonction des résultats obtenus.
+
+	Le suivi du stage était assuré au travers de réunions régulières avec mes encadrants, généralement organisées de manière hebdomadaire. Ces échanges permettaient de présenter l'avancement des travaux, de discuter des difficultés rencontrées et d'orienter les prochaines étapes de la recherche.
+
+	J'ai également participé à plusieurs réunions plénières du projet DECODES réunissant l'ensemble des partenaires. Ces rencontres ont constitué une opportunité de présenter les résultats intermédiaires obtenus, de recueillir des retours extérieurs et de mieux comprendre les enjeux globaux du projet.
+
+	Les travaux réalisés au cours du stage se sont articulés autour de quatre grandes phases :
+
+	\begin{enumerate}
+		\item \textbf{Étude bibliographique}
+
+		Une première phase a consisté à acquérir une compréhension approfondie du sujet à travers l'étude de la littérature scientifique relative au DNS, aux infrastructures réseau et aux méthodes de mesure de la consommation énergétique.
+
+		\item \textbf{Conception de l'environnement expérimental}
+
+		Cette étape a porté sur la mise en place des outils nécessaires aux expérimentations : développement de scripts de mesure, configuration des serveurs de test et validation des protocoles de collecte de données.
+
+		\item \textbf{Campagnes de mesures et analyse des résultats}
+
+		Les expérimentations ont ensuite été conduites de manière itérative afin d'évaluer différentes configurations et d'améliorer progressivement la qualité des mesures obtenues.
+
+		\item \textbf{Modélisation et valorisation des travaux}
+
+		Enfin, les résultats collectés ont été exploités afin de construire des modèles d'analyse et de documenter les conclusions du stage au travers de rapports, présentations et travaux de rédaction.
+
+	\end{enumerate}
+
 	\section{État de l'art}
 
-	---
-	
-	\section{Modélisation}
+	\section{Déroulement du travail}
 
-	Introduction des modèles et comparaison.
-
-	\subsection{Methodologie de mesure}
+	\subsection{Conception de l'environnement expérimental}
 
 	La première partie de cette recherche consiste à mesurer de manière efficace et détaillée la consommation d'un résolveur DNS. Pour ce faire, j'ai choisi une approche boîte noire, en mesurant le plus grand nombre de métriques possibles, puis en déduisant celles qui sont les plus pertinentes pour estimer la consommation énergétique.
 
@@ -352,64 +357,27 @@
 
 	\emph{Petite conclusion :} Très utile pour les modèles, cela servira de base pour ceux-ci / fournir les données aux constantes, etc.
 
-	---
-	\subsection{Modèle de réseau de files d'attente}
 
-	Une manière d'estimer la consommation d'un résolveur DNS consiste à comprendre les étapes d'une résolution et à estimer la consommation de chacune de ces étapes pour avoir une approche plus généraliste. Cela permettra d'estimer la consommation d'un résolveur indépendamment du matériel, de la charge et de la configuration de l'implémentation.
+	\subsection{Campagnes de mesures}
+	Décrire les outils utilisés, les scripts de mesures créés, les différentes configurations testées, les problèmes rencontrés et comment ils ont été résolus.
+	Diagrammes détaillés des différents types de mesures.
+	Sanity check 
+	\subsubsection{Mesures de consommation énergétique}
+	problemes rencontrés :
+	- espace disque insufisant
+	- Durée des mesures important (pas vraiment un problème)
+	\subsubsection{Mesures de la complexité algorithmique}
 
-	Les réseaux de files d'attente sont parfaits pour ce type de décomposition, car ils peuvent représenter différents types de retards dus au temps d'attente ou au traitement.
 
-	À partir de notre compréhension de Bind9, nous avons créé un modèle de réseau de files d'attente. Il se compose de plusieurs parties représentant les principales étapes de la résolution DNS, y compris la connexion. Ces étapes sont :
-	\begin{itemize}
-		\item Connexion TCP (si utilisation de DoT ou DoH)
-		\item Poignée de main TCP (établissement de la connexion)
-		\item Échange de certificats TLS
-		\item Résolution récursive composée de :
-		\begin{itemize}
-			\item Threads de travail
-			\item Requêtes DNS aux serveurs autoritatifs
-		\end{itemize}
-		\item Recherche dans le cache / insertion dans le cache
-	\end{itemize}
+	\subsection{Analyse des résultats}
+	Outils utilisés pour analyser les résultats, les différentes analyses réalisées, les problèmes rencontrés et comment ils ont été résolus.
+	(Format des mesures obtenus)
+	Script de traitement des données, etc.
+	problemes rencontrés : 
+	- temps de traitement
 
-	Chacune de ces étapes est modélisée par un modèle de file d'attente M/M/C, avec ses caractéristiques qui seront estimées à l'aide de mesures.
 
-	Une étude d'ablation aide à différencier la latence et la consommation de chaque composant (principalement CPU et RAM) pour établir les caractéristiques. Les caractéristiques à estimer sont :
-	\begin{itemize}
-		\item $\rho$ : Charge
-		\item $S$ : Temps de service
-	\end{itemize}
-
-	L'étude d'ablation consiste à effectuer plusieurs mesures, d'abord avec une configuration nécessitant le minimum d'étapes dans la résolution DNS, puis en ajoutant progressivement ces étapes pour avoir une vision claire de l'étape qui agit dans chaque mesure, en considérant que chaque étape est indépendante.
-
-	La méthodologie de mesure correspondant à chaque étape est :
-	\begin{itemize}
-		\item Threads de travail : Mesurés avec des requêtes UDP où le nom de domaine est déjà dans le cache pour éviter la résolution récursive.
-		\item Recherche dans le cache : Mesurée avec UDP avec différentes charges de cache (mémoire occupée par le cache).
-		\item Requêtes DNS aux serveurs autoritatifs : Mesurées avec des requêtes UDP où le nom de domaine n'est pas dans le cache.
-		\item Connexion TCP : Mesurée avec des requêtes TCP sans échange de clés ou de certificats.
-		\item Poignée de main TCP : Mesurée
-	\end{itemize}
-
-	\includegraphics[width=0.9\textwidth]{diagrams_and_images/DNS_queue_model.png}
-
-	Ce modèle est basé sur notre compréhension actuelle du \textbf{fonctionnement de Bind9}, et bien qu'il ne soit peut-être pas exhaustif, il fournit un \textbf{cadre fiable pour estimer la consommation énergétique}. Pour affiner sa précision, certains paramètres nécessiteront des mesures, suivies d'une analyse approfondie pour extraire et valider les données les plus pertinentes pour le modèle.
-
-	---
-	\subsection{Analyse de complexité algorithmique}
-
-	Petite introduction / Pourquoi voulons-nous utiliser la complexité algorithmique pour ce problème ?
-
-	Comment cela est-il fait ?
-
-	Petite conclusion / Quel est le principal résultat de cela ?
-
-	---
-	\section{Résultats}
-
-	Introduction
-
-	\subsection{Consommation par protocole}
+	\subsubsection{Consommation par protocole}
 
 	La consommation énergétique est mesurée à l'aide d'un wattmètre (Yoctopuce) avec un taux d'échantillonnage de 100 Hz. Les mesures sont effectuées en envoyant des requêtes au résolveur avec différents QPS (requêtes par seconde). Chaque mesure est échantillonnée 5 fois pour réduire le bruit autant que possible. Chaque protocole est mesuré de la même manière.
 
@@ -434,7 +402,7 @@
 	Il existe une différence claire de consommation énergétique entre l'utilisation avec et sans cache. Les courbes pour l'utilisation sans cache ont une forme de décroissance exponentielle. En observant les courbes d'utilisation du cache, l'ordre est étrange : UDP n'utilise aucune connexion, il devrait donc être en dessous de toutes les autres courbes. Il pourrait donc y avoir un problème ou quelque chose qui n'est pas encore compris.
 
 	---
-	\subsection{Paquets envoyés et reçus par le résolveur}
+	\subsubsection{Paquets envoyés et reçus par le résolveur}
 
 	Une manière de visualiser l'utilisation du résolveur consiste à examiner chaque paquet envoyé et reçu par le résolveur. Sachant que Bind9 utilise UDP pour communiquer avec les DNS autoritatifs, l'examen des paquets UDP est idéal. Ces paquets incluent de nombreux types de requêtes que nous verrons plus tard. Ces nombres de requêtes sont divisés par le QPS résolu par le résolveur.
 
@@ -450,7 +418,7 @@
 	Le fait que cela suive une décroissance exponentielle est étrange et doit être étudié. La manière d'étudier cela consiste à examiner la distribution des types de requêtes pour chaque valeur afin de voir quels types de requêtes sont moins présents lorsque le QPS augmente.
 
 	---
-	\subsection{Densité de la consommation énergétique}
+	\subsubsection{Densité de la consommation énergétique}
 
 	Afin de visualiser la consommation énergétique du résolveur et sa distribution, voici 3 graphiques montrant la distribution de la consommation énergétique lors de l'utilisation du cache et sans utilisation du cache.
 
@@ -472,7 +440,7 @@
 	Cela est réalisé à l'aide d'estimations de densité par noyau (*Kernel Density Estimations*).
 
 	---
-	\subsection{Différence entre cache et non-cache}
+	\subsubsection{Différence entre cache et non-cache}
 
 	La différence de consommation entre la résolution avec et sans cache est claire et nous pouvons modéliser cette différence. Le modèle n'est pas directement appliqué à la différence car les QPS dans les mesures ne sont pas les mêmes avec et sans cache. Ainsi, pour modéliser cette différence, nous commençons par modéliser les courbes avec et sans cache pour chaque protocole, puis nous faisons simplement la différence entre elles.
 
@@ -486,7 +454,7 @@
 	La courbe a la forme d'une décroissance exponentielle car c'est ce que nous avons utilisé pour modéliser les consommations avec et sans cache.
 
 	---
-	\subsection{Distribution des TTL}
+	\subsubsection{Distribution des TTL}
 
 	Le cache permet d'économiser beaucoup de consommation énergétique, mais les entrées du cache ont une durée limitée spécifiée par les serveurs DNS autoritatifs\footnote{Cela est dû au fait que l'adresse IP peut changer au fil du temps ; de plus, les DNS sont généralement utilisés comme une première couche de répartiteurs de charge}. Il s'agit du TTL (*Time To Live*), spécifié en secondes dans la zone pour chaque entrée sur laquelle le DNS a autorité. La distribution de ce TTL est intéressante à examiner.
 
@@ -506,7 +474,7 @@
 	Pour les TLD, des pics peuvent être observés à 24h et 48h car ce sont des valeurs rondes.
 
 	---
-	\subsection{Types de requêtes effectuées par le résolveur}
+	\subsubsection{Types de requêtes effectuées par le résolveur}
 
 	Toutes les requêtes récursives ne concernent pas des adresses IP : certaines sont des délégations vers un autre serveur autoritatif (NS), d'autres sont des alias vers un autre nom de domaine (CNAME). Il y a également des informations DNSSEC telles que RRSIG, DNSKEY, DS, etc.
 
@@ -522,7 +490,7 @@
 	La plupart sont de type IP, mais il y a une part non négligeable de DNSSEC, NS et CNAME.
 
 	---
-	\subsection{Prédiction de la consommation énergétique du DNS}
+	\subsubsection{Prédiction de la consommation énergétique du DNS}
 
 	À partir de toutes les métriques collectées lors des mesures, il est possible d'entraîner un modèle pour prédire avec précision la consommation énergétique du DNS. Le modèle qui donne les meilleurs résultats est un modèle de régression linéaire.
 
@@ -534,7 +502,7 @@
 	\end{figure}
 
 	---
-	\subsection{Nouvelle méthodologie de mesure}
+	\subsubsection{Nouvelle méthodologie de mesure}
 
 	Il y a certains problèmes avec les mesures. Pour les résoudre, la méthodologie doit être ajustée. Ces ajustements devraient résoudre les problèmes suivants :
 	\begin{itemize}
@@ -600,6 +568,73 @@
 			Représente le nombre d'enregistrements DNS automatiquement supprimés du cache après avoir atteint leur durée de vie maximale. \\
 			\textit{Unité : Compteur (entier non signé).}
 	\end{description}
+
+
+	
+	\subsection{Modélisation}
+
+	Introduction des modèles et comparaison.
+
+
+	\subsubsection{Modèle de réseau de files d'attente}
+
+	Une manière d'estimer la consommation d'un résolveur DNS consiste à comprendre les étapes d'une résolution et à estimer la consommation de chacune de ces étapes pour avoir une approche plus généraliste. Cela permettra d'estimer la consommation d'un résolveur indépendamment du matériel, de la charge et de la configuration de l'implémentation.
+
+	Les réseaux de files d'attente sont parfaits pour ce type de décomposition, car ils peuvent représenter différents types de retards dus au temps d'attente ou au traitement.
+
+	À partir de notre compréhension de Bind9, nous avons créé un modèle de réseau de files d'attente. Il se compose de plusieurs parties représentant les principales étapes de la résolution DNS, y compris la connexion. Ces étapes sont :
+	\begin{itemize}
+		\item Connexion TCP (si utilisation de DoT ou DoH)
+		\item Poignée de main TCP (établissement de la connexion)
+		\item Échange de certificats TLS
+		\item Résolution récursive composée de :
+		\begin{itemize}
+			\item Threads de travail
+			\item Requêtes DNS aux serveurs autoritatifs
+		\end{itemize}
+		\item Recherche dans le cache / insertion dans le cache
+	\end{itemize}
+
+	Chacune de ces étapes est modélisée par un modèle de file d'attente M/M/C, avec ses caractéristiques qui seront estimées à l'aide de mesures.
+
+	Une étude d'ablation aide à différencier la latence et la consommation de chaque composant (principalement CPU et RAM) pour établir les caractéristiques. Les caractéristiques à estimer sont :
+	\begin{itemize}
+		\item $\rho$ : Charge
+		\item $S$ : Temps de service
+	\end{itemize}
+
+	L'étude d'ablation consiste à effectuer plusieurs mesures, d'abord avec une configuration nécessitant le minimum d'étapes dans la résolution DNS, puis en ajoutant progressivement ces étapes pour avoir une vision claire de l'étape qui agit dans chaque mesure, en considérant que chaque étape est indépendante.
+
+	La méthodologie de mesure correspondant à chaque étape est :
+	\begin{itemize}
+		\item Threads de travail : Mesurés avec des requêtes UDP où le nom de domaine est déjà dans le cache pour éviter la résolution récursive.
+		\item Recherche dans le cache : Mesurée avec UDP avec différentes charges de cache (mémoire occupée par le cache).
+		\item Requêtes DNS aux serveurs autoritatifs : Mesurées avec des requêtes UDP où le nom de domaine n'est pas dans le cache.
+		\item Connexion TCP : Mesurée avec des requêtes TCP sans échange de clés ou de certificats.
+		\item Poignée de main TCP : Mesurée
+	\end{itemize}
+
+	\includegraphics[width=0.9\textwidth]{diagrams_and_images/DNS_queue_model.png}
+
+	Ce modèle est basé sur notre compréhension actuelle du \textbf{fonctionnement de Bind9}, et bien qu'il ne soit peut-être pas exhaustif, il fournit un \textbf{cadre fiable pour estimer la consommation énergétique}. Pour affiner sa précision, certains paramètres nécessiteront des mesures, suivies d'une analyse approfondie pour extraire et valider les données les plus pertinentes pour le modèle.
+
+	---
+	\subsubsection{Analyse de complexité algorithmique}
+
+	Petite introduction / Pourquoi voulons-nous utiliser la complexité algorithmique pour ce problème ?
+
+	Comment cela est-il fait ?
+
+	Petite conclusion / Quel est le principal résultat de cela ?
+
+	\chapter*{Conclusion}
+	\addcontentsline{toc}{chapter}{Conclusion}
+
+	\chapter*{Bibliographie}
+	\addcontentsline{toc}{chapter}{Bibliographie}
+
+	\chapter*{Annexes}
+	\addcontentsline{toc}{chapter}{Annexes}
 
 
 	\newpage
