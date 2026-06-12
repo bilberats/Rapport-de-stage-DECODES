@@ -695,7 +695,7 @@
 		\centering
 		\includegraphics[width=0.9\textwidth]{Graphs/requests/query_type_distribution.png}
 		\caption{Distribution des types de requêtes pour les résolutions récursives}
-		\label{fig:image4}
+		\label{fig:distribution_types}
 	\end{figure}
 	
 	La plupart sont de type A, mais il y a une part non négligeable de DNSSEC, NS et CNAME. Les types sont expliqués dans les annexe~\ref{types}.
@@ -724,7 +724,30 @@
 	\subsubsection{Étude d'ablation}
 	
 	\subsubsection{Étude de la complexité algorithmique de Bind9}
-	
+	Les mesures de consommation énergétique du résolveur DNS sont très intéressantes, mais elles ne permettent pas de comprendre les raisons de cette consommation énergétique. Pour mieux comprendre les raisons de cette consommation énergétique, et en s'abstrayant du matériel, une solution consiste à étudier la complexité algorithmique de Bind9. En effet, la consommation énergétique d'un programme est liée à sa complexité algorithmique, des paramètres de consommations peuvent être déduits à partir des performances énergétiques des composants de la machine (CPU, RAM, etc.).
+
+	L'étude de la complexité algorithmique de Bind9 s'est faite en deux parties, d'abord une étude de la complexité algorithmique statique de chaque fonction de Bind9 grâce à un outil développé en python par Rosario Patane, un de mes collègues et membre du projet DECODES. La seconde partie de l'étude de la complexité algorithmique de Bind9 s'est faite de manière dynamique, en mesurant le nombre d'appels par fonction de Bind9 pour différentes configurations de mesure. Cela a permis d'avoir une idée de la complexité algorithmique réelle de Bind9 pour différentes configurations, et ainsi d'avoir une meilleure compréhension des raisons de la consommation énergétique du résolveur DNS.
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.9\textwidth]{Graphs/bind_complexity_executions.png}
+		\caption{Nombre d'appels des 40 fonctions les plus appelées de Bind9}
+		\label{fig:most_called_functions_40}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.9\textwidth]{Graphs/bind_complexity_callgraph.png}
+		\caption{Graph d'appels des 55 fonctions les plus appelées de Bind9 avec leur complexité algorithmique statique}
+		\label{fig:graph_appels_functions}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.9\textwidth]{Graphs/uftrace_top_10_doh.png}
+		\caption{Nombre d'appels des 10 fonctions les plus appelées de Bind9 en fonction du QPS pour DoH avec utilisation du cache}
+		\label{fig:top_10_functions_doh_QPS}
+	\end{figure}
 	
 	\subsection{Modélisation}
 	
