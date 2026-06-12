@@ -22,7 +22,7 @@
 	abbreviate=false,
 	language=french,
 	datamodel=ISO690UTBM
-]{biblatex} % ISO 690 Utbm
+]{biblatex} % ISO 690 UTBM
 
 \input{biblatex.cfg}
 
@@ -257,7 +257,7 @@
 	Introduction 
 
 	\section{Description du projet DECODES}
-	Décirire le sujet défini à mon arrivée et les objectifs généraux du projet.
+	Décrire le sujet défini à mon arrivée et les objectifs généraux du projet.
 	Mon rôle dans le projet.
 	(organigramme des gens du projet et de leurs rôles)
 	Décrire le sujet réel (analyse de la complexité et modélisation)
@@ -303,12 +303,10 @@
 
 	\subsubsection{Configuration des différentes machines}
 
-	La configuration se compose d'un client et d'un DNS. Le client agit également comme orchestrateur et lancera les mesures sur les deux machines. La consommation énergétique externe est collectée à l'aide d'un Yoctopuce (wattmètre) et est surveillée par le client.
+	La configuration expérimentale repose sur deux machines : un client et un serveur DNS. Le client joue également le rôle d'orchestrateur et est chargé de déclencher ainsi que de coordonner l'exécution des mesures sur l'ensemble du système. La consommation énergétique externe est mesurée à l'aide d'un dispositif Yoctopuce (wattmètre) et est supervisée directement depuis la machine cliente.
 
-	Le DNS utilise une implémentation de Bind9.
+	Le serveur DNS est basé sur une implémentation de BIND9 et exécute, en parallèle du traitement des requêtes, des scripts dédiés à la collecte de différentes métriques de performance. Ces scripts introduisent une charge supplémentaire non négligeable, susceptible d'influencer les mesures de consommation énergétique, et doivent donc être pris en compte dans l'interprétation des résultats. Dans cette architecture, le client assure ainsi simultanément les fonctions de générateur de charge et d'orchestrateur des campagnes de mesures.
 
-	le client orchestre les mesures et fait office de client
-	Le DNS possede des scripts de mesures de diffétentes metriques (ces scripts consomment, cette consommation ne doit pas etre négilgée )
 
 	\begin{center}
 	\begin{tikzpicture}[
@@ -335,7 +333,7 @@
 		\colorlet{color2}{green!30}
 		\colorlet{color3}{yellow!30}
 
-		% Noeuds (de gauche à droite)
+		% Nœuds (de gauche à droite)
 		\node[mynode, fill=color0] (power) at (0,6) {Source d'alimentation};
 		\node[mynode, fill=color1] (yocto) at (0,3) {Yoctopuce};
 		\node[mynode, fill=color3] (monitoring) at (10,3) {PC de surveillance};
@@ -358,10 +356,10 @@
 	\end{center}
 
 	\subsubsection{Outils de mesure utilisés}
-	Un grand nombre de métriques sont collectées pour aider à estimer et modéliser la consommation énergétique du résolveur DNS. Ces métriques peuvent se classer dans 4 catégories : les mesures de critéres systemes, les mesures de consommation énergétiques externes, les logs réseau et les mesures spécifiques au logiciel (Bind9).
+	Un grand nombre de métriques sont collectées pour aider à estimer et modéliser la consommation énergétique du résolveur DNS. Ces métriques peuvent se classer dans 4 catégories : les mesures de critères systèmes, les mesures de consommation énergétiques externes, les logs réseau et les mesures spécifiques au logiciel (Bind9).
 	Pour collecter ces métriques les outils utilisés selon la catégories sont :
 	\begin{itemize}
-		\item \textbf{Mesures de critères systèmes :} \texttt{turbostat} (CPU), mesures système donées par le kernel (I/O, NIC,), \texttt{perf} (RAM)
+		\item \textbf{Mesures de critères systèmes :} \texttt{turbostat} (CPU), mesures système données par le kernel (I/O, NIC,), \texttt{perf} (RAM)
 		\item \textbf{Mesures de consommation énergétique externes :} \texttt{Yoctopuce}
 		\item \textbf{Logs réseau :} \texttt{tcpdump}
 		\item \textbf{Mesures spécifiques à Bind9 :} \texttt{rndc} (Informations sur le cache de Bind9), \texttt{uftrace} (Rapports des fonctions exécutées par Bind9)
@@ -372,14 +370,55 @@
 	Concernant les outils de mesure spécifiques à Bind9, \texttt{rndc} est un outil de contrôle de Bind9 qui permet d'obtenir des informations sur le cache, les statistiques de requêtes, etc. \texttt{uftrace} est un outil de traçage de fonctions qui permet d'obtenir des rapports détaillés sur les fonctions exécutées par des logiciels comme Bind9, ce qui est particulièrement utile pour l'analyse de la complexité algorithmique.
 	
 	\subsubsection{Scripts de mesure développés}
-	Un script par outil utlisé globalement + différents 
 
-	\emph{Petite conclusion :} Très utile pour les modèles, cela servira de base pour ceux-ci / fournir les données aux constantes, etc.
+	Afin de mesurer les métriques nécessaires à l'évaluation de la consommation énergétique du résolveur DNS et à la modélisation de celle-ci, plusieurs scripts de collecte ont été développés. Ces scripts permettent d'extraire des indicateurs système, réseau et énergétiques de manière synchronisée sur l'ensemble de la chaîne de mesure.
+
+	\begin{itemize}
+		\item \textbf{Scripts de mesure des indicateurs système :}
+		\begin{itemize}
+			\item \texttt{measure\_cpu.sh} : utilise l'outil \texttt{turbostat} afin de collecter des informations relatives à l'utilisation du processeur, notamment la fréquence, les états de sommeil (C-states) ainsi que les compteurs de performance associés à l'activité CPU.
+
+			\item \texttt{measure\_io.sh} : exploite les fichiers \texttt{/sys/block/sda/stat}, qui contiennent des compteurs cumulés depuis le démarrage du système pour les opérations d'E/S disque (lecture et écriture en kilo-octets). Les valeurs sont différentiées temporellement afin d'obtenir les volumes d'I/O sur chaque intervalle de mesure.
+			
+			\item \texttt{measure\_nic.sh} : repose sur les compteurs du noyau Linux situés dans \texttt{/sys/class/net/eno1/statistics/}, notamment \texttt{rx\_bytes} et \texttt{tx\_bytes}, représentant respectivement le volume de données reçues et transmises par l'interface réseau. Comme pour les I/O disque, une différenciation temporelle permet d'obtenir les débits sur les intervalles considérés.
+			
+			\item \texttt{measure\_ram.sh} : collecte des métriques liées à l'utilisation mémoire via les opérations sur le Last Level Cache (LLC), notamment les événements \textit{LLC-loads} et \textit{LLC-stores}. Ces indicateurs sont utilisés comme estimateurs indirects de l'activité mémoire et des accès à la RAM.
+			
+		\end{itemize}
+		
+		\item \textbf{Scripts de collecte de logs réseau :}
+		\begin{itemize}
+			\item \texttt{dns\_activity\_logger.sh} : capture le trafic réseau à l'aide de \texttt{tcpdump} afin d'analyser les requêtes DNS reçues par le résolveur ainsi que les réponses émises. Ces données permettent de reconstruire le flux de requêtes et d'évaluer la charge effective.
+			
+			\item \texttt{bind\_query\_capture.sh} : exploite les journaux de BIND9 afin d'identifier les requêtes effectivement traitées par le résolveur et d'obtenir une vision logique des résolutions effectuées (indépendamment du niveau réseau brut).
+		\end{itemize}
+		
+		\item \textbf{Script de collecte des mesures externes :}
+		\begin{itemize}
+			\item \texttt{yoctowatt\_log\_fast.py} : utilise un dispositif Yoctopuce (wattmètre) afin de mesurer en continu la consommation énergétique du serveur exécutant le résolveur DNS. Les mesures sont synchronisées avec les autres sources de données afin de permettre une corrélation temporelle précise.
+		\end{itemize}
+
+		\item \textbf{Mesures liées à Bind9 :}
+		\begin{itemize}
+			\item \texttt{monitor\_cache.sh} : interroge BIND9 via \texttt{rndc} afin d'extraire les métriques internes du cache DNS (taux de hit/miss, taille du cache, mémoire utilisée, etc.).
+			\item \texttt{record\_uftrace.sh} : utilise \texttt{uftrace} pour obtenir des rapports détaillés sur les fonctions exécutées par BIND9 et leur nombre d'exécutions, ce qui permet d'analyser la complexité algorithmique dynamique et d'identifier les points chauds en termes de consommation de ressources.
+		\end{itemize}
+		
+	\end{itemize}
+
+	L'ensemble de ces scripts constitue le squelette qui va être utilisé pour la collecte de données nécessaire à la modélisation de la consommation énergétique du résolveur DNS. Ils permettent d'obtenir une vue multi-niveaux du système (CPU, mémoire, I/O, réseau et cache DNS), ainsi qu'une mesure directe de la consommation électrique. Ces données serviront de base à la construction des modèles, à l'estimation des paramètres et à l'identification des facteurs influençant la consommation énergétique.
 
 	
 	\subsubsection{Sélection de l'ensemble des noms de domaines utilisés}
 	
-	Pour faire les mesures de consommation du DNS, il faut envoyer des requêtes de résolution de noms de domaines. Un ensemble de 17 millions de noms de domaine est accéssible sur github avec leur popularité. 
+	Pour faire les mesures de consommation du DNS, il faut envoyer des requêtes de résolution de noms de domaines. Un ensemble de 17 millions de noms de domaine est accessible sur GitHub avec leur popularité \cite{DomainNameDataset}. 
+
+	Avec autant de noms de domaines, on peut se demander si avoir un ensemble de 17 millions de noms de domaines est nécessaire pour faire les mesures, ou si un ensemble plus petit pourrait être suffisant. La taille de l'ensemble de noms de domaines a-t-elle une influence sur les mesures de consommation énergétique du DNS ? 
+
+	Une autre question se pose, cela n'as pas encore été abordé mais pour faire les mesures de consommation du DNS sans utilisation du cache, comment faire ? Les précédents travaux ont utilisé un seul nom de domaine pour simuler l'utilisation du cache et un grand nombre de noms de domaines (360 000) pour simuler l'utilisation sans cache. Cela permet en effet de voir l'influence du cache sur la consommation énergétique du DNS, mais cela ne correspond pas à un cas d'usage réel, de plus les conditions de mesure ne sont pas les mêmes pour les deux configurations, ce qui peut fausser les résultats. 
+
+	Premièrement, pour voir l'influence de la taille de l'ensemble de noms de domaines sur la consommation énergétique du DNS, il est intéressant de regarder si le cache peut être saturé, et si c'est possible a combien de noms de domaines cela correspond-t-il en moyenne ? 
+	Pour savoir ça, j'ai fait des mesures de différentes métriques associées au cache de Bind9 pour différents ensemble de noms de domaines entre 100 000 et 14 millions de noms de domaines. En premier lieu avec des ensembles de noms de domaines entre 100 000 et 1 million de noms de domaines avec un interval de 100 000 noms de domaines entre chaque mesure, puis avec des ensembles de noms de domaines entre 1 et 14 millions de noms de domaines avec un interval de 1 million de noms de domaines entre chaque mesure.
 	
 	\begin{figure}[H]
 		\centering
@@ -393,36 +432,123 @@
 		\caption{Évolution des valeurs associées au cache de bind pour différents ensemble de noms de domaines entre 1 et 14 millions de noms de domaines}
 		\label{fig:Evolution du cache 14M}
 	\end{figure}
+
+	Les mesures ne vont pas au delà de 14 millions de noms de domaines car la RAM du serveur client n'était pas suffisante pour faire les mesures avec des ensembles de noms de domaines plus grands et cela ne changeait pas significativement les résultats.
+
+	Les 6 métriques mesurées sont : 
+	\begin{itemize}
+		\item  \textbf{cache\_hits :} nombre total de réponses servies depuis le cache
+		\item \textbf{cache\_hits\_query :} nombre de requêtes résolues directement depuis le cache
+		\item \textbf{cache\_misses\_query :} nombre de requêtes nécessitant une résolution externe
+		\item \textbf{cache\_tree\_memory :} mémoire utilisée par la structure arborescente du cache
+		\item \textbf{cache\_heap\_memory :} mémoire utilisée par le tas du cache
+		\item \textbf{cache\_ttl\_expired :} nombre d'entrées supprimées après expiration du TTL
+	\end{itemize}
+
+	La métrique \textbf{cache\_mem\_exhaust} n'est pas représentée sur les figures car sa valeur reste nulle durant l'intégralité des mesures. Ce résultat indique qu'aucune saturation du cache n'est observée, y compris pour l'ensemble de données le plus important, composé de 14 millions de noms de domaine.
+
+	L'évolution des métriques \textbf{cache\_tree\_memory} et \textbf{cache\_heap\_memory} met en évidence le remplissage progressif du cache au cours du temps. Plus la taille de l'ensemble de données est importante, plus la durée nécessaire à la mise en cache de l'ensemble des entrées est élevée.
+
+	Les expérimentations ont été réalisées pendant 30 minutes en utilisant le protocole UDP avec une charge constante de 12,000 requêtes par seconde. Une diminution progressive du nombre d'entrées présentes dans le cache est observée à partir d'environ 15 minutes, en raison de l'expiration des enregistrements associée au TTL. Ce phénomène devient particulièrement marqué après 20 minutes. Son ampleur augmente avec la taille de l'ensemble de données, ce qui s'explique par le nombre plus important d'entrées susceptibles d'atteindre leur durée de vie maximale.
+
+	Par ailleurs, le nombre de \textbf{cache\_hits\_query} augmente continuellement au cours des mesures pour l'ensemble des jeux de données. Cette augmentation est toutefois plus rapide pour les ensembles de petite taille, le cache atteignant plus rapidement un état stable dans lequel une proportion importante des requêtes peut être satisfaite localement. À l'inverse, le nombre de \textbf{cache\_misses\_query} diminue progressivement au fil du temps, avec une décroissance plus prononcée pour les ensembles de petite taille.
+
+	Ces tendances apparaissent plus nettement sur les courbes de la figure \ref{fig:Evolution du cache 1M} que sur celles de la figure \ref{fig:Evolution du cache 14M}. Étant donné que la durée des mesures est limitée à 30 minutes, les ensembles de grande taille ne permettent pas d'atteindre un niveau de remplissage du cache comparable à celui observé pour les ensembles plus réduits. Les variations des métriques sont donc plus progressives et les courbes présentent une pente plus faible durant la phase initiale de l'expérience.
+
+	Il convient de noter que, même lorsque l'ensemble des noms de domaine a été chargé dans le cache, des \textbf{cache\_misses\_query} continuent d'être observés. Ce comportement s'explique principalement par les requêtes supplémentaires générées lors des mécanismes de validation DNSSEC ainsi que par l'expiration régulière des entrées dont la durée de vie (TTL) est atteinte. Ces événements nécessitent la réalisation de nouvelles résolutions externes et contribuent ainsi au maintien d'un nombre non nul de défauts de cache.
+
+	L'analyse des courbes permet également d'estimer le temps nécessaire au remplissage du cache. Pour un ensemble de 100,000 noms de domaine, le cache atteint un état proche de la saturation après environ 1 minute et 30 secondes. Cette durée correspond au temps requis pour que la majorité des entrées de l'ensemble de données soient résolues puis stockées localement dans le cache du résolveur.
+
+	Pour répondre a la question de l'influence de la taille de l'ensemble de noms de domaine sur la consommation énergétique du DNS, des mesures ont été réalisées pour différents ensembles de noms de domaine entre 100,000 et 1 millions : 
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.9\textwidth]{Graphs/domains_sets_watts_avg_protocols_ci.png}
+		\caption{Consommation énergétique moyenne pour différents ensembles de noms de domaine entre 100,000 et 1 million de noms de domaine}
+		\label{fig:consommation domaine sets 1M}
+	\end{figure}
 	
-	
+	Ces mesures ont été perturbés par des ip externes envoyant des requêtes au serveur DNS durant les mesures, ce qui a faussé les résultats. Cependant, on peut observer un petite différence de consommation énergétique entre les différentes tailles d'ensemble de noms de domaine, mais cette différence n'est pas significative.
+
 	\subsubsection{Gestion des mesures avec et sans cache}
 
+	Le protocole retenu pour la réalisation des mesures consiste, dans un premier temps, à préremplir le cache pendant une durée déterminée, suffisante pour permettre le chargement de l'ensemble des entrées associées au jeu de données de noms de domaine utilisé. Cette phase vise à garantir que les mesures effectuées avec cache reflètent le comportement du résolveur dans un état où le cache est déjà établi. Le nombre de noms de domaines choisi est 100,000 pour permettre un remplissage rapide du cache et ainsi limiter la durée totale des campagnes de mesures.
+
+	Pour les mesures réalisées sans utilisation du cache, une option de configuration de BIND a été employée afin de désactiver artificiellement le mécanisme de mise en cache. Il s'agit du paramètre \texttt{max-cache-ttl}, qui définit la durée de vie maximale des entrées conservées dans le cache. En fixant cette valeur à zéro, les entrées deviennent immédiatement invalides après leur insertion et ne peuvent donc pas être réutilisées pour satisfaire des requêtes ultérieures. Cette configuration permet ainsi d'émuler un fonctionnement du résolveur sans cache tout en conservant les autres mécanismes internes inchangés.
+
+	Entre chaque série de mesures, ce paramètre de configuration de BIND9 est modifié afin d'activer ou de désactiver le mécanisme de cache. Le serveur est ensuite redémarré afin de prendre en compte la nouvelle configuration et de réinitialiser l'état du cache. En complément, la commande \texttt{rndc flush} est utilisée afin de vider explicitement le cache du résolveur.
+
+	Cette commande pourrait a priori constituer une solution suffisante pour réinitialiser l'état du cache. Toutefois, les expérimentations ont montré que son exécution n'entraîne pas de modification observable de la taille du cache. Pour cette raison, le redémarrage du service BIND9 s'avère nécessaire, à la fois pour garantir la prise en compte de la configuration modifiée et pour assurer une remise à zéro effective du cache entre les différentes séries de mesures.
+
+
 	\subsection{Campagnes de mesures}
-	Décrire les outils utilisés, les scripts de mesures créés, les différentes configurations testées, les problèmes rencontrés et comment ils ont été résolus. 
-	Diagrammes détaillés d'un cycle de mesure 
-	Estimation de temps pour chaque cycle de mesure
-	Sanity check 
 
+	Maintenant que l'environnement expérimental est configuré et que les outils de mesure sont en place, la phase suivante consiste à réaliser les campagnes de mesures. Pour ce faire, il faut définir les différentes configurations à tester, les protocoles à utiliser, les charges à appliquer, etc. Ensuite un faut orchestrateur pour lancer les différentes mesures de manière automatisée et synchronisée.
+
+	Il faut noter que étant donné que les campagnes de mesures sont généralement longues à réaliser, il est important de les planifier de manière efficace et de s'assurer que l'espace disque est suffisant pour stocker les données collectées. Il est également important de vérifier si la mesure est stable et fiable avant de lancer les campagnes de mesures à grande échelle, c'est ce qu'on appelle un sanity check, qui consiste à faire des mesures de test pour vérifier que tout fonctionne correctement et que les résultats obtenus sont cohérents avec les attentes. Cela est fait au préalable à chaque changement dans les scripts de mesure ou dans la configuration expérimentale. Un analyse rapide est effectuée.
+
+	Le script le plus important pour toutes les mesures et le script d'envoi des requêtes. Il prend en paramètres le protocole à utiliser et la charge à appliquer. Il existe deux versions de ce script, une pour les connexions persistantes et une pour les connexions non persistantes.
+	
 	\subsubsection{Mesures de consommation énergétique}
-	problemes rencontrés :
-	- espace disque insufisant
-	- Durée des mesures important (pas vraiment un problème)
-	\subsubsection{Mesures de la complexité algorithmique}
+	En premier lieu, chaque mesure basée sur la consommation du résolveur DNS sera échantillonné plusieurs fois (5 fois dans notre cas) afin d'obtenir des résultats plus fiables (réduire le bruit et les incertitudes) et de pouvoir calculer des intervalles de confiance. 
+	Pour les configurations sélectionnées, on retrouve les différentes combinaisons suivantes :
+	\begin{itemize}
+		\item \textbf{Commun pour les deux types de connexions : }
+		\begin{itemize}
+			\item Protocoles : UDP, DoT, DoH
+			\item Utilisation du cache : avec cache, sans cache
+		\end{itemize}
 
+		\item \textbf{Connexions persistantes} : une connexion TLS est établie au début de la mesure et est maintenue tout au long de la mesure.
+		\begin{itemize}
+			\item QPS : allant de 30 QPS à 330 QPS avec 30 QPS d'intervalle entre chaque mesure
+		\end{itemize}
+		\item \textbf{Connexions non persistantes} : une nouvelle connexion TLS est établie pour chaque requête DNS envoyée par le client.
+		\begin{itemize}
+			\item QPS : allant de 50 QPS à 550 QPS avec 50 QPS d'intervalle entre chaque mesure
+		\end{itemize}
+	\end{itemize}
+	\vspace{0.5cm}
+
+	Pour l'orchestration des mesures, plusieurs scripts sont responsables de lancer les différentes mesures de manière automatisée et synchronisée. En partant du plus haut niveau au plus bas niveau, on trouve :
+
+	\begin{itemize}
+		\item \texttt{extensive\_measurements.sh} : Script principal avec une boucle par paramètre de configuration (protocoles, utilisation du cache, QPS et échantillon), il lance avec ces paramètres \texttt{start.sh}.
+
+		\item \texttt{start.sh} : script qui exécute une mesure unique pour une configuration donnée. Il vide le cache du DNS, change la configuration de BIND9 pour activer ou désactiver le cache, redémarre le service, créé les dossiers pour l'organisation des données récoltées, lance \texttt{start\_dns\_logs\_monitoring.sh} sur le DNS puis lance \texttt{start\_measurements.sh} sur le client.
+
+		\item \texttt{start\_dns\_logs\_monitoring.sh} : script qui exécute tous les scripts de mesures réseau et de logs DNS en parallèle.
+
+		\item \texttt{start\_measurements.sh} : script qui exécute tous les scripts de mesures systèmes, réseau et énergétiques en parallèle.
+
+		\item \texttt{start\_measurements.sh} : script qui exécute le script de mesure de consommation externe \texttt{yoctowatt\_log\_fast.py} en parallèle avec \texttt{orchestrate\_measures.sh} coté DNS pour lancer tout les scripts de mesure de critères systèmes.
+	\end{itemize}
+	\vspace{0.5cm}
+
+	Des campagnes de mesures ont été réalisées pour mesurer la consommation énergétique du résolveur DNS avec les mêmes configurations mais sans effectuer de mesures au niveau du résolveur DNS pour voir l'influence de ces mesures sur la consommation énergétique du résolveur DNS. Également, la consommation énergétique du résolveur DNS a été mesurée au repos pour avoir une base de comparaison pour les mesures réalisées avec les différentes configurations.
+
+	\subsubsection{Mesures de la complexité algorithmique}
+	L'orchestration des mesures de la complexité algorithmique est bien plus simple car il ne faut lancer que le script d'envoie des requêtes et le script de mesure du nombres d'appels par fonction de Bind9. Cependant un seul échantillon est réalisé pour chaque configuration, car les mesures de la complexité algorithmique sont plus stables que les mesures de consommation énergétique, et il n'est pas nécessaire de faire plusieurs échantillons pour obtenir des résultats fiables.\\
+
+	La mise en place d'une infrastructure d'orchestration automatisée constitue une étape essentielle pour la réalisation de campagnes de mesures à grande échelle. Elle permet de garantir la reproductibilité des expérimentations, de limiter les erreurs humaines lors de l'exécution des protocoles et d'assurer la synchronisation des différentes sources de données collectées.
+
+	La répétition des mesures de consommation énergétique sur plusieurs échantillons permet par ailleurs de prendre en compte la variabilité inhérente aux systèmes informatiques et d'améliorer la robustesse statistique des résultats obtenus.
+
+	Enfin, la distinction entre les campagnes de mesures énergétiques et les campagnes d'analyse de la complexité algorithmique permet d'adapter les protocoles expérimentaux aux caractéristiques de chaque type de mesure. L'ensemble de cette méthodologie fournit ainsi un cadre expérimental rigoureux permettant d'obtenir des données fiables pour l'étude des performances énergétiques du résolveur DNS ainsi que pour l'élaboration des modèles présentés dans la suite de ce rapport.
 
 	\subsection{Analyse des résultats}
 
-	Les mesures obtenues ont étés analysées principalement avec des jupyter notebooks en utilisant pandas, numpy et matplotlib pour visualiser les résultats. 
+	Les mesures obtenues ont étés analysées principalement avec des Jupyter notebooks en utilisant pandas, numpy et matplotlib pour visualiser les résultats. 
 
 	Ces analyses ont pour but de vérifier des hypothèses émises. La visualisation est essentielle pour valider ces hypothèses et comprendre les résultats obtenus, et repérer les erreurs et anomalies dans les mesures. 
 
-	Certains problemes ont été rencontrés lors de l'analyse des résultats, notamment en raison du temps de traitement nécessaire, et la mémoire vive nécessaire pour analyser les grandes quantités de données collectées. Pour résoudre ce problème, des techniques d'échantillonnage ont été utilisées afin de réduire la taille des ensembles de données tout en conservant une représentativité suffisante pour les analyses. Cela réduit la précision des résultats, mais permet d'obtenir des analyses plus rapidement et de manière plus efficace. Un script a été développé pour automatiser ce processus d'échantillonnage et d'exportation des données dans un format plus facilement manipulable pour les analyses. Il rassemble toutes les métriques collectées lors des mesures, rééchantillone les données a une granularité de 1 seconde, remplit les données manquantes avec une méthode appropriée à la nature des données et les exporte dans un format CSV pour une utilisation ultérieure dans les notebooks d'analyse.
+	Certains problèmes ont été rencontrés lors de l'analyse des résultats, notamment en raison du temps de traitement nécessaire, et la mémoire vive nécessaire pour analyser les grandes quantités de données collectées. Pour résoudre ce problème, des techniques d'échantillonnage ont été utilisées afin de réduire la taille des ensembles de données tout en conservant une représentativité suffisante pour les analyses. Cela réduit la précision des résultats, mais permet d'obtenir des analyses plus rapidement et de manière plus efficace. Un script a été développé pour automatiser ce processus d'échantillonnage et d'exportation des données dans un format plus facilement manipulable pour les analyses. Il rassemble toutes les métriques collectées lors des mesures, change la granularité à 1 seconde, remplit les données manquantes avec une méthode appropriée à la nature des données et les exporte dans un format CSV pour une utilisation ultérieure dans les notebooks d'analyse.
 
 	Grace à ce prétraitement des données automatisé, les résultats suivant ont pu être obtenus et analysés efficacement. 
 	
-	Le grand nombre de métriques collectées permet de faire des analyses approfondies des différents levier de consommation. Cependant, durant ce stage, ce grand panel de métriques n'a pas été exploité à son plein potentiel et par moment, il a été difficile de trouver quelles étaient les métriques les plus pertinentes à étudier pour ce sujet de recherche.
+	Le grand nombre de métriques collectées permet de faire des analyses approfondies des différents levier de consommation. Cependant, durant ce stage, ce grand panel de métriques n'a pas été exploité à son plein potentiel et par moment, il a été difficile de trouver quelles étaient les métriques les plus pertinentes à étudier pour ce sujet de recherche.\\
 
-	Cette section résume les résultats les plus intéressants obtenus et les analyses, en mentionant les limitations de ces résultats s'il y en a, et les prochaines étapes pour les améliorer ou les approfondir.
+	Cette section résume les résultats les plus intéressants obtenus et les analyses, en mentionnant les limitations de ces résultats s'il y en a, et les prochaines étapes pour les améliorer ou les approfondir.
 
 	\subsubsection{Mesures de consommation énergétique du résolveur DNS}
 	
@@ -430,7 +556,7 @@
 	
 	Pour les protocols DoT et DoH, les mesures ont été réalisées avec des connexions persistantes et non persistantes. Pour les connexions persistantes, une connexion TLS est établie au début de la mesure et est maintenue tout au long de la mesure. Pour les connexions non persistantes, une nouvelle connexion TLS est établie pour chaque requête DNS envoyée par le client.
 	
-	Il faut noter que pour DoH, les connxions sont systématiquement persistantes, car DoH utilise le protocole HTTP qui est conçu pour maintenir des connexions persistantes. Cependant, pour les besoins de cette étude, une configuration a été mise en place pour simuler des connexions non persistantes en fermant la connexion HTTP après chaque requête DNS. Cela permet de simuler le fait que chaque requête DoH correspond à un client différent.
+	Il faut noter que pour DoH, les connexions sont systématiquement persistantes, car DoH utilise le protocole HTTP qui est conçu pour maintenir des connexions persistantes. Cependant, pour les besoins de cette étude, une configuration a été mise en place pour simuler des connexions non persistantes en fermant la connexion HTTP après chaque requête DNS. Cela permet de simuler le fait que chaque requête DoH correspond à un client différent.
 	
 	
 	\begin{figure}[H]
@@ -442,7 +568,7 @@
 	
 	Il existe une différence claire de consommation énergétique entre l'utilisation avec et sans cache. Les courbes pour l'utilisation sans cache ont une forme de décroissance exponentielle. En observant les courbes d'utilisation du cache, l'ordre est étrange : UDP n'utilise aucune connexion, il devrait donc être en dessous de toutes les autres courbes. 
 	
-	La différence entre les protocoles utilisant TLS (DoT et DoH) et le protocole utilisant UDP est du au coût du chiffrement principalement. Étant donné que pour ces mesures, les connexions sont persistantes, le coût de l'établissement de la connexion s'efface sur une longue période. Ces résultats sont donc cohérents avec ce qui est attendu. 
+	La différence entre les protocoles utilisant TLS (DoT et DoH) et le protocole utilisant UDP est du au coût du chiffrement principalement. Étant donné que pour ces mesures, les connexions sont persistantes, le coût de l'établissement de la connexion s'efface sur une longue période. Ces résultats sont donc cohérents avec ce qui est attendu. \\
 	
 	Pour voir le coût de l'établissement des connexions, il faut faire des mesures avec des connexions non persistantes.
 	
@@ -453,7 +579,7 @@
 		\label{fig:consomation_non_persistante}
 	\end{figure}
 
-	Avec des connexions non persistantes, la consommation énergétique est plus élevée pour les protocoles utilisant TLS (DoT et DoH) en raison du coût de l'établissement de la connexion pour chaque requête. Le protocol DoH consomme le plus ce qui est cohérent avec le coût supplémentaire du protocole HTTP en plus du chiffrement TLS. 
+	Avec des connexions non persistantes, la consommation énergétique est plus élevée pour les protocoles utilisant TLS (DoT et DoH) en raison du coût de l'établissement de la connexion pour chaque requête. Le protocol DoH consomme le plus ce qui est cohérent avec le coût supplémentaire du protocole HTTP en plus du chiffrement TLS. \\
 	
 	Pour pourvoir interpréter ces résultats sans biais lié à la surcharge introduite par les scripts de mesure, il est nécessaire de faire des mesures de consommation énergétique sans la surcharge liée à l'enregistrement des métriques au niveau du DNS. 
 	
@@ -464,115 +590,87 @@
 		\label{fig:consomation_non_persistante_externe}
 	\end{figure}
 
-	Étonnamment, les résultats sont différents, le protocole DoT consomme davantage que le protocole DoH, ce qui ne corrobore pas l'hypothèse selon laquelle DoH consomme plus que DoT en raison du coût supplémentaire du protocole HTTP. Comme le protocole mesuré était le même dans ces essais, cette différence provient probablement de la consommation des scripts de mesure au niveau du DNS, qui dépend donc du protocole utilisé. 
+	Étonnamment, les résultats sont différents, le protocole DoT consomme davantage que le protocole DoH, ce qui ne corrobore pas l'hypothèse selon laquelle DoH consomme plus que DoT en raison du coût supplémentaire du protocole HTTP. Comme le protocole mesuré était le même dans ces essais, cette différence provient probablement de la consommation des scripts de mesure au niveau du DNS, qui dépend donc du protocole utilisé. \\
 	
 	Le QPS est limité pour DoT et DoH en raison de la surcharge introduite par l'établissement de connexions TLS pour chaque requête, ce qui rend les mesures à des QPS plus élevés difficiles à réaliser. De plus, il y a un nombre limité de socket disponibles pour les connexions TLS, ce qui peut également limiter la capacité à atteindre des QPS plus élevés. C'est encore plus flagrant avec les connexions non persistantes, où une nouvelle connexion TLS doit être établie pour chaque requête. DoH est le protocol avec le plus de surcharge, par conséquent, c'est le protocol avec lequel le QPS maximum est le plus bas.
 	
-	Il serait intéressant d'avoir des mesures pour des QPS plus élevés et avec différentes configurations DNS (nombre maximal de clients du résolveur, nombre de threads de travail, etc.) et différentes implémentations DNS (PowerDNS, Unbound, Knot DNS, etc.).
-	
-	
-	---
-	\subsubsection{Densité de la consommation énergétique}
+	Il serait intéressant d'avoir des mesures pour des QPS plus élevés et avec différentes configurations DNS (nombre maximal de clients du résolveur, nombre de threads de travail, etc.) et différentes implémentations DNS (PowerDNS, Unbound, Knot DNS, etc.).\\
 
-	Afin de visualiser la consommation énergétique du résolveur et sa distribution, voici 3 graphiques montrant la distribution de la consommation énergétique lors de l'utilisation du cache et sans utilisation du cache.
-	
+	Pour vérifier que le protocol utilisé pour les mesures représente bien ce que nous essayons de mesurer, il faut vérifier certaines métriques importantes.
+	Le paramètre le plus crucial des configurations de mesure est l'utilisation ou non du cache. En effet, si le cache est utilisé, la consommation énergétique du résolveur est beaucoup plus faible, et les résultats sont très différents de ceux obtenus sans utilisation du cache. Par conséquent, il est essentiel de vérifier que le cache est bien utilisé ou non utilisé selon la configuration de mesure.
+	Pour cela, il est nécessaire d'examiner les métriques du cache de Bind9. Les métriques collectées nous intéressant sont la place occupée par le cache, pour cette métrique il existe 2 façon de mesurer, il y a la mémoire utilisée par le tas du cache, c'est a dire les le contenu des données DNS et la mémoire utilisée par la structure arborescente du cache. Il y a également le nombre de requêtes qui touchent le cache, c'est à dire le nombre de requêtes pour lesquelles une réponse est trouvée dans le cache, et le nombre de requêtes qui ne touchent pas le cache. On peut déduire avec ces dernières le pourcentage de requêtes qui touchent le cache. Enfin une métrique importante qui révèle l'efficacité du protocol mis en place pour bien simuler la non utilisation du cache est l'expiration des entrées du cache du au TTL. En effet, comme mentionné précédemment, pour simuler la non utilisation du cache, le TTL maximum du cache est défini à 0, ce qui signifie que les entrées du cache expirent immédiatement après leur ajout. Par conséquent, si le cache est correctement configuré pour ne pas être utilisé, il devrait y avoir une grande quantité d'expiration d'entrées du cache due au TTL.
+
 	\begin{figure}[H]
 		\centering
-		\begin{minipage}{0.3\textwidth}
-			\includegraphics[width=\textwidth]{Graphs/consumption_density_qps_1_udp.png}
-		\end{minipage}
-		\hfill
-		\begin{minipage}{0.3\textwidth}
-			\includegraphics[width=\textwidth]{Graphs/consumption_density_qps_100_udp.png}
-		\end{minipage}
-		\hfill
-		\begin{minipage}{0.3\textwidth}
-			\includegraphics[width=\textwidth]{Graphs/consumption_density_qps_1000_udp.png}
-		\end{minipage}
+		\includegraphics[width=0.9\textwidth]{Graphs/cache_metrics_avg_protocols_ci.png}
+		\caption{Métriques du cache de Bind9 moyennées pour les différents protocoles avec et sans utilisation du cache}
+		\label{fig:cache_metrics}
 	\end{figure}
-	
-	Cela est réalisé à l'aide d'estimations de densité par noyau (*Kernel Density Estimations*).
-	
-	---
-	\subsubsection{Différence entre cache et non-cache}
-	
-	La différence de consommation entre la résolution avec et sans cache est claire et nous pouvons modéliser cette différence. Le modèle n'est pas directement appliqué à la différence car les QPS dans les mesures ne sont pas les mêmes avec et sans cache. Ainsi, pour modéliser cette différence, nous commençons par modéliser les courbes avec et sans cache pour chaque protocole, puis nous faisons simplement la différence entre elles.
-	
-	\begin{figure}[H]
-		\centering
-		\includegraphics[width=0.9\textwidth]{Graphs/energy_consumption_difference.png}
-		\caption{Différence de consommation entre les résolutions avec et sans cache}
-		\label{fig:image3}
-	\end{figure}
-	
-	La courbe a la forme d'une décroissance exponentielle car c'est ce que nous avons utilisé pour modéliser les consommations avec et sans cache.
-	
-	\subsubsection{Nouvelle méthodologie de mesure}
-	
-	Il y a certains problèmes avec les mesures. Pour les résoudre, la méthodologie doit être ajustée. Ces ajustements devraient résoudre les problèmes suivants :
-	\begin{itemize}
-		\item Le même ensemble de domaines pour les mesures avec et sans cache n'est pas utilisé.
-		\item Nous ne pouvons pas vraiment savoir si le cache est vraiment utilisé ou non.
-	\end{itemize}
-	
-	Les étapes pour ces ajustements sont :
-	\begin{enumerate}
-		\item Mesurer l'utilisation du cache pour différentes tailles d'ensembles de domaines.
-		\item Sélectionner un ensemble de domaines qui sature le cache, mais où toutes les requêtes touchent le cache pour estimer la consommation énergétique du cache.
-		\item Définir le TTL maximum du cache à 0 pour les mesures sans utilisation du cache et à 7 jours pour les mesures avec utilisation du cache.
-	\end{enumerate}
-	
-	Cela permettra de mesurer avec précision la consommation de recherche dans le cache en fonction de sa taille et avec le même ensemble de domaines.
-	
-	\subsubsection{Modifications de la configuration}
-	Entre chaque mesure, la configuration sera modifiée. Tout d'abord, le cache sera vidé, puis le TTL maximum du cache sera défini à 0 si les mesures se concentrent sur l'absence de cache, et à 7 jours s'il se concentre sur l'utilisation du cache.
-	
-	\subsubsection{Nouvelles métriques}
-	Le cache sera surveillé à l'aide de 6 variables disponibles via \texttt{rndc}, un module utilisé pour visualiser les métriques de Bind9.
-	
-	Les nouvelles métriques sont :
-	
-	\begin{description}
-		\item[Accès au cache] \hfill \\
-		Le nombre total de requêtes DNS \textbf{servies directement depuis le cache}. \\
-		Cela inclut les réponses positives (par exemple, les enregistrements A, AAAA, MX) qui ont été précédemment mises en cache. \\
-		\textit{Unité : Compteur (entier non signé).}
-		
-		\item[Échecs de cache] \hfill \\
-		Le nombre total de requêtes DNS \textbf{non servies depuis le cache}, nécessitant une résolution externe (par exemple, en interrogeant un serveur DNS autoritatif ou récursif). \\
-		\textit{Unité : Compteur (entier non signé).}
-		
-		\item[Accès au cache (à partir des requêtes)] \hfill \\
-		Le nombre de \textbf{réponses en cache} pour les requêtes entrantes. \\
-		Contrairement aux \texttt{accès au cache}, cette métrique se concentre sur les \textbf{requêtes initiales} servies depuis le cache. \\
-		\textit{Unité : Compteur (entier non signé).}
-		
-		\item[Échecs de cache (à partir des requêtes)] \hfill \\
-		Le nombre de requêtes entrantes \textbf{non résolues par le cache}, nécessitant une résolution externe. \\
-		Complémentaire aux \texttt{accès au cache (à partir des requêtes)} pour évaluer l'efficacité du cache sur les requêtes entrantes. \\
-		\textit{Unité : Compteur (entier non signé).}
-		
-		\item[Mémoire de l'arbre de cache] \hfill \\
-		Mémoire \textbf{utilisée par la structure arborescente du cache} (en octets). \\
-		Représente la mémoire allouée pour organiser les entrées du cache dans une structure arborescente (optimisée pour des recherches rapides). \\
-		\textit{Unité : Octets.}
-		
-		\item[Mémoire du tas de cache] \hfill \\
-		Mémoire \textbf{utilisée par le tas du cache} (en octets). \\
-		Représente la mémoire allouée dynamiquement pour les entrées du cache non organisées dans l'arbre. \\
-		\textit{Unité : Octets.}
 
-		\item[Entrées de cache supprimées en raison de l'épuisement de la mémoire] \hfill \\
-		Le nombre d'\textbf{entrées de cache supprimées} en raison de \textbf{l'épuisement de la mémoire}. \\
-		Indique que le cache a atteint sa limite de mémoire allouée (\texttt{max-cache-size}) et a dû supprimer des entrées pour libérer de l'espace. \\
-		\textit{Unité : Compteur (entier non signé).} \\
-		\textit{Note : Une valeur > 0 suggère que \texttt{max-cache-size} devrait être augmentée.}
-		
-		\item[Entrées de cache supprimées en raison de l'expiration du TTL] \hfill \\
-		Le nombre d'\textbf{entrées de cache supprimées} car leur \textbf{TTL (*Time To Live*) a expiré}. \\
-		Représente le nombre d'enregistrements DNS automatiquement supprimés du cache après avoir atteint leur durée de vie maximale. \\
-		\textit{Unité : Compteur (entier non signé).}
-	\end{description}
+	Concernant l'espace mémoire occupé par l'arborescence et le tas du cache, on peut voir une petite différence entre les mesures avec et sans utilisation du cache, mais cette différence n'est pas très grande, ce qui est surprenant. De plus, l'occupation de la mémoire augmente avec le QPS dans les deux cas, ce qui n'était pas attendu également. Cependant on voit, comme prévu au niveau du pourcentage de requêtes qui touchent le cache une différence claire entre l'utilisation du cache et la non utilisation du cache. De plus, pour les mesures n'utilisant pas de cache on voit une stagnation du pourcentage de requêtes qui touchent le cache vers $45\%$ ce qui est plus que prévu. Les courbes d'expiration des entrées du cache dues au TTL montrent également une différence claire entre les mesures avec et sans utilisation du cache, avec une grande quantité d'expiration pour les mesures sans utilisation du cache et très peu pour l'utilisation du cache ce qui montre l'efficacité du paramètre \texttt{max-cache-ttl}.
+
+	Pour expliquer les incohérences observées, il faut noter que le protocole est faillible car la phase de remplissage du cache n'est pas homogène, elle devrait être faite avec un certain nombre de requêtes sur un ensemble de nom de domaine. Cependant il est fait pendant une certaine durée avec le QPS de la configuration, donc la durée de la mesure est étendue de 1 minute 30 (temps mesuré du remplissage du cache pour 100 000 noms de domaines \ref{fig:Evolution du cache 1M}) et la première minute 30 est ignorée pour les analyses. Cette minute 30 de remplissage a été mesurée avec un 10 000 QPS, le protocol n'est donc pas rigoureux et sera modifié pour les prochaines mesures par manque de temps, cela n'a pas été fait pour ces mesures. Cette faille dans le protocol explique la différence de d'occupation de la mémoire du cache avec l'utilisation du cache et l'augmentation du pourcentage de requêtes qui touchent le cache mais pas pourquoi autant d'espace est occupé par le cache même sans utilisation du cache et pourquoi ce pourcentage de requêtes qui touchent le cache est si haut sans utilisation du cache. 
+
+	Concernant la mémoire utilisée par le cache lors des mesures faites sans cache, les entrées du cache sont ajoutées au cache mais expirent immédiatement après leur ajout, elles sont supprimées du cache par un autre processus qui vérifie régulièrement les quelles entrées ont expiré du au TTL. Ce processus de suppression des entrées expirées du cache n'est pas instantané et il est possible que ce soit pour cette raison que l'espace mémoire occupé par le cache soit du même ordre de grandeur avec et sans utilisation du cache. Pour expliquer le pourcentage de requêtes qui touchent le cache sans utilisation du cache, il faut noter que les requêtes qui touchent le cache sont celles pour lesquelles une réponse est trouvée dans le cache ou dans la zone (serveur root uniquement dans notre cas). Cette valeur est élevé mais n'augmente pas à la différence de l'utilisation du cache, ce qui montre un comportement différent. Cette valeur peut s'expliquer par le fait que l'adresse du serveur root est nécessaire pour toutes les résolutions.
+
+
+	
+	% \subsubsection{Densité de la consommation énergétique}
+
+	% Afin de visualiser la consommation énergétique du résolveur et sa distribution, voici 3 graphiques montrant la distribution de la consommation énergétique lors de l'utilisation du cache et sans utilisation du cache.
+	
+	% \begin{figure}[H]
+	% 	\centering
+	% 	\begin{minipage}{0.3\textwidth}
+	% 		\includegraphics[width=\textwidth]{Graphs/consumption_density_qps_1_udp.png}
+	% 	\end{minipage}
+	% 	\hfill
+	% 	\begin{minipage}{0.3\textwidth}
+	% 		\includegraphics[width=\textwidth]{Graphs/consumption_density_qps_100_udp.png}
+	% 	\end{minipage}
+	% 	\hfill
+	% 	\begin{minipage}{0.3\textwidth}
+	% 		\includegraphics[width=\textwidth]{Graphs/consumption_density_qps_1000_udp.png}
+	% 	\end{minipage}
+	% \end{figure}
+	
+	% Cela est réalisé à l'aide d'estimations de densité par noyau (*Kernel Density Estimations*).
+	
+	% ---
+	% \subsubsection{Différence entre cache et non-cache}
+	
+	% La différence de consommation entre la résolution avec et sans cache est claire et nous pouvons modéliser cette différence. Le modèle n'est pas directement appliqué à la différence car les QPS dans les mesures ne sont pas les mêmes avec et sans cache. Ainsi, pour modéliser cette différence, nous commençons par modéliser les courbes avec et sans cache pour chaque protocole, puis nous faisons simplement la différence entre elles.
+	
+	% \begin{figure}[H]
+	% 	\centering
+	% 	\includegraphics[width=0.9\textwidth]{Graphs/energy_consumption_difference.png}
+	% 	\caption{Différence de consommation entre les résolutions avec et sans cache}
+	% 	\label{fig:image3}
+	% \end{figure}
+	
+	% La courbe a la forme d'une décroissance exponentielle car c'est ce que nous avons utilisé pour modéliser les consommations avec et sans cache.
+	
+	% \subsubsection{Nouvelle méthodologie de mesure}
+	
+	% Il y a certains problèmes avec les mesures. Pour les résoudre, la méthodologie doit être ajustée. Ces ajustements devraient résoudre les problèmes suivants :
+	% \begin{itemize}
+	% 	\item Le même ensemble de domaines pour les mesures avec et sans cache n'est pas utilisé.
+	% 	\item Nous ne pouvons pas vraiment savoir si le cache est vraiment utilisé ou non.
+	% \end{itemize}
+	
+	% Les étapes pour ces ajustements sont :
+	% \begin{enumerate}
+	% 	\item Mesurer l'utilisation du cache pour différentes tailles d'ensembles de domaines.
+	% 	\item Sélectionner un ensemble de domaines qui sature le cache, mais où toutes les requêtes touchent le cache pour estimer la consommation énergétique du cache.
+	% 	\item Définir le TTL maximum du cache à 0 pour les mesures sans utilisation du cache et à 7 jours pour les mesures avec utilisation du cache.
+	% \end{enumerate}
+	
+	% Cela permettra de mesurer avec précision la consommation de recherche dans le cache en fonction de sa taille et avec le même ensemble de domaines.
+	
+	% \subsubsection{Modifications de la configuration}
+	% Entre chaque mesure, la configuration sera modifiée. Tout d'abord, le cache sera vidé, puis le TTL maximum du cache sera défini à 0 si les mesures se concentrent sur l'absence de cache, et à 7 jours s'il se concentre sur l'utilisation du cache.
+	
+	
 
 	\subsubsection{Étude de la distribution des types de requêtes et des TTLs}
 		
@@ -582,13 +680,12 @@
 	
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=0.9\textwidth]{Graphs/resolver_qps.png}
+		\includegraphics[width=0.9\textwidth]{Graphs/requests/resolver_qps.png}
 		\caption{Nombre de requêtes envoyées et reçues par le résolveur pour une résolution en fonction du QPS}
 		\label{fig:image2}
 	\end{figure}
 	
-	Le fait que cela suive une décroissance exponentielle est étrange et doit être étudié. La manière d'étudier cela consiste à examiner la distribution des types de requêtes pour chaque valeur afin de voir quels types de requêtes sont moins présents lorsque le QPS augmente.
-
+	Le fait que cela suive une décroissance exponentielle est étrange et doit être étudié. La manière d'étudier cela consiste à examiner la distribution des types de requêtes pour chaque valeur afin de voir quels types de requêtes sont moins présents lorsque le QPS augmente.\\
 
 	Toutes les requêtes récursives ne concernent pas des adresses IP : certaines sont des délégations vers un autre serveur autoritatif (NS), d'autres sont des alias vers un autre nom de domaine (CNAME). Il y a également des informations DNSSEC telles que RRSIG, DNSKEY, DS, etc.
 	
@@ -596,33 +693,38 @@
 	
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=0.9\textwidth]{Graphs/query_type_distribution.png}
+		\includegraphics[width=0.9\textwidth]{Graphs/requests/query_type_distribution.png}
 		\caption{Distribution des types de requêtes pour les résolutions récursives}
 		\label{fig:image4}
 	\end{figure}
 	
-	La plupart sont de type IP, mais il y a une part non négligeable de DNSSEC, NS et CNAME.
+	La plupart sont de type A, mais il y a une part non négligeable de DNSSEC, NS et CNAME. Les types sont expliqués dans les annexe~\ref{types}.
 	
-	Le cache permet d'économiser beaucoup de consommation énergétique, mais les entrées du cache ont une durée limitée spécifiée par les serveurs DNS autoritatifs\footnote{Cela est dû au fait que l'adresse IP peut changer au fil du temps ; de plus, les DNS sont généralement utilisés comme une première couche de répartiteurs de charge}. Il s'agit du TTL (*Time To Live*), spécifié en secondes dans la zone pour chaque entrée sur laquelle le DNS a autorité. La distribution de ce TTL est intéressante à examiner.
+	Le cache permet d'économiser beaucoup de consommation énergétique, mais les entrées du cache ont une durée limitée spécifiée par les serveurs DNS autoritatifs\footnote{Cela est dû au fait que l'adresse IP peut changer au fil du temps ; de plus, les DNS sont généralement utilisés comme une première couche de répartiteurs de charge}. Il s'agit du TTL, spécifié en secondes dans la zone pour chaque entrée sur laquelle le DNS a autorité. La distribution de ce TTL est intéressante à examiner.
 	
-	Tout d'abord, nous pouvons examiner des noms de domaine aléatoires. Le graphique de gauche montre la CDF (*Cumulative Distribution Function*) de 100 000 noms de domaine aléatoires issus d'un ensemble d'1 million de noms de domaine pour avoir une idée de cette distribution. Le graphique de droite montre la distribution des TTL pour les TLD (*Top Level Domains*, comme .fr, .com), au total 192 (le nombre exact n'est pas confirmé).
+	Tout d'abord, nous pouvons examiner des noms de domaine aléatoires. Le graphique de gauche montre la CDF (Cumulative Distribution Function) de 100 000 noms de domaine aléatoires issus d'un ensemble d'1 million de noms de domaine pour avoir une idée de cette distribution. Le graphique de droite montre la distribution des TTL pour les TLD (Top Level Domains, comme .fr, .com), au total 1576 (le nombre exact n'est pas confirmé).
 	
 	\begin{figure}[H]
 		\centering
 		\begin{minipage}{0.45\textwidth}
-			\includegraphics[width=\textwidth]{Graphs/ttl_ecdf.png}
+			\includegraphics[width=\textwidth]{Graphs/requests/ttl_ecdf.png}
+			\caption{Distribution des TTL pour des noms de domaine aléatoires}
 		\end{minipage}
 		\hfill
 		\begin{minipage}{0.45\textwidth}
-			\includegraphics[width=\textwidth]{Graphs/tld_ttl_ecdf.png}
+			\includegraphics[width=\textwidth]{Graphs/requests/tld_ttl_ecdf.png}
+			\caption{Distribution des TTL pour les TLD}
 		\end{minipage}
 	\end{figure}
 	
-	Pour les TLD, des pics peuvent être observés à 24h et 48h car ce sont des valeurs rondes.
+	Pour les noms de domaine aléatoires, la distribution est très variable, mais il y a des pics à 1h, 4h et 24h, cependant la majorité des domaines ont un TTL de moins de 1 heure.
+
+	Pour les TLD, des pics peuvent être observés à 24h et 48h car ce sont des valeurs rondes. On remarque également que les TLD ont généralement des TTL plus élevés que les autres noms de domaine, ce qui est logique car ils auraient une charge plus importante étant donné qu'il n'y a pas beaucoup de TLD. Cela permet d'avoir une meilleure efficacité du cache pour les TLD, ce qui est important car ils sont souvent consultés.
 
 	\subsubsection{Étude d'ablation}
 	
 	\subsubsection{Étude de la complexité algorithmique de Bind9}
+	
 	
 	\subsection{Modélisation}
 	
@@ -691,20 +793,80 @@
 
 	Petite conclusion / Quel est le principal résultat de cela ?
 	\cite{key}
+	\cite{test}
 	\chapter*{Conclusion}
 	\addcontentsline{toc}{chapter}{Conclusion}
 
-	\chapter*{Bibliographie}
 	\addcontentsline{toc}{chapter}{Bibliographie}
 	\nocite{*}
 	\printbibliography{}
 
-	\chapter*{Annexes}
+	\chapter*{Annexes} \label{annexes}
 	\addcontentsline{toc}{chapter}{Annexes}
 	
 	\section*{Détail des métriques collectées}
 	\addcontentsline{toc}{section}{Détail des métriques collectées}
 	
+	\subsubsection{Nouvelles métriques}
+	Le cache sera surveillé à l'aide de 6 variables disponibles via \texttt{rndc}, un module utilisé pour visualiser les métriques de Bind9.
+	
+	Les nouvelles métriques sont :
+	
+	\begin{description}
+		\item[Accès au cache] \hfill \\
+		Le nombre total de requêtes DNS \textbf{servies directement depuis le cache}. \\
+		Cela inclut les réponses positives (par exemple, les enregistrements A, AAAA, MX) qui ont été précédemment mises en cache. \\
+		\textit{Unité : Compteur (entier non signé).}
+		
+		\item[Échecs de cache] \hfill \\
+		Le nombre total de requêtes DNS \textbf{non servies depuis le cache}, nécessitant une résolution externe (par exemple, en interrogeant un serveur DNS autoritatif ou récursif). \\
+		\textit{Unité : Compteur (entier non signé).}
+		
+		\item[Accès au cache (à partir des requêtes)] \hfill \\
+		Le nombre de \textbf{réponses en cache} pour les requêtes entrantes. \\
+		Contrairement aux \texttt{accès au cache}, cette métrique se concentre sur les \textbf{requêtes initiales} servies depuis le cache. \\
+		\textit{Unité : Compteur (entier non signé).}
+		
+		\item[Échecs de cache (à partir des requêtes)] \hfill \\
+		Le nombre de requêtes entrantes \textbf{non résolues par le cache}, nécessitant une résolution externe. \\
+		Complémentaire aux \texttt{accès au cache (à partir des requêtes)} pour évaluer l'efficacité du cache sur les requêtes entrantes. \\
+		\textit{Unité : Compteur (entier non signé).}
+		
+		\item[Mémoire de l'arbre de cache] \hfill \\
+		Mémoire \textbf{utilisée par la structure arborescente du cache} (en octets). \\
+		Représente la mémoire allouée pour organiser les entrées du cache dans une structure arborescente (optimisée pour des recherches rapides). \\
+		\textit{Unité : Octets.}
+		
+		\item[Mémoire du tas de cache] \hfill \\
+		Mémoire \textbf{utilisée par le tas du cache} (en octets). \\
+		Représente la mémoire allouée dynamiquement pour les entrées du cache non organisées dans l'arbre. \\
+		\textit{Unité : Octets.}
+
+		\item[Entrées de cache supprimées en raison de l'épuisement de la mémoire] \hfill \\
+		Le nombre d'\textbf{entrées de cache supprimées} en raison de \textbf{l'épuisement de la mémoire}. \\
+		Indique que le cache a atteint sa limite de mémoire allouée (\texttt{max-cache-size}) et a dû supprimer des entrées pour libérer de l'espace. \\
+		\textit{Unité : Compteur (entier non signé).} \\
+		\textit{Note : Une valeur > 0 suggère que \texttt{max-cache-size} devrait être augmentée.}
+		
+		\item[Entrées de cache supprimées en raison de l'expiration du TTL] \hfill \\
+		Le nombre d'\textbf{entrées de cache supprimées} car leur \textbf{TTL (*Time To Live*) a expiré}. \\
+		Représente le nombre d'enregistrements DNS automatiquement supprimés du cache après avoir atteint leur durée de vie maximale. \\
+		\textit{Unité : Compteur (entier non signé).}
+	\end{description}
+
+	\texttt{Time\_Of\_Day\_Seconds}: Wall-clock timestamp of the sample (seconds since midnight).
+	\texttt{Avg\_MHz}: Average CPU frequency including idle time.
+	\texttt{Busy\%}: Percentage of time the CPU cores were active (not idle).
+	\texttt{Bzy\_MHz}: Average CPU frequency while cores were busy.
+	\texttt{C6\%}: Percentage of time cores spent in deep sleep (C6).
+	\texttt{CoreTmp}: Average CPU core temperature (°C).
+	\texttt{PkgTmp}: Temperature of the full CPU package (°C).
+	\texttt{PkgWatt}: Total CPU package power consumption (watts).
+	\texttt{CorWatt}: Power consumed by CPU cores only (watts).
+	\texttt{LLCkRPS}: Total last-level cache (LLC) accesses per second, in thousands (loads + stores).
+	\texttt{LLC\%hit}: Percentage of LLC accesses that hit the cache instead of going to DRAM.
+
+	\section{Types de requêtes DNS} \label{types}
 
 	\newpage
 

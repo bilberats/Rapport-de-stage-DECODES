@@ -12,19 +12,41 @@
       ]
     }
   ],
+  "[latex]": {
+    "editor.wordWrap": "on"
+  },
   "cSpell.words": [
     "basictex",
     "biblatex",
     "Codespaces",
+    "d'interprétabilité",
     "darwin",
+    "Datacenter",
+    "Datagram",
+    "DNSKEY",
+    "DNSSEC",
+    "l'AFNIC",
+    "l'ENPC",
+    "l'ENSAE",
+    "l'ENSTA",
     "latexmk",
     "makeutbmbackcover",
     "makeutbmfrontcover",
+    "matplotlib",
+    "numpy",
+    "rndc",
+    "RRSIG",
     "Tahoma",
+    "tcpdump",
+    "Télécom",
     "texlive",
     "texliveonfly",
     "tlmgr",
+    "turbostat",
+    "uftrace",
     "usepackage",
-    "UTBM"
+    "UTBM",
+    "yocto",
+    "Yoctopuce"
   ]
 }
