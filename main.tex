@@ -178,16 +178,16 @@
 
 	\section{Fonctionnement du DNS}
 
-	Le \textit{Domain Name System} (DNS) est un service essentiel d'Internet dont le rôle principal est de traduire les noms de domaine compréhensibles par les utilisateurs, tels que \texttt{[www.example.com](http://www.example.com)}, en adresses IP utilisables par les équipements réseau.
+	Le \textit{Domain Name System} (DNS) est un service essentiel d'Internet dont le rôle principal est de traduire les noms de domaine compréhensibles par les utilisateurs, tels que \texttt{www.example.com}, en adresses IP utilisables par les équipements réseau.
 
 	Le DNS repose sur une architecture distribuée et hiérarchique. Chaque niveau de cette hiérarchie est responsable d'une partie de l'espace des noms de domaine, ce qui permet au système de rester scalable malgré la taille d'Internet.
 
 	\begin{figure}[H]
-	\centering
-	% Insérer ici votre schéma de résolution DNS
-	\includegraphics[width=0.8\textwidth]{diagrams_and_images/dns_resolution.png}
-	\caption{Exemple simplifié d'une résolution DNS récursive.}
-	\label{fig:dns_resolution}
+		\centering
+		% Insérer ici votre schéma de résolution DNS
+		\includegraphics[width=0.8\textwidth]{diagrams_and_images/dns_resolution.png}
+		\caption{Exemple simplifié d'une résolution DNS récursive.}
+		\label{fig:dns_resolution}
 	\end{figure}
 
 	\subsection{Serveurs autoritatifs et résolveurs}
@@ -295,7 +295,11 @@
 
 	\section{État de l'art}
 
+	Dans cette partie, nous allons voir les travaux précédents sur l'étude de la consommation énergétique des résolveurs DNS, ainsi que les travaux connexes à ce qui a été fait dans ce stage. Cette partie est importante pour comprendre les contributions de ce stage et les limites des travaux précédents.
+
 	\section{Déroulement du travail}
+
+
 
 	\subsection{Conception de l'environnement expérimental}
 
@@ -305,7 +309,7 @@
 
 	La configuration expérimentale repose sur deux machines : un client et un serveur DNS. Le client joue également le rôle d'orchestrateur et est chargé de déclencher ainsi que de coordonner l'exécution des mesures sur l'ensemble du système. La consommation énergétique externe est mesurée à l'aide d'un dispositif Yoctopuce (wattmètre) et est supervisée directement depuis la machine cliente.
 
-	Le serveur DNS est basé sur une implémentation de BIND9 et exécute, en parallèle du traitement des requêtes, des scripts dédiés à la collecte de différentes métriques de performance. Ces scripts introduisent une charge supplémentaire non négligeable, susceptible d'influencer les mesures de consommation énergétique, et doivent donc être pris en compte dans l'interprétation des résultats. Dans cette architecture, le client assure ainsi simultanément les fonctions de générateur de charge et d'orchestrateur des campagnes de mesures.
+	Le serveur DNS est basé sur une implémentation de Bind9 et exécute, en parallèle du traitement des requêtes, des scripts dédiés à la collecte de différentes métriques de performance. Ces scripts introduisent une charge supplémentaire non négligeable, susceptible d'influencer les mesures de consommation énergétique, et doivent donc être pris en compte dans l'interprétation des résultats. Dans cette architecture, le client assure ainsi simultanément les fonctions de générateur de charge et d'orchestrateur des campagnes de mesures.
 
 
 	\begin{center}
@@ -390,7 +394,7 @@
 		\begin{itemize}
 			\item \texttt{dns\_activity\_logger.sh} : capture le trafic réseau à l'aide de \texttt{tcpdump} afin d'analyser les requêtes DNS reçues par le résolveur ainsi que les réponses émises. Ces données permettent de reconstruire le flux de requêtes et d'évaluer la charge effective.
 			
-			\item \texttt{bind\_query\_capture.sh} : exploite les journaux de BIND9 afin d'identifier les requêtes effectivement traitées par le résolveur et d'obtenir une vision logique des résolutions effectuées (indépendamment du niveau réseau brut).
+			\item \texttt{bind\_query\_capture.sh} : exploite les journaux de Bind9 afin d'identifier les requêtes effectivement traitées par le résolveur et d'obtenir une vision logique des résolutions effectuées (indépendamment du niveau réseau brut).
 		\end{itemize}
 		
 		\item \textbf{Script de collecte des mesures externes :}
@@ -400,8 +404,8 @@
 
 		\item \textbf{Mesures liées à Bind9 :}
 		\begin{itemize}
-			\item \texttt{monitor\_cache.sh} : interroge BIND9 via \texttt{rndc} afin d'extraire les métriques internes du cache DNS (taux de hit/miss, taille du cache, mémoire utilisée, etc.).
-			\item \texttt{record\_uftrace.sh} : utilise \texttt{uftrace} pour obtenir des rapports détaillés sur les fonctions exécutées par BIND9 et leur nombre d'exécutions, ce qui permet d'analyser la complexité algorithmique dynamique et d'identifier les points chauds en termes de consommation de ressources.
+			\item \texttt{monitor\_cache.sh} : interroge Bind9 via \texttt{rndc} afin d'extraire les métriques internes du cache DNS (taux de hit/miss, taille du cache, mémoire utilisée, etc.).
+			\item \texttt{record\_uftrace.sh} : utilise \texttt{uftrace} pour obtenir des rapports détaillés sur les fonctions exécutées par Bind9 et leur nombre d'exécutions, ce qui permet d'analyser la complexité algorithmique dynamique et d'identifier les points chauds en termes de consommation de ressources.
 		\end{itemize}
 		
 	\end{itemize}
@@ -476,9 +480,9 @@
 
 	Pour les mesures réalisées sans utilisation du cache, une option de configuration de BIND a été employée afin de désactiver artificiellement le mécanisme de mise en cache. Il s'agit du paramètre \texttt{max-cache-ttl}, qui définit la durée de vie maximale des entrées conservées dans le cache. En fixant cette valeur à zéro, les entrées deviennent immédiatement invalides après leur insertion et ne peuvent donc pas être réutilisées pour satisfaire des requêtes ultérieures. Cette configuration permet ainsi d'émuler un fonctionnement du résolveur sans cache tout en conservant les autres mécanismes internes inchangés.
 
-	Entre chaque série de mesures, ce paramètre de configuration de BIND9 est modifié afin d'activer ou de désactiver le mécanisme de cache. Le serveur est ensuite redémarré afin de prendre en compte la nouvelle configuration et de réinitialiser l'état du cache. En complément, la commande \texttt{rndc flush} est utilisée afin de vider explicitement le cache du résolveur.
+	Entre chaque série de mesures, ce paramètre de configuration de Bind9 est modifié afin d'activer ou de désactiver le mécanisme de cache. Le serveur est ensuite redémarré afin de prendre en compte la nouvelle configuration et de réinitialiser l'état du cache. En complément, la commande \texttt{rndc flush} est utilisée afin de vider explicitement le cache du résolveur.
 
-	Cette commande pourrait a priori constituer une solution suffisante pour réinitialiser l'état du cache. Toutefois, les expérimentations ont montré que son exécution n'entraîne pas de modification observable de la taille du cache. Pour cette raison, le redémarrage du service BIND9 s'avère nécessaire, à la fois pour garantir la prise en compte de la configuration modifiée et pour assurer une remise à zéro effective du cache entre les différentes séries de mesures.
+	Cette commande pourrait a priori constituer une solution suffisante pour réinitialiser l'état du cache. Toutefois, les expérimentations ont montré que son exécution n'entraîne pas de modification observable de la taille du cache. Pour cette raison, le redémarrage du service Bind9 s'avère nécessaire, à la fois pour garantir la prise en compte de la configuration modifiée et pour assurer une remise à zéro effective du cache entre les différentes séries de mesures.
 
 
 	\subsection{Campagnes de mesures}
@@ -515,7 +519,7 @@
 	\begin{itemize}
 		\item \texttt{extensive\_measurements.sh} : Script principal avec une boucle par paramètre de configuration (protocoles, utilisation du cache, QPS et échantillon), il lance avec ces paramètres \texttt{start.sh}.
 
-		\item \texttt{start.sh} : script qui exécute une mesure unique pour une configuration donnée. Il vide le cache du DNS, change la configuration de BIND9 pour activer ou désactiver le cache, redémarre le service, créé les dossiers pour l'organisation des données récoltées, lance \texttt{start\_dns\_logs\_monitoring.sh} sur le DNS puis lance \texttt{start\_measurements.sh} sur le client.
+		\item \texttt{start.sh} : script qui exécute une mesure unique pour une configuration donnée. Il vide le cache du DNS, change la configuration de Bind9 pour activer ou désactiver le cache, redémarre le service, créé les dossiers pour l'organisation des données récoltées, lance \texttt{start\_dns\_logs\_monitoring.sh} sur le DNS puis lance \texttt{start\_measurements.sh} sur le client.
 
 		\item \texttt{start\_dns\_logs\_monitoring.sh} : script qui exécute tous les scripts de mesures réseau et de logs DNS en parallèle.
 
@@ -730,10 +734,33 @@
 
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=0.9\textwidth]{Graphs/bind_complexity_executions.png}
-		\caption{Nombre d'appels des 40 fonctions les plus appelées de Bind9}
-		\label{fig:most_called_functions_40}
+		\includegraphics[width=0.9\textwidth]{Graphs/Static_complexity_report.png}
+		\caption{Graphiques de l'analyse de la complexité algorithmique statique de Bind9}
+		\label{fig:graph_static_complexity}
 	\end{figure}
+
+	La figure \ref{fig:graph_static_complexity} présente les résultats de l'analyse statique de la complexité algorithmique de Bind9 à travers six distributions complémentaires.
+
+	La première distribution représente les scénarios de pire cas (\textit{Worst Case Scenario}) estimés pour les fonctions du code source. Elle met en évidence que la majorité des fonctions présentent une complexité faible, tandis qu'un nombre limité de fonctions se distingue par une complexité potentiellement élevée. Cette répartition est caractéristique des grands projets logiciels, dans lesquels une faible proportion de fonctions concentre une part importante de la complexité algorithmique.
+
+	La deuxième distribution concerne la complexité cyclomatique. Cette métrique mesure le nombre de chemins d'exécution indépendants à travers une fonction et constitue un indicateur de la complexité structurelle du code. Une valeur élevée traduit généralement la présence de nombreux branchements conditionnels, boucles ou mécanismes de gestion d'erreurs, rendant la fonction plus difficile à maintenir et à tester. Les résultats montrent que la majorité des fonctions de Bind9 possèdent une complexité cyclomatique relativement faible, tandis qu'un nombre restreint de fonctions présente des valeurs significativement plus élevées.
+
+	Les distributions du nombre de lignes de code et du nombre de jetons (\textit{tokens}) permettent d'évaluer la taille des fonctions selon deux perspectives complémentaires. Alors que les lignes de code donnent une estimation de la longueur des fonctions, le nombre de jetons fournit une mesure plus précise de leur richesse syntaxique. Dans les deux cas, les distributions mettent en évidence une forte concentration de petites fonctions et un nombre limité de fonctions particulièrement volumineuses.
+
+	La distribution du nombre d'appels entrants (\textit{fan-in}) indique combien de fonctions différentes peuvent invoquer une fonction donnée. Cette métrique permet d'identifier les fonctions centrales dans l'architecture logicielle. Les résultats montrent que quelques fonctions jouent un rôle structurant au sein de Bind9 et sont réutilisées par de nombreuses autres fonctions.
+
+	Enfin, la distribution du score de confiance reflète le niveau de fiabilité attribué aux estimations de complexité produites par l'outil d'analyse statique. Les valeurs observées permettent d'évaluer la robustesse des résultats et d'identifier les estimations nécessitant une interprétation plus prudente.
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.9\textwidth]{Graphs/Graph_calls_static.png}
+		\caption{Graph des relations d'appels entre les fonctions de Bind9 avec leur complexité algorithmique statique}
+		\label{fig:callgraph_static_complexity}
+	\end{figure}
+
+	La figure \ref{fig:callgraph_static_complexity} représente le graphe des relations d'appels entre les fonctions de Bind9, construit à partir de l'analyse statique du code source et enrichi par les métriques de complexité algorithmique associées à chaque fonction. Chaque nœud correspond à une fonction et chaque arête représente une relation d'appel identifiée dans le code. Cette représentation permet de visualiser simultanément la structure des dépendances entre fonctions et la répartition de la complexité au sein du logiciel. Les fonctions fortement connectées apparaissent comme des éléments centraux de l'architecture, tandis que les fonctions présentant une complexité algorithmique élevée peuvent être identifiées comme des zones potentiellement plus difficiles à maintenir, tester ou analyser. Ce graphe fournit ainsi une vue d'ensemble de l'organisation statique de Bind9 et de la manière dont la complexité est distribuée dans son code source.
+
+	La suite des graphiques se concentre sur l'analyse dynamique de la complexité algorithmique de Bind9.
 
 	\begin{figure}[H]
 		\centering
@@ -742,6 +769,8 @@
 		\label{fig:graph_appels_functions}
 	\end{figure}
 
+	La figure \ref{fig:graph_appels_functions} se concentre sur les 55 fonctions recevant le plus grand nombre d'appels au sein de Bind9. Cette vue simplifiée facilite l'identification des fonctions critiques du système en supprimant les fonctions périphériques moins sollicitées. L'analyse met en évidence un nombre réduit de fonctions particulièrement centrales qui constituent les principaux points de passage lors de l'exécution du résolveur. Ces fonctions représentent des candidates privilégiées pour les analyses de performance et de consommation énergétique.
+
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.9\textwidth]{Graphs/uftrace_top_10_doh.png}
@@ -749,13 +778,60 @@
 		\label{fig:top_10_functions_doh_QPS}
 	\end{figure}
 	
+	La figure \ref{fig:top_10_functions_doh_QPS} présente l'évolution du nombre d'appels des dix fonctions les plus sollicitées de Bind9 en fonction du débit de requêtes (QPS) dans le cas du protocole DoH avec utilisation du cache. Une augmentation globalement linéaire du nombre d'appels est attendue lorsque la charge augmente, traduisant la proportionnalité entre le trafic traité et l'activité interne du résolveur. Les différences observées entre les fonctions reflètent leur rôle respectif dans la pile de traitement DoH. Il n'y a aucune différence entre les mesures faites avec et sans cache, la différence doit se voir dans les temps d'exécution de ces fonctions cependant.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.9\textwidth]{Graphs/bind_complexity_executions.png}
+		\caption{Nombre d'appels des 40 fonctions les plus appelées de Bind9 avec leur complexité algorithmique statique}
+		\label{fig:executions_top_40}
+	\end{figure}
+
+	On remarque que 3 fonctions sont particulièrement sollicitées, à savoir \texttt{dns\_acl\_allowed}, \texttt{dns\_view\_attach} et \texttt{dns\_tsigkey\_identity}. Ces fonctions représentent à elle seule plus de 97\% des appels effectués par Bind9. Elles semblent être appelées au moins une fois par requête. Voici une brève description de ces fonctions ainsi que de la fonction \texttt{cfg\_tuple\_get} qui est également très sollicitée, mais dans une moindre mesure.
+
+	\begin{itemize}
+		\item \texttt{dns\_acl\_allowed} \textbf{(O(1))} : vérifie si une requête ou un client est autorisé selon les règles de contrôle d'accès (ACL) configurées dans Bind9.
+		
+		\item \texttt{dns\_view\_attach} \textbf{(O(1))} : associe une nouvelle référence à une vue DNS (\textbf{view}) afin de permettre son partage sécurisé entre plusieurs composants du serveur.
+		
+		\item \texttt{dns\_tsigkey\_identity} \textbf{(O(1))} : retourne l'identité (nom DNS) associée à une clé TSIG utilisée pour l'authentification des échanges DNS.
+		
+		\item \texttt{cfg\_tuple\_get} \textbf{(O(n))} : recherche et récupère un élément dans une structure de configuration de type \textbf{tuple}. La recherche étant linéaire, son temps d'exécution est proportionnel au nombre d'éléments contenus dans la structure.
+	\end{itemize}
+
+	L'analyse statique et dynamique de la complexité de Bind9 met en évidence une répartition hétérogène des traitements au sein du résolveur. Si la majorité des fonctions présentent une complexité relativement faible et un nombre limité d'appels, un ensemble restreint de fonctions occupe une position centrale dans l'architecture du logiciel et concentre une part importante de l'activité observée lors du traitement des requêtes DNS.
+
+	L'étude des graphes d'appels permet d'identifier ces fonctions critiques ainsi que leurs relations avec les différents sous-systèmes du résolveur. Les mesures dynamiques montrent par ailleurs que certaines fonctions voient leur nombre d'appels évoluer proportionnellement à la charge appliquée, ce qui suggère un lien direct entre leur activité, les performances du résolveur et sa consommation de ressources.
+
+	Ces résultats fournissent une meilleure compréhension du fonctionnement interne de Bind9 et permettent d'identifier les composantes susceptibles d'avoir le plus fort impact sur les performances et la consommation énergétique. Ils constituent ainsi une base de travail pertinente pour la construction de modèles visant à représenter le comportement du résolveur.
+
+	Cependant, il manque une analyse du temps d'exécution de ces fonctions, qui pourrait donner des informations supplémentaires sur la consommation énergétique du résolveur. De plus, il est probable que nous observions des différences dans le temps d'exécution de ces fonctions selon la configuration de mesure (avec ou sans cache, protocole utilisé, etc.). Il est également important de noter qu'il manque probablement des fonctions critiques dans cette analyse, pour pouvoir mesurer les fonctions manquantes, il faudrait intégrer les librairies utilisées par Bind9 dans l'analyse de la complexité algorithmique. Cela permettrait d'avoir une vue plus complète de la consommation énergétique du résolveur DNS.
+
+
+	Les différentes campagnes de mesures réalisées ont permis de caractériser le comportement du résolveur DNS sous plusieurs angles complémentaires : utilisation du cache, consommation des ressources système, consommation énergétique et complexité algorithmique. L'analyse des résultats met en évidence l'influence de paramètres tels que le protocole utilisé, la charge appliquée ou encore l'utilisation du cache sur les performances et la consommation du système.
+
+	Au-delà des observations quantitatives, ces expérimentations ont également permis d'identifier les principaux mécanismes impliqués dans le traitement des requêtes DNS et de mieux comprendre leur contribution relative à la charge du résolveur. Les métriques collectées constituent ainsi un ensemble de données riche permettant de relier l'activité interne de Bind9 aux ressources matérielles effectivement consommées.
+
+	Ces résultats constituent le socle expérimental nécessaire à la phase de modélisation. Les analyses précédentes ont permis d'identifier les variables pertinentes, d'estimer les paramètres caractéristiques du système et de valider les hypothèses formulées sur le fonctionnement du résolveur. La section suivante s'appuie sur ces observations afin de construire et d'évaluer différents modèles capables d'estimer la consommation énergétique d'un résolveur DNS à partir de ses caractéristiques de fonctionnement.
+
+
 	\subsection{Modélisation}
 	
-	Introduction des modèles et comparaison.
+	L'objectif principal de ce projet est de mieux comprendre et d'étudier la consommation énergétique des infrastructures DNS, en se concentrant plus particulièrement sur le résolveur Bind9. Les campagnes de mesures présentées dans les sections précédentes ont permis de constituer un ensemble de données comprenant à la fois des mesures de consommation énergétique, des métriques système et réseau ainsi que des informations relatives à la complexité algorithmique du logiciel.
+
+	Toutefois, les mesures seules ne permettent pas d'expliquer ou de prédire directement le comportement énergétique du résolveur dans de nouvelles conditions d'utilisation. Une étape de modélisation est donc nécessaire afin de transformer ces observations expérimentales en outils capables d'estimer la consommation énergétique du système.
+
+	Deux approches complémentaires sont étudiées dans ce travail. La première repose sur des techniques d'apprentissage automatique permettant d'établir une relation entre les métriques observées et la consommation énergétique mesurée. La seconde s'appuie sur un modèle analytique fondé sur les réseaux de files d'attente, dont l'objectif est de représenter les différentes étapes du traitement d'une requête DNS et leur contribution à la consommation globale.
+
+	Ces approches répondent à des problématiques différentes mais complémentaires. Les modèles statistiques visent principalement à maximiser la précision des prédictions, tandis que les modèles analytiques cherchent à fournir une compréhension plus fine des mécanismes internes responsables de la consommation énergétique. Enfin, un troisième axe de recherche, basé sur l'analyse de la complexité algorithmique du résolveur, est actuellement à l'étude mais n'a pas encore abouti à un modèle exploitable.
 
 	\subsubsection{Prédiction de la consommation énergétique du DNS}
 	
-	À partir de toutes les métriques collectées lors des mesures, il est possible d'entraîner un modèle pour prédire avec précision la consommation énergétique du DNS. Le modèle qui donne les meilleurs résultats est un modèle de régression linéaire.
+	Les campagnes de mesures réalisées ont permis de collecter un grand nombre de métriques caractérisant l'activité du résolveur DNS, notamment l'utilisation du processeur, de la mémoire, du réseau, des entrées-sorties ainsi que différents indicateurs liés au fonctionnement du cache. Ces informations constituent une base de données riche permettant d'envisager une approche par apprentissage automatique.
+
+	L'objectif de cette approche est de construire un modèle capable de prédire la consommation énergétique du résolveur à partir des métriques observées. Un tel modèle présente plusieurs intérêts. D'une part, il permet d'estimer rapidement la consommation énergétique sans avoir recours à un wattmètre externe. D'autre part, il permet d'identifier les métriques les plus influentes dans la consommation observée et d'évaluer leur contribution relative.
+
+	Cette approche repose toutefois sur l'hypothèse que les métriques nécessaires à la prédiction sont disponibles au moment de l'estimation. Or, dans certains contextes de déploiement ou d'exploitation, l'accès à ces informations peut être limité. Il est donc important d'évaluer à la fois la précision du modèle obtenu et sa dépendance aux données d'entrée utilisées.
 	
 	\begin{figure}[H]
 		\centering
@@ -763,51 +839,61 @@
 		\caption{Estimation par régression linéaire et consommation énergétique réelle}
 		\label{fig:image5}
 	\end{figure}
-	
-	
+
 	\subsubsection{Modèle de réseau de files d'attente}
 
-	Une manière d'estimer la consommation d'un résolveur DNS consiste à comprendre les étapes d'une résolution et à estimer la consommation de chacune de ces étapes pour avoir une approche plus généraliste. Cela permettra d'estimer la consommation d'un résolveur indépendamment du matériel, de la charge et de la configuration de l'implémentation.
+	Une approche permettant d'estimer la consommation énergétique d'un résolveur DNS consiste à décomposer le processus de résolution en plusieurs étapes élémentaires et à évaluer la contribution énergétique de chacune d'entre elles. Contrairement à une approche purement empirique, dépendante du matériel ou de l'implémentation utilisée, cette méthode vise à construire un modèle plus général permettant d'estimer la consommation d'un résolveur dans différentes conditions d'utilisation.
 
-	Les réseaux de files d'attente sont parfaits pour ce type de décomposition, car ils peuvent représenter différents types de retards dus au temps d'attente ou au traitement.
+	Les réseaux de files d'attente constituent un cadre particulièrement adapté à cet objectif. Ils permettent de représenter les différentes ressources mobilisées lors du traitement d'une requête ainsi que les délais associés aux temps d'attente et aux temps de service. Chaque étape du processus de résolution peut ainsi être modélisée indépendamment avant d'être intégrée dans un modèle global.
 
-	À partir de notre compréhension de Bind9, nous avons créé un modèle de réseau de files d'attente. Il se compose de plusieurs parties représentant les principales étapes de la résolution DNS, y compris la connexion. Ces étapes sont :
+	À partir de notre compréhension du fonctionnement interne de Bind9, un modèle de réseau de files d'attente a été élaboré. Celui-ci représente les principales étapes impliquées dans le traitement d'une requête DNS, depuis l'établissement éventuel de la connexion jusqu'à la génération de la réponse. Les différentes composantes du modèle sont les suivantes :
+
 	\begin{itemize}
-		\item Connexion TCP (si utilisation de DoT ou DoH)
-		\item Poignée de main TCP (établissement de la connexion)
-		\item Échange de certificats TLS
+		\item Établissement de la connexion TCP (pour DoT et DoH) ;
+		\item Handshake TCP ;
+		\item Handshake TLS et échange des certificats ;
 		\item Résolution récursive composée de :
 		\begin{itemize}
-			\item Threads de travail
-			\item Requêtes DNS aux serveurs autoritatifs
+			\item l'exécution par les threads de travail du résolveur ;
+			\item les échanges DNS avec les serveurs autoritatifs ;
 		\end{itemize}
-		\item Recherche dans le cache / insertion dans le cache
+		\item Recherche et insertion dans le cache DNS.
 	\end{itemize}
 
-	Chacune de ces étapes est modélisée par un modèle de file d'attente M/M/C, avec ses caractéristiques qui seront estimées à l'aide de mesures.
+	Chacune de ces composantes est représentée par une file d'attente de type M/M/C. Les paramètres associés à chaque file devront être estimés expérimentalement afin de caractériser leur comportement. Les principales caractéristiques recherchées sont :
 
-	Une étude d'ablation aide à différencier la latence et la consommation de chaque composant (principalement CPU et RAM) pour établir les caractéristiques. Les caractéristiques à estimer sont :
 	\begin{itemize}
-		\item $\rho$ : Charge
-		\item $S$ : Temps de service
+		\item $\rho$ : taux d'utilisation ou charge de la ressource ;
+		\item $S$ : temps moyen de service.
 	\end{itemize}
 
-	L'étude d'ablation consiste à effectuer plusieurs mesures, d'abord avec une configuration nécessitant le minimum d'étapes dans la résolution DNS, puis en ajoutant progressivement ces étapes pour avoir une vision claire de l'étape qui agit dans chaque mesure, en considérant que chaque étape est indépendante.
+	L'estimation de ces paramètres repose sur une étude d'ablation. Cette méthodologie consiste à partir d'une configuration minimale mobilisant le moins de mécanismes possible, puis à ajouter progressivement les différentes étapes du processus de résolution. L'objectif est d'isoler la contribution de chaque composante à la latence observée ainsi qu'à la consommation des ressources matérielles, notamment le processeur et la mémoire.
 
-	La méthodologie de mesure correspondant à chaque étape est :
+	Les protocoles de mesure envisagés pour caractériser les différentes composantes sont les suivants :
+
 	\begin{itemize}
-		\item Threads de travail : Mesurés avec des requêtes UDP où le nom de domaine est déjà dans le cache pour éviter la résolution récursive.
-		\item Recherche dans le cache : Mesurée avec UDP avec différentes charges de cache (mémoire occupée par le cache).
-		\item Requêtes DNS aux serveurs autoritatifs : Mesurées avec des requêtes UDP où le nom de domaine n'est pas dans le cache.
-		\item Connexion TCP : Mesurée avec des requêtes TCP sans échange de clés ou de certificats.
-		\item Poignée de main TCP : Mesurée
+		\item \textbf{Threads de travail} : mesure réalisée à l'aide de requêtes UDP dont les enregistrements sont déjà présents dans le cache afin d'éliminer le coût de la résolution récursive ;
+
+		\item \textbf{Recherche dans le cache} : mesure réalisée avec des requêtes UDP en faisant varier le taux de remplissage du cache afin d'évaluer l'impact de sa taille sur les temps d'accès ;
+
+		\item \textbf{Résolution récursive et requêtes vers les serveurs autoritatifs} : mesure réalisée avec des requêtes UDP portant sur des noms de domaine absents du cache ;
+
+		\item \textbf{Établissement de la connexion TCP} : mesure réalisée à l'aide de requêtes TCP sans couche TLS afin d'isoler le coût de la connexion ;
+
+		\item \textbf{Handshake TLS et échange des certificats} : mesure réalisée en comparant les performances obtenues avec TCP seul et avec DoT ou DoH, permettant d'isoler le surcoût induit par la couche TLS.
+
 	\end{itemize}
 
-	\includegraphics[width=0.9\textwidth]{diagrams_and_images/DNS_queue_model.png}
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.9\textwidth]{diagrams_and_images/DNS_queue_model.png}
+		\caption{Modèle de réseau de files d'attente représentant les principales étapes du traitement d'une requête DNS.}
+		\label{fig:dns_queue_model}
+	\end{figure}
 
-	Ce modèle est basé sur notre compréhension actuelle du \textbf{fonctionnement de Bind9}, et bien qu'il ne soit peut-être pas exhaustif, il fournit un \textbf{cadre fiable pour estimer la consommation énergétique}. Pour affiner sa précision, certains paramètres nécessiteront des mesures, suivies d'une analyse approfondie pour extraire et valider les données les plus pertinentes pour le modèle.
+	Ce modèle repose sur notre compréhension actuelle du fonctionnement interne de Bind9. Bien qu'il ne prétende pas représenter l'intégralité des mécanismes mis en œuvre par le résolveur, il fournit un cadre méthodologique permettant d'analyser et d'estimer sa consommation énergétique. Les travaux futurs consisteront à mesurer les paramètres associés à chaque composante du modèle, puis à valider expérimentalement leur capacité à reproduire le comportement observé du résolveur dans différentes conditions de charge et de configuration.
 
-	---
+
 	\subsubsection{Analyse de complexité algorithmique}
 
 	Petite introduction / Pourquoi voulons-nous utiliser la complexité algorithmique pour ce problème ?
