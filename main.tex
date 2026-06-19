@@ -17,9 +17,8 @@
 
 \usepackage[
 	backend=biber,
-	style=authortitle,
-	citestyle=verbose-ibid,
-	abbreviate=false,
+	style=numeric,
+	sorting=none,
 	language=french,
 	datamodel=ISO690UTBM
 ]{biblatex} % ISO 690 UTBM
@@ -96,36 +95,25 @@
 	\lipsum[1-2] 
 
 	\tableofcontents
+	\listoffigures
 	\newpage
 
 	\chapter*{Introduction}
 	\addcontentsline{toc}{chapter}{Introduction}
 
-	\textbf{Contexte :} \\
-	Les DNS sont utilisés quotidiennement.
-	\textbf{Problème :} \\
-	Nous devons trouver une méthode pour mesurer et estimer la consommation énergétique du DNS, incluant tous les acteurs différents présents dans le processus de résolution d'un nom de domaine. Mesurer un système distribué comme le DNS n'est pas simple et implique l'estimation de la consommation énergétique de tous les acteurs du système. Pour simplifier le problème, nous nous sommes d'abord concentrés sur l'estimation de la consommation énergétique du premier acteur : le résolveur.
+	Les systèmes de noms de domaine (DNS) constituent une infrastructure essentielle du fonctionnement d'Internet. Utilisés quotidiennement par des milliards de requêtes, ils assurent la traduction entre les noms de domaine et les adresses IP nécessaires à la communication entre machines. Malgré leur rôle central, leur consommation énergétique reste encore peu caractérisée, en particulier dans le cadre de leur fonctionnement distribué.
 
-	\textbf{Travaux connexes :}
-	Ce document s'appuie sur les travaux d'anciens stagiaires ayant mesuré la même configuration : *Analyse de la consommation énergétique des résolveurs DNS* \cite{ResolverEnergy}.
+	La mesure de la consommation énergétique d'un système tel que le DNS constitue un défi méthodologique important. En effet, le processus de résolution implique plusieurs acteurs (clients, résolveurs récursifs, serveurs autoritatifs) ainsi que différents protocoles de communication. Estimer la consommation globale nécessite donc de prendre en compte l'ensemble de ces composantes. Afin de simplifier ce problème, ce travail se concentre dans un premier temps sur l'estimation de la consommation énergétique du résolveur DNS, considéré comme l'élément central du processus de résolution.
 
-	\textbf{Défis ou lacunes :}
-	Les études précédentes sur la consommation énergétique des résolveurs DNS manquent d'interprétabilité. Celle-ci est importante pour modéliser cette consommation et estimer la consommation énergétique de différents types de résolveurs à différentes échelles. De plus, contrairement à d'autres études, la méthode utilisée pour mesurer la consommation énergétique du cache du résolveur utilise le même ensemble de domaines que celui utilisé pour mesurer le résolveur sans cache. \textbf{Cela permet une estimation de la consommation énergétique plus proche des cas d'usage réels}. Pour l'estimation de la consommation énergétique de la résolution sans utilisation du cache, la configuration est modifiée pour empêcher la mise en cache des domaines qui pourraient réapparaître et fausser les résultats.
+	Ce stage s'inscrit dans le cadre du projet DECODES et s'appuie sur les travaux de précédents stagiaires, notamment ceux ayant étudié la consommation énergétique de BIND9 \cite{renout2026dns_analysis}. Ces études constituent une base expérimentale importante, mais présentent certaines limites, notamment un manque d'interprétabilité des modèles proposés et une difficulté à généraliser les résultats à d'autres configurations ou résolveurs.
 
-	\textbf{Idée principale :}
-	Comparaison de deux approches pour modéliser la consommation énergétique de Bind9, une implémentation de résolveur DNS. La première consiste à analyser son fonctionnement pour créer un modèle de file d'attente qui nous aidera à estimer la consommation énergétique. La deuxième approche est agnostique : la complexité algorithmique du logiciel est analysée temporellement et spatialement, de manière statique et pendant l'exécution.
-	// Il faudrait une petite comparaison entre les deux approches pour expliquer leurs différences et limitations.
+	L'objectif de ce travail est de proposer et d'évaluer différentes approches de modélisation de la consommation énergétique d'un résolveur DNS. Deux axes principaux sont étudiés. Le premier repose sur des techniques d'apprentissage automatique visant à prédire la consommation énergétique à partir de métriques système et réseau. Le second s'appuie sur un modèle analytique basé sur les réseaux de files d'attente, permettant une représentation plus structurée et interprétable du fonctionnement interne du résolveur. En parallèle, une analyse de la complexité algorithmique de BIND9 est explorée afin d'apporter un éclairage complémentaire sur les mécanismes influençant la consommation.
 
-	\textbf{Contributions :}
-	\begin{itemize}
-		\item Méthode d'estimation de la consommation énergétique des logiciels/DNS
-		\item Étude de la consommation via un modèle de file d'attente
-		\item Étude de la consommation via une analyse du code d'une implémentation DNS (Bind9)
-	\end{itemize}
+	Les contributions de ce travail sont multiples. Elles incluent la mise en place d'une méthodologie de mesure de la consommation énergétique d'un résolveur DNS, l'étude du surcoût lié à l'instrumentation, la construction et l'évaluation de modèles de prédiction basés sur le machine learning, ainsi que le développement d'un modèle analytique fondé sur les réseaux de files d'attente. Une étude préliminaire de la complexité algorithmique de BIND9 complète également ces travaux.
 
-	\textbf{Organisation :} du document / rapport
+	Le rapport est organisé en plusieurs chapitres. Le premier présente le contexte institutionnel et l'environnement de travail au sein de Télécom SudParis. Le deuxième chapitre introduit les notions théoriques nécessaires à la compréhension du DNS et des protocoles associés. Le troisième chapitre détaille le travail réalisé, incluant la mise en place de l'environnement expérimental, les campagnes de mesures, l'analyse des résultats et les approches de modélisation développées. Enfin, une conclusion synthétise les résultats obtenus et propose des perspectives d'amélioration et de recherche.
 
-	---
+
 	\chapter{Présentation de Télécom SudParis}
 
 	\section{Présentation de l'organisme d'accueil}
@@ -254,17 +242,56 @@
 
 	\chapter{Travail réalisé}
 
-	Introduction 
+	Ce chapitre présente les travaux réalisés dans le cadre de mon stage de recherche au sein du projet DECODES. Ce stage s'inscrit dans un contexte scientifique portant sur l'étude des infrastructures réseau, et plus particulièrement sur l'analyse du fonctionnement du DNS ainsi que de ses différents protocoles de communication.
+
+	Les travaux effectués se situent à l'intersection de deux domaines. D'une part, le domaine des réseaux, qui comprend l'étude des mécanismes de résolution DNS, des protocoles associés (UDP, DoT, DoH) et de leur impact sur les performances et la consommation des systèmes. D'autre part, le domaine de la science des données, dans lequel mes compétences ont été mobilisées pour l'analyse des données expérimentales, la modélisation de la consommation énergétique et l'exploitation des mesures collectées.
+
+	Bien que ma formation initiale soit principalement orientée vers la data science et relativement éloignée des problématiques réseaux, les connaissances fondamentales acquises dans ce domaine ont été complétées au cours du stage afin de mieux appréhender le fonctionnement du DNS et des protocoles étudiés.
+
+	Ce chapitre a pour objectif de présenter de manière structurée les différentes missions réalisées. Il débute par une description du projet DECODES ainsi que la place que j'occupe dans ce projet et des objectifs du stage, notamment dans une perspective de poursuite en thèse. Il détaille ensuite l'organisation du travail, la méthodologie utilisée pour établir un protocol de mesure ainsi que la mise en place de l'environnement expérimental, en continuité avec les travaux réalisés par les stagiaires précédents. Enfin, il présente les principaux résultats obtenus ainsi que les analyses effectuées à partir des données collectées.
 
 	\section{Description du projet DECODES}
-	Décrire le sujet défini à mon arrivée et les objectifs généraux du projet.
-	Mon rôle dans le projet.
-	(organigramme des gens du projet et de leurs rôles)
-	Décrire le sujet réel (analyse de la complexité et modélisation)
+
+	Le projet \textbf{DECODES} (\textit{Datacenter Energy Consumption Optimisation by DNS EvaluationS}) s'inscrit dans un contexte où la consommation énergétique des infrastructures numériques, et en particulier celle des \textbf{centres de données}, devient un enjeu majeur. Alors que les services numériques connaissent une croissance exponentielle, leur empreinte électrique devrait encore s'accroître significativement dans les années à venir. Pourtant, parmi les composants critiques d'Internet, le \textbf{Système de Noms de Domaine (DNS)}, bien que fondamental pour le fonctionnement du réseau, reste largement sous-estimé dans les analyses de consommation énergétique. La consommation du DNS est probablement marginale par rapport à celle des centres de données, mais cela reste un exemple de consommation énergétique d'un service réseau distribué, qui est en fonctionnement continu et qui est utilisé par tous les services numériques. La méthodologie qui sera développée dans le cadre de ce projet pourra être adaptée à d'autres services distribués, tels que les systèmes de messagerie, les réseaux sociaux ou les plateformes de streaming. De plus, étant donné que tous les services numériques reposent sur le DNS, la consommation d'autres types de services pourraient être estimée à partir des données récoltées pour l'estimation de la consommation énergétique du DNS. Enfin, la consommation énergétique du DNS peut servir d'indicateur pour détecter des défaillances dans les infrastructures réseau.
+
+	\subsection{Contexte et motivation}
+	Le DNS, bien que représentant une fraction modeste du trafic réseau global, se distingue par son \textbf{fonctionnement continu} et son \textbf{architecture hautement distribuée}. Son rôle central dans les communications Internet, couplé à l'évolution des mécanismes de sécurité tels que le \textbf{DNS-over-HTTPS (DoH)}, le \textbf{DNS-over-TLS (DoT)} ou encore \textbf{DNSSEC}, introduit des surcoûts computationnels non négligeables. Ces protocoles, bien que renforçant la confidentialité et l'intégrité des données, augmentent la charge de traitement des serveurs, et donc leur consommation énergétique.
+
+	Malgré son importance, l'impact énergétique du DNS n'a jusqu'à présent fait l'objet que de peu d'études approfondies. Cette lacune a motivé le lancement du projet DECODES, qui vise à combler ce manque en proposant une \textbf{approche scientifique rigoureuse} pour comprendre, modéliser et optimiser la consommation énergétique liée au DNS, tout en préservant ses performances et sa sécurité.
+
+	\subsection{Objectifs}
+	Le projet DECODES poursuit cinq objectifs principaux, présentés sur le site officiel du projet\footnote{Site du projet permettant de consulter les informations relatives au projet ainsi que son avancement : \url{https://decodes-project.fr/}} :
+
+	\begin{itemize}
+		\item[\textbf{O1}] \textbf{Construire un cadre de mesure énergétique du DNS} :
+		Développer un framework standardisé permettant de mesurer la consommation énergétique des différents composants du DNS, notamment les \textbf{résolveurs}, les \textbf{serveurs autoritaires} et les \textbf{points d'échange Internet (IXP)}. Cet objectif inclut le déploiement d'outils de monitoring, la définition de méthodologies de mesure reproductibles, ainsi que la garantie d'une collecte de données respectueuse de la vie privée.
+
+		\item[\textbf{O2}] \textbf{Élaborer des modèles énergétiques et un environnement de test} :
+		À partir des mesures réalisées dans le cadre de l'objectif O1, ce volet consiste à concevoir des \textbf{modèles multi-niveaux} (infrastructure, protocole, utilisateur) pour analyser finement la consommation énergétique du DNS. Ces modèles seront validés dans un \textbf{environnement contrôlé} (sandbox), tout en explorant des stratégies d'optimisation telles que le \textbf{cache}, le \textbf{routage intelligent} ou l'ajustement des paramètres protocolaire.
+
+		\item[\textbf{O3}] \textbf{Évaluer l'impact de la cryptographie post-quantique (PQC) dans DNSSEC} :
+		Cet objectif vise à analyser les conséquences, en termes de performance et de consommation énergétique, de l'intégration d'\textbf{algorithmes de cryptographie post-quantique} (comme Dilithium, Falcon ou SPHINCS+) dans le protocole DNSSEC. Des outils de benchmark seront développés pour évaluer les compromis entre \textbf{sécurité}, \textbf{efficacité} et \textbf{durabilité}.
+
+		\item[\textbf{O4}] \textbf{Valider les optimisations sur des infrastructures réelles} :
+		Les stratégies d'optimisation énergétique identifiées seront testées et validées sur des \textbf{infrastructures DNS opérationnelles}, telles que celles des registres internet, des IXP ou des fournisseurs d'accès à Internet (FAI). L'enjeu est de démontrer que les gains énergétiques peuvent être obtenus \textbf{sans altérer} la performance ou la sécurité des services.
+
+		\item[\textbf{O5}] \textbf{Contribuer aux standards et à la science ouverte} :
+		En parallèle des travaux techniques, le projet DECODES cherche à s'impliquer activement dans les instances de standardisation, notamment auprès de l'\textbf{IETF} (Internet Engineering Task Force) et de l'\textbf{ITU-T} (Union internationale des télécommunications), afin de promouvoir des \textbf{bonnes pratiques éco-responsables} pour le DNS. Par ailleurs, l'ensemble des \textbf{jeux de données}, \textbf{outils} et \textbf{modèles} produits dans le cadre du projet sera publié en \textbf{accès ouvert}, afin de favoriser la reproductibilité des résultats et leur adoption par la communauté scientifique.
+	\end{itemize}
+
+	\subsection{Consortium}
+	Le projet DECODES est un \textbf{projet collaboratif de recherche} financé par l'\textbf{Agence Nationale de la Recherche (ANR)} dans le cadre de l'\textbf{Appel à Projets Générique 2025} (instrument PRCE). Il rassemble quatre partenaires complémentaires :
+
+	\begin{itemize}
+		\item \textbf{Afnic} (Association française pour le nommage Internet en coopération) : représentée par \textbf{Sandoche Balakricnan}, l'Afnic apporte son expertise en tant que registre internet des noms de domaines en \texttt{.fr} et acteur majeur de l'écosystème DNS en France.
+		\item \textbf{École Nationale des Ponts et Chaussées (ENPC)} : sous la direction de \textbf{Daphne Tuncer}, l'ENPC contribue par son savoir-faire en modélisation et en analyse des systèmes distribués.
+		\item \textbf{France-IX} : avec \textbf{Simon Muyal}, ce point d'échange Internet apporte une vision opérationnelle des enjeux liés au trafic DNS et à son acheminement.
+		\item \textbf{Télécom SudParis} : sous la responsabilité de \textbf{Michel Marot}, cet établissement apporte son expertise en réseaux, sécurité et optimisation des protocoles.
+	\end{itemize}
+
+	Ce consortium pluridisciplinaire permet d'aborder le projet sous des angles \textbf{théoriques}, \textbf{expérimentaux} et \textbf{opérationnels}, garantissant ainsi une approche globale et appliquée.
 
 	\subsection{Organisation du travail}
-
-	Le stage s'inscrivait dans le cadre du projet DECODES (\textit{Datacenter Energy Consumption Optimisation by DNS EvaluationS}), mené en collaboration avec plusieurs partenaires académiques et industriels, notamment l'AFNIC, IXFrance, l'ENPC et Télécom SudParis.
 
 	L'organisation du travail reposait sur une large autonomie dans la conduite des activités de recherche. Les objectifs généraux étaient définis par les encadrants, mais le choix des méthodologies, des outils et des protocoles expérimentaux relevait en grande partie de mon initiative. Cette liberté m'a permis d'explorer différentes approches et d'adapter progressivement mes travaux en fonction des résultats obtenus.
 
@@ -293,9 +320,37 @@
 
 	\end{enumerate}
 
+
 	\section{État de l'art}
 
-	Dans cette partie, nous allons voir les travaux précédents sur l'étude de la consommation énergétique des résolveurs DNS, ainsi que les travaux connexes à ce qui a été fait dans ce stage. Cette partie est importante pour comprendre les contributions de ce stage et les limites des travaux précédents.
+	Dans cette partie, nous allons voir les travaux précédents sur l'étude de la consommation énergétique des résolveurs DNS, ainsi que les travaux connexes à ce qui a été étudié durant ce stage. Cette partie est importante pour comprendre les contributions de ce stage et les limites des travaux précédents. Cet état de l'art s'appuie principalement sur les travaux réalisés dans le cadre du projet DECODES. En particulier, il reprend et synthétise les analyses bibliographiques présentées par Capucine Barré et al. dans l'article \cite{barre2026dns_cpu}, ainsi que celles de Nicolas Renout, Gatien Roujanski et al. dans \cite{renout2026dns_analysis}. Il intègre également les éléments de contexte et les problématiques exposés dans la présentation générale du projet DECODES. En raison des contraintes temporelles du stage, une revue bibliographique exhaustive n'a pas pu être menée indépendamment. 
+
+	La consommation énergétique des infrastructures numériques est devenue un enjeu majeur avec la croissance continue des services Internet et des centres de données. Si de nombreux travaux se sont intéressés aux serveurs, au cloud computing ou aux réseaux de communication, le système de noms de domaine (DNS), pourtant indispensable au fonctionnement d'Internet, reste relativement peu étudié du point de vue énergétique.
+
+	\subsection{Méthodes de mesure de la consommation énergétique}
+
+	Les premières études sur la consommation énergétique des infrastructures Internet reposaient principalement sur des modèles analytiques à grande échelle. Par exemple, Baliga et al. \cite{baliga2011energy_internet} ont proposé une modélisation hiérarchique de la consommation énergétique d'Internet en distinguant les réseaux d'accès, métropolitains et cœur de réseau. Bien que ces travaux aient permis d'identifier les principaux postes de consommation, ils reposent sur des hypothèses simplificatrices qui ne reflètent plus la complexité des infrastructures actuelles.
+
+	Plusieurs travaux ont ensuite comparé les différentes méthodes de mesure énergétique. Dudkowski et Samdanis \cite{dudkowski2019energy_taxonomy} distinguent notamment les mesures matérielles directes (wattmètres), les mesures logicielles reposant sur les API du système d'exploitation et les approches indirectes basées sur des protocoles de supervision tels que SNMP. Les mesures matérielles offrent la meilleure précision mais sont difficiles à déployer à grande échelle, tandis que les approches logicielles sont plus facilement généralisables mais présentent des erreurs parfois importantes.
+
+	Cette limitation est confirmée par McCullough et al. \cite{mccullough2011energy_error}, qui montrent que les modèles de prédiction énergétique, qu'ils soient linéaires ou non linéaires, peuvent produire des erreurs supérieures à 150\% sur des architectures multicœurs modernes. D'autres études, notamment celles de Babuta et al. \cite{babuta2020power_tools} et Jay et al. \cite{jay2016power_tools}, concluent également que les wattmètres physiques demeurent la référence pour obtenir des mesures fiables, même si les outils logiciels permettent une analyse plus fine des différents composants matériels.
+
+	\subsection{Consommation énergétique du DNS}
+
+	Malgré l'importance du DNS dans l'écosystème Internet, peu d'études ont analysé précisément sa consommation énergétique. Parmi les travaux les plus complets, Hankel et al. \cite{hankel2021dns_energy} ont développé une méthodologie permettant de mesurer la consommation énergétique de plusieurs résolveurs DNS (Bind, Unbound et Microsoft DNS) sur différentes plateformes logicielles. Leurs résultats montrent que le processeur et la mémoire constituent les principaux contributeurs à la consommation énergétique lors du traitement des requêtes DNS. Ils mettent également en évidence l'influence significative du système d'exploitation et des paramètres de configuration sur l'efficacité énergétique du résolveur.
+
+	D'autres travaux se sont intéressés à l'impact des protocoles DNS sécurisés. Avec l'adoption croissante de mécanismes tels que DNS-over-TLS (DoT), DNS-over-HTTPS (DoH) ou DNSSEC, le coût énergétique du DNS tend à augmenter. Le Louët et al. \cite{lelouet2023doh_energy} montrent notamment que le protocole DoH peut consommer jusqu'à quinze fois plus d'énergie que le DNS classique sur UDP dans certains scénarios défavorables, principalement à cause du coût des connexions HTTPS et du chiffrement TLS. Plus généralement, plusieurs études estiment que l'utilisation de TLS peut engendrer une augmentation de la consommation énergétique de l'ordre de 30 à 35\%.
+
+	Cette problématique devient particulièrement importante dans un contexte où le trafic DNS chiffré représente une part croissante des requêtes Internet. Les débats autour du chiffrement généralisé du DNS soulignent ainsi la nécessité de mieux comprendre les compromis entre sécurité, performances et consommation énergétique.
+
+	\subsection{Positionnement du projet DECODES}
+
+	Les travaux existants montrent que la consommation énergétique du DNS dépend à la fois des protocoles utilisés, des interactions entre logiciels et systèmes d'exploitation, ainsi que des caractéristiques matérielles sous-jacentes. Cependant, peu d'études analysent conjointement ces différents facteurs à l'échelle des résolveurs DNS modernes.
+
+	En revanche, peu d'études cherchent à prédire directement la consommation énergétique d'un résolveur DNS à partir des métriques internes exposées par celui-ci, telles que les statistiques de cache, l'utilisation mémoire ou les compteurs d'activité.
+
+	Le projet DECODES s'inscrit dans une démarche visant à mieux comprendre et quantifier les compromis entre performance, sécurité et consommation énergétique au sein des infrastructures DNS. Dans ce cadre, il propose la construction d'un cadre de mesure énergétique standardisé, le développement de modèles multi-niveaux (allant de l'infrastructure aux mécanismes protocolaires), ainsi que la conception d'outils d'évaluation et d'optimisation de l'efficacité énergétique. Le présent travail s'intègre dans cet ensemble en se concentrant sur l'élaboration de modèles de prédiction de la consommation énergétique des résolveurs DNS à partir de métriques collectées en temps réel. L'objectif est de fournir des estimateurs fiables et facilement déployables, complémentaires aux approches basées uniquement sur des mesures matérielles, afin de faciliter l'analyse et l'optimisation énergétique des systèmes DNS.
+
 
 	\section{Déroulement du travail}
 
@@ -311,53 +366,55 @@
 
 	Le serveur DNS est basé sur une implémentation de Bind9 et exécute, en parallèle du traitement des requêtes, des scripts dédiés à la collecte de différentes métriques de performance. Ces scripts introduisent une charge supplémentaire non négligeable, susceptible d'influencer les mesures de consommation énergétique, et doivent donc être pris en compte dans l'interprétation des résultats. Dans cette architecture, le client assure ainsi simultanément les fonctions de générateur de charge et d'orchestrateur des campagnes de mesures.
 
+	\begin{figure}[H]
+		\centering
+		\begin{tikzpicture}[
+			mynode/.style={
+				draw,
+				rounded corners=5pt,
+				minimum width=2cm,
+				minimum height=0.8cm,
+				align=center,
+				inner sep=4pt,
+				font=\small,
+			},
+			myedge/.style={
+				line width=1pt,
+				rounded corners=8pt,
+				>={Stealth[scale=0.8]},
+				nodes={fill=white},
+			}
+		]
 
-	\begin{center}
-	\begin{tikzpicture}[
-		mynode/.style={
-			draw,
-			rounded corners=5pt,
-			minimum width=2cm,
-			minimum height=0.8cm,
-			align=center,
-			inner sep=4pt,
-			font=\small,
-		},
-		myedge/.style={
-			line width=1pt,
-			rounded corners=8pt,
-			>={Stealth[scale=0.8]},
-			nodes={fill=white},
-		}
-	]
+			% Couleurs
+			\colorlet{color0}{red!30}
+			\colorlet{color1}{blue!30}
+			\colorlet{color2}{green!30}
+			\colorlet{color3}{yellow!30}
 
-		% Couleurs
-		\colorlet{color0}{red!30}
-		\colorlet{color1}{blue!30}
-		\colorlet{color2}{green!30}
-		\colorlet{color3}{yellow!30}
+			% Nœuds (de gauche à droite)
+			\node[mynode, fill=color0] (power) at (0,6) {Source d'alimentation};
+			\node[mynode, fill=color1] (yocto) at (0,3) {Yoctopuce};
+			\node[mynode, fill=color3] (monitoring) at (10,3) {PC de surveillance};
+			\node[mynode, fill=color2] (scripts) at (10,0) {Scripts de mesure};
+			\node[mynode, fill=color2] (dns) at (0,0) {DNS};
 
-		% Nœuds (de gauche à droite)
-		\node[mynode, fill=color0] (power) at (0,6) {Source d'alimentation};
-		\node[mynode, fill=color1] (yocto) at (0,3) {Yoctopuce};
-		\node[mynode, fill=color3] (monitoring) at (10,3) {PC de surveillance};
-		\node[mynode, fill=color2] (scripts) at (10,0) {Scripts de mesure};
-		\node[mynode, fill=color2] (dns) at (0,0) {DNS};
+			% Fond gris pour DNS et scripts de mesure
+			\begin{scope}[on background layer]
+				\node[fill=gray!50, rounded corners=5pt, fit=(dns) (scripts), inner sep=10pt] {};
+			\end{scope}
 
-		% Fond gris pour DNS et scripts de mesure
-		\begin{scope}[on background layer]
-			\node[fill=gray!50, rounded corners=5pt, fit=(dns) (scripts), inner sep=10pt] {};
-		\end{scope}
+			% Connexions
+			\draw[myedge, ->] (power) -- (yocto) node[midway] {Alimentation};
+			\draw[myedge, ->] (yocto) -- (monitoring) node[midway] {USB};
+			\draw[myedge, ->] (yocto) -- (dns) node[midway] {Alimentation};
+			\draw[myedge, ->] (monitoring) -- (dns) node[midway] {Envoi de requêtes};
+			\draw[myedge, ->] (monitoring) -- (scripts) node[midway] {Lance les scripts};
 
-		% Connexions
-		\draw[myedge, ->] (power) -- (yocto) node[midway] {Alimentation};
-		\draw[myedge, ->] (yocto) -- (monitoring) node[midway] {USB};
-		\draw[myedge, ->] (yocto) -- (dns) node[midway] {Alimentation};
-		\draw[myedge, ->] (monitoring) -- (dns) node[midway] {Envoi de requêtes};
-		\draw[myedge, ->] (monitoring) -- (scripts) node[midway] {Lance les scripts};
-
-	\end{tikzpicture}
-	\end{center}
+		\end{tikzpicture}
+		\caption{Schéma de l'environnement expérimental}
+		\label{fig:experimental_setup}
+	\end{figure}
 
 	\subsubsection{Outils de mesure utilisés}
 	Un grand nombre de métriques sont collectées pour aider à estimer et modéliser la consommation énergétique du résolveur DNS. Ces métriques peuvent se classer dans 4 catégories : les mesures de critères systèmes, les mesures de consommation énergétiques externes, les logs réseau et les mesures spécifiques au logiciel (Bind9).
@@ -426,7 +483,7 @@
 	
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=0.9\textwidth]{Graphs/cache_metrics_10.png}
+		\includegraphics[width=0.9\textwidth]{Graphs/cache_metrics_1M.png}
 		\caption{Évolution des valeurs associées au cache de bind pour différents ensemble de noms de domaines entre 100 000 et 1 millions de noms de domaines}
 		\label{fig:Evolution du cache 1M}
 	\end{figure}
@@ -747,7 +804,7 @@
 
 	Les distributions du nombre de lignes de code et du nombre de jetons (\textit{tokens}) permettent d'évaluer la taille des fonctions selon deux perspectives complémentaires. Alors que les lignes de code donnent une estimation de la longueur des fonctions, le nombre de jetons fournit une mesure plus précise de leur richesse syntaxique. Dans les deux cas, les distributions mettent en évidence une forte concentration de petites fonctions et un nombre limité de fonctions particulièrement volumineuses.
 
-	La distribution du nombre d'appels entrants (\textit{fan-in}) indique combien de fonctions différentes peuvent invoquer une fonction donnée. Cette métrique permet d'identifier les fonctions centrales dans l'architecture logicielle. Les résultats montrent que quelques fonctions jouent un rôle structurant au sein de Bind9 et sont réutilisées par de nombreuses autres fonctions.
+	La distribution du nombre d'appels entrants (\textit{Call Count}) indique combien de fonctions différentes peuvent invoquer une fonction donnée. Cette métrique permet d'identifier les fonctions centrales dans l'architecture logicielle. Les résultats montrent que quelques fonctions jouent un rôle structurant au sein de Bind9 et sont réutilisées par de nombreuses autres fonctions.
 
 	Enfin, la distribution du score de confiance reflète le niveau de fiabilité attribué aux estimations de complexité produites par l'outil d'analyse statique. Les valeurs observées permettent d'évaluer la robustesse des résultats et d'identifier les estimations nécessitant une interprétation plus prudente.
 
@@ -780,6 +837,22 @@
 	
 	La figure \ref{fig:top_10_functions_doh_QPS} présente l'évolution du nombre d'appels des dix fonctions les plus sollicitées de Bind9 en fonction du débit de requêtes (QPS) dans le cas du protocole DoH avec utilisation du cache. Une augmentation globalement linéaire du nombre d'appels est attendue lorsque la charge augmente, traduisant la proportionnalité entre le trafic traité et l'activité interne du résolveur. Les différences observées entre les fonctions reflètent leur rôle respectif dans la pile de traitement DoH. Il n'y a aucune différence entre les mesures faites avec et sans cache, la différence doit se voir dans les temps d'exécution de ces fonctions cependant.
 	
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{ccccc}
+		\hline
+		\textbf{QPS} & \textbf{dns\_message\_rechecksig} & \textbf{dns\_view\_attach} & \textbf{dns\_acl\_allowed} \\
+		\hline
+		100 & 59\,943  & 59\,945   & 119\,886 \\
+		200 & 119\,842 & 119\,844  & 239\,684 \\
+		300 & 179\,724 & 179\,726  & 359\,448 \\
+		\hline
+		\end{tabular}
+		\caption{Nombre d'appels des fonctions les plus appelées de BIND9 en fonction du débit de requêtes (QPS) pour une durée de mesure de 10 minutes.}
+		\label{tab:function_calls_qps}
+	\end{table}
+
+
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.9\textwidth]{Graphs/bind_complexity_executions.png}
@@ -798,6 +871,7 @@
 		
 		\item \texttt{cfg\_tuple\_get} \textbf{(O(n))} : recherche et récupère un élément dans une structure de configuration de type \textbf{tuple}. La recherche étant linéaire, son temps d'exécution est proportionnel au nombre d'éléments contenus dans la structure.
 	\end{itemize}
+
 
 	L'analyse statique et dynamique de la complexité de Bind9 met en évidence une répartition hétérogène des traitements au sein du résolveur. Si la majorité des fonctions présentent une complexité relativement faible et un nombre limité d'appels, un ensemble restreint de fonctions occupe une position centrale dans l'architecture du logiciel et concentre une part importante de l'activité observée lors du traitement des requêtes DNS.
 
@@ -833,17 +907,75 @@
 
 	Cette approche repose toutefois sur l'hypothèse que les métriques nécessaires à la prédiction sont disponibles au moment de l'estimation. Or, dans certains contextes de déploiement ou d'exploitation, l'accès à ces informations peut être limité. Il est donc important d'évaluer à la fois la précision du modèle obtenu et sa dépendance aux données d'entrée utilisées.
 	
+	Afin d'identifier les variables les plus influentes sur la consommation énergétique du résolveur DNS, une matrice de corrélation a été calculée entre l'ensemble des métriques collectées et la consommation énergétique mesurée.
+
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=0.9\textwidth]{Graphs/linear_regression_predictions.png}
-		\caption{Estimation par régression linéaire et consommation énergétique réelle}
-		\label{fig:image5}
+		\includegraphics[width=0.9\textwidth]{Graphs/correlation_matrix.png}
+		\caption{Matrice de corrélation entre les métriques et la consommation énergétique}
+		\label{fig:correlation_matrix}
 	\end{figure}
 
+	L'analyse de cette matrice met en évidence que les variables les plus fortement corrélées avec la consommation énergétique sont principalement liées à l'utilisation du processeur (CPU) ainsi qu'au débit de requêtes (QPS). Cette observation est cohérente avec le fonctionnement interne d'un résolveur DNS, dont la charge de travail est essentiellement pilotée par le nombre de requêtes traitées et le coût de traitement associé à chaque requête.
+
+	Les métriques CPU reflètent directement l'intensité du calcul nécessaire au traitement des requêtes, notamment la gestion des threads, les opérations de résolution récursive et les mécanismes de cache. De son côté, le QPS représente une mesure directe de la charge entrante, influençant linéairement ou non linéairement l'activité globale du système.
+
+	À l'inverse, certaines métriques telles que les accès disques ou certaines statistiques réseau présentent une corrélation plus faible avec la consommation énergétique dans les conditions expérimentales étudiées. Cela suggère que, pour les configurations testées, la consommation du résolveur est principalement dominée par des facteurs de calcul plutôt que par des goulots d'étranglement d'entrée/sortie.
+
+	Ces résultats confirment que les variables liées au CPU et au débit de requêtes constituent des indicateurs essentiels pour la modélisation de la consommation énergétique du résolveur DNS.
+
+	Cette analyse de corrélation met en évidence les variables les plus fortement liées à la consommation énergétique du résolveur DNS, en particulier celles associées à l'activité CPU et au débit de requêtes (QPS). Sur la base de ces observations, plusieurs modèles de machine learning sont ensuite entraînés afin de quantifier et exploiter ces relations pour la prédiction de la consommation énergétique.
+
+	
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{lccccc}
+			\hline
+			\textbf{Modèle} & \textbf{MSE} & \textbf{RMSE} & \textbf{MAE} & \textbf{MAPE (\%)} & \textbf{Temps d'entraînement (s)} \\
+			\hline
+			RandomForest            & 1.2743 & 1.1288 & 0.7988 & 1.2587 & 111.6585 \\
+			XGBoost                 & 1.2034 & 1.0970 & 0.7975 & 1.2632 & 1.6706 \\
+			HistGradientBoosting    & 1.2305 & 1.1093 & 0.8075 & 1.2811 & 3.3806 \\
+			ExtraTrees              & 1.3478 & 1.1609 & 0.8222 & 1.2965 & 44.4482 \\
+			LinearSVR               & 1.7789 & 1.3338 & 0.9398 & 1.4847 & 132.775 \\
+			\hline
+		\end{tabular}
+		\caption{Comparaison des performances des modèles de régression pour la prédiction de la consommation énergétique du résolveur DNS}
+		\label{tab:ml_results}
+	\end{table}
+	
+	Les résultats présentés dans le tableau \ref{tab:ml_results} comparent plusieurs modèles de régression utilisés pour la prédiction de la consommation énergétique du résolveur DNS à partir des métriques collectées.
+	
+	Globalement, les modèles basés sur des méthodes d'ensemble (\textit{ensemble methods}) obtiennent les meilleures performances. En particulier, XGBoost atteint les erreurs les plus faibles en termes de MSE et RMSE, tout en conservant un temps d'entraînement très réduit par rapport aux autres approches. Cela en fait le modèle le plus performant en termes de compromis entre précision et coût de calcul.
+
+	Les modèles RandomForest et ExtraTrees présentent des performances légèrement inférieures, avec des erreurs plus élevées et un temps d'entraînement significativement plus important dans le cas de RandomForest. HistGradientBoosting offre des performances proches de XGBoost, mais avec un léger surcoût en erreur et en temps d'entraînement.
+	
+	Enfin, le modèle linéaire LinearSVR présente les performances les moins bonnes sur l'ensemble des métriques. Cela suggère que la relation entre les variables explicatives et la consommation énergétique n'est pas linéaire, justifiant l'utilisation de modèles non linéaires plus complexes.
+	
+	L'ensemble des modèles présente néanmoins des erreurs relativement faibles (MAPE autour de 1.2-1.5\%), ce qui indique que les métriques collectées permettent une prédiction fiable de la consommation énergétique du résolveur DNS dans les conditions expérimentales étudiées.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.9\textwidth]{Graphs/RandomForest_predictions.png}
+		\caption{Estimation par RandomForest et consommation énergétique réelle}
+		\label{fig:Estimation_RandomForest}
+	\end{figure}
+
+	Le test de prédiction est réalisé sur 20\% des données, il correspond donc à plusieurs mesures de configurations différentes mise bout à bout. Ce qui explique donc ces irrégularités et cette périodicité. 
+	
+	L'ensemble des expérimentations réalisées dans cette section montre que la consommation énergétique du résolveur DNS peut être prédite avec une bonne précision à partir des métriques système, réseau et applicatives collectées lors des campagnes de mesures. Les différents modèles testés présentent des performances globalement proches, avec toutefois des différences notables en termes de précision et de coût d'entraînement.
+
+	Parmi les approches évaluées, XGBoost se distingue comme le modèle le plus performant. Cette supériorité s'explique par plusieurs facteurs. Tout d'abord, XGBoost repose sur une stratégie de gradient boosting optimisée, permettant de corriger itérativement les erreurs des modèles précédents et de capturer efficacement des relations non linéaires complexes entre les variables explicatives et la consommation énergétique. Ensuite, son mécanisme de régularisation intégré limite le surapprentissage, ce qui améliore sa capacité de généralisation sur des données issues de configurations variées (protocoles différents, utilisation ou non du cache, variations de charge).
+
+	De plus, XGBoost bénéficie d'optimisations d'implémentation importantes, notamment en termes de parallélisation et de gestion efficace des structures de données, ce qui explique son temps d'entraînement particulièrement faible par rapport à d'autres méthodes d'ensemble comme RandomForest ou ExtraTrees, tout en conservant une meilleure précision.
+
+	Ainsi, XGBoost constitue le meilleur compromis entre performance prédictive, robustesse et coût de calcul dans le cadre de ce problème. Ces résultats confirment l'intérêt des méthodes d'ensemble à base d'arbres pour la modélisation de systèmes complexes tels que les résolveurs DNS, où les relations entre variables sont fortement non linéaires et dépendantes du contexte d'exécution.
+
+
 	\subsubsection{Modèle de réseau de files d'attente}
-
+	
 	Une approche permettant d'estimer la consommation énergétique d'un résolveur DNS consiste à décomposer le processus de résolution en plusieurs étapes élémentaires et à évaluer la contribution énergétique de chacune d'entre elles. Contrairement à une approche purement empirique, dépendante du matériel ou de l'implémentation utilisée, cette méthode vise à construire un modèle plus général permettant d'estimer la consommation d'un résolveur dans différentes conditions d'utilisation.
-
+	
 	Les réseaux de files d'attente constituent un cadre particulièrement adapté à cet objectif. Ils permettent de représenter les différentes ressources mobilisées lors du traitement d'une requête ainsi que les délais associés aux temps d'attente et aux temps de service. Chaque étape du processus de résolution peut ainsi être modélisée indépendamment avant d'être intégrée dans un modèle global.
 
 	À partir de notre compréhension du fonctionnement interne de Bind9, un modèle de réseau de files d'attente a été élaboré. Celui-ci représente les principales étapes impliquées dans le traitement d'une requête DNS, depuis l'établissement éventuel de la connexion jusqu'à la génération de la réponse. Les différentes composantes du modèle sont les suivantes :
@@ -901,14 +1033,13 @@
 	Comment cela est-il fait ?
 
 	Petite conclusion / Quel est le principal résultat de cela ?
-	\cite{key}
-	\cite{test}
+
 	\chapter*{Conclusion}
 	\addcontentsline{toc}{chapter}{Conclusion}
 
 	\addcontentsline{toc}{chapter}{Bibliographie}
 	\nocite{*}
-	\printbibliography{}
+	\printbibliography
 
 	\chapter*{Annexes} \label{annexes}
 	\addcontentsline{toc}{chapter}{Annexes}
