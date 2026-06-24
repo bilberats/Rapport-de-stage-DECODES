@@ -13,7 +13,7 @@
 \usepackage{graphicx} % Requis pour insérer des images
 \usepackage{svg}
 \usepackage{tikz}
-
+\usepackage{booktabs}
 
 \usepackage[
 	backend=biber,
@@ -134,7 +134,7 @@
 
 	Durant mon stage, j'ai été accueilli sur le campus de Palaiseau, situé au sein du cluster scientifique de l'Institut Polytechnique de Paris. Bien que Télécom SudParis possède historiquement un campus principal à Évry-Courcouronnes, une partie de ses activités d'enseignement et de recherche est aujourd'hui implantée sur le campus de Palaiseau, notamment dans les locaux partagés avec Télécom Paris.
 
-	\subsection{Le département Réseaux et Services de Télécommunications (RST)}
+	\subsection{Le département Réseaux et Services de Télécommunications\\ (RST)}
 
 	Mon stage s'est déroulé au sein du département \textbf{Réseaux et Services de Télécommunications (RST)} de Télécom SudParis. Ce département constitue le pôle d'expertise de l'école dans le domaine des réseaux informatiques et des télécommunications. Il est implanté à la fois sur les campus d'Évry-Courcouronnes et de Palaiseau.
 
@@ -441,9 +441,10 @@
 
 			\item \texttt{measure\_io.sh} : exploite les fichiers \texttt{/sys/block/sda/stat}, qui contiennent des compteurs cumulés depuis le démarrage du système pour les opérations d'E/S disque (lecture et écriture en kilo-octets). Les valeurs sont différentiées temporellement afin d'obtenir les volumes d'I/O sur chaque intervalle de mesure.
 			
-			\item \texttt{measure\_nic.sh} : repose sur les compteurs du noyau Linux situés dans \texttt{/sys/class/net/eno1/statistics/}, notamment \texttt{rx\_bytes} et \texttt{tx\_bytes}, représentant respectivement le volume de données reçues et transmises par l'interface réseau. Comme pour les I/O disque, une différenciation temporelle permet d'obtenir les débits sur les intervalles considérés.
+			\item \texttt{measure\_nic.sh} : repose sur les compteurs du noyau Linux situés dans \\
+			\texttt{/sys/class/net/eno1/statistics/}, notamment \texttt{rx\_bytes} et \texttt{tx\_bytes}, représentant respectivement le volume de données reçues et transmises par l'interface réseau. Comme pour les I/O disque, une différenciation temporelle permet d'obtenir les débits sur les intervalles considérés.
 			
-			\item \texttt{measure\_ram.sh} : collecte des métriques liées à l'utilisation mémoire via les opérations sur le Last Level Cache (LLC), notamment les événements \textit{LLC-loads} et \textit{LLC-stores}. Ces indicateurs sont utilisés comme estimateurs indirects de l'activité mémoire et des accès à la RAM.
+			\item \texttt{measure\_ram.sh} : collecte des métriques liées à l'utilisation mémoire avec \texttt{perf} via les opérations sur le Last Level Cache (LLC), notamment les événements \textit{LLC-loads} et \textit{LLC-stores}. Ces indicateurs sont utilisés comme estimateurs indirects de l'activité mémoire et des accès à la RAM.
 			
 		\end{itemize}
 		
@@ -576,7 +577,7 @@
 	\begin{itemize}
 		\item \texttt{extensive\_measurements.sh} : Script principal avec une boucle par paramètre de configuration (protocoles, utilisation du cache, QPS et échantillon), il lance avec ces paramètres \texttt{start.sh}.
 
-		\item \texttt{start.sh} : script qui exécute une mesure unique pour une configuration donnée. Il vide le cache du DNS, change la configuration de Bind9 pour activer ou désactiver le cache, redémarre le service, créé les dossiers pour l'organisation des données récoltées, lance \texttt{start\_dns\_logs\_monitoring.sh} sur le DNS puis lance \texttt{start\_measurements.sh} sur le client.
+		\item \texttt{start.sh} : script qui exécute une mesure unique pour une configuration donnée. Il vide le cache du DNS, change la configuration de Bind9 pour activer ou désactiver le cache, redémarre le service, créé les dossiers pour l'organisation des données récoltées, lance \texttt{start\_dns\_logs\_monitoring.sh} sur le DNS puis lance \\ \texttt{start\_measurements.sh} sur le client.
 
 		\item \texttt{start\_dns\_logs\_monitoring.sh} : script qui exécute tous les scripts de mesures réseau et de logs DNS en parallèle.
 
@@ -884,7 +885,7 @@
 
 	Les différentes campagnes de mesures réalisées ont permis de caractériser le comportement du résolveur DNS sous plusieurs angles complémentaires : utilisation du cache, consommation des ressources système, consommation énergétique et complexité algorithmique. L'analyse des résultats met en évidence l'influence de paramètres tels que le protocole utilisé, la charge appliquée ou encore l'utilisation du cache sur les performances et la consommation du système.
 
-	Au-delà des observations quantitatives, ces expérimentations ont également permis d'identifier les principaux mécanismes impliqués dans le traitement des requêtes DNS et de mieux comprendre leur contribution relative à la charge du résolveur. Les métriques collectées constituent ainsi un ensemble de données riche permettant de relier l'activité interne de Bind9 aux ressources matérielles effectivement consommées.
+	Au-delà des observations quantitatives, ces expérimentations ont également permis\\ d'identifier les principaux mécanismes impliqués dans le traitement des requêtes DNS et de mieux comprendre leur contribution relative à la charge du résolveur. Les métriques collectées constituent ainsi un ensemble de données riche permettant de relier l'activité interne de Bind9 aux ressources matérielles effectivement consommées.
 
 	Ces résultats constituent le socle expérimental nécessaire à la phase de modélisation. Les analyses précédentes ont permis d'identifier les variables pertinentes, d'estimer les paramètres caractéristiques du système et de valider les hypothèses formulées sur le fonctionnement du résolveur. La section suivante s'appuie sur ces observations afin de construire et d'évaluer différents modèles capables d'estimer la consommation énergétique d'un résolveur DNS à partir de ses caractéristiques de fonctionnement.
 
@@ -1026,14 +1027,6 @@
 	Ce modèle repose sur notre compréhension actuelle du fonctionnement interne de Bind9. Bien qu'il ne prétende pas représenter l'intégralité des mécanismes mis en œuvre par le résolveur, il fournit un cadre méthodologique permettant d'analyser et d'estimer sa consommation énergétique. Les travaux futurs consisteront à mesurer les paramètres associés à chaque composante du modèle, puis à valider expérimentalement leur capacité à reproduire le comportement observé du résolveur dans différentes conditions de charge et de configuration.
 
 
-	\subsubsection{Analyse de complexité algorithmique}
-
-	Petite introduction / Pourquoi voulons-nous utiliser la complexité algorithmique pour ce problème ?
-
-	Comment cela est-il fait ?
-
-	Petite conclusion / Quel est le principal résultat de cela ?
-
 	\chapter*{Conclusion}
 	\addcontentsline{toc}{chapter}{Conclusion}
 
@@ -1107,6 +1100,54 @@
 	\texttt{LLC\%hit}: Percentage of LLC accesses that hit the cache instead of going to DRAM.
 
 	\section{Types de requêtes DNS} \label{types}
+
+	\subsection{Principaux types de requêtes et codes de réponse DNS}
+
+	Le tableau~\ref{tab:dns-types} présente les principaux types d'enregistrements DNS ainsi que les codes de réponse étudiés dans ce travail.
+
+	\begin{table}[ht]
+		\centering
+		\caption{Types d'enregistrements et codes de réponse DNS}
+		\label{tab:dns-types}
+		\begin{tabular}{p{3cm} p{10cm}}
+		\toprule
+		\textbf{Type} & \textbf{Description} \\
+		\midrule
+		A & Associe un nom de domaine à une adresse IPv4. \\
+		AAAA & Associe un nom de domaine à une adresse IPv6. \\
+		NS & Désigne les serveurs DNS faisant autorité pour une zone. \\
+		CNAME & Définit un alias vers un autre nom de domaine. \\
+		DS & Contient l'empreinte cryptographique d'une clé DNSSEC de la zone enfant afin d'assurer la chaîne de confiance. \\
+		DNSKEY & Contient les clés publiques utilisées pour la validation des signatures DNSSEC. \\
+		RRSIG & Contient les signatures cryptographiques associées aux enregistrements protégés par DNSSEC. \\
+		NXDOMAIN & Code de réponse indiquant que le nom de domaine demandé n'existe pas. \\
+		SERVFAIL & Code de réponse signalant une erreur interne du serveur lors du traitement de la requête. \\
+		REFUSED & Code de réponse indiquant que le serveur refuse de traiter la requête conformément à sa politique de sécurité ou de configuration. \\
+		FORMERR & Code de réponse indiquant que la requête DNS reçue est mal formée. \\
+		BADCOOKIE & Code de réponse indiquant que le cookie DNS fourni par le client est invalide ou expiré. \\
+		\bottomrule
+		\end{tabular}
+	\end{table}
+
+	\subsection{Signification des symboles fréquemment rencontrés dans les traces DNS}
+
+	Avec les requêtes de résolution DNS en UDP, les types ont également des symboles associés, les types de symboles sont décris dans le tableau~\ref{tab:dns-symbols}.
+
+	\begin{table}[ht]
+		\centering
+		\caption{Signification des symboles observés dans les traces DNS}
+		\label{tab:dns-symbols}
+		\begin{tabular}{p{3cm} p{10cm}}
+			\toprule
+			\textbf{Symbole} & \textbf{Description} \\
+			\midrule
+			\texttt{?} & Indique une requête DNS adressée à un serveur. \\
+			\texttt{*} & Représente un caractère générique (\textit{wildcard}) pouvant correspondre à plusieurs noms de domaine. \\
+			\texttt{-} & Indique généralement une valeur absente, inconnue ou non applicable. \\
+			\texttt{|} & Utilisé comme séparateur de champs dans certains formats de traces ou de journaux. \\
+			\bottomrule
+		\end{tabular}
+	\end{table}
 
 	\newpage
 
