@@ -141,6 +141,8 @@
 
 \begin{document}
 	\arialfont
+	\glsdisablehyper
+
 
 	\makeutbmfrontcover{}
  
@@ -180,7 +182,7 @@
 	\newpage
 
 
-	\printglossary[type=\acronymtype]
+	\printglossary[type=\acronymtype,nonumberlist]
 
 
 	\chapter*{Introduction}
@@ -644,9 +646,64 @@
 		\end{itemize}
 		
 	\end{itemize}
-
+	
 	L'ensemble de ces scripts constitue le squelette qui va être utilisé pour la collecte de données nécessaire à la modélisation de la consommation énergétique du résolveur \gls{dns}. Ils permettent d'obtenir une vue multi-niveaux du système (CPU, mémoire, I/O, réseau et cache \gls{dns}), ainsi qu'une mesure directe de la consommation électrique. Ces données serviront de base à la construction des modèles, à l'estimation des paramètres et à l'identification des facteurs influençant la consommation énergétique.
+	
+	\subsubsection{Détail de la configuration}
 
+	Cette sous-section présente l'environnement expérimental utilisé dans le cadre des mesures réalisées au cours de ce stage. Elle regroupe à la fois les outils logiciels employés pour la collecte et l'analyse des métriques système et réseau, ainsi que les caractéristiques des machines utilisées côté serveur DNS et côté client. Enfin, les protocoles réseau et DNS mobilisés sont également précisés afin de garantir la reproductibilité des expériences.
+
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{lll}
+			\toprule
+			\textbf{Catégorie} & \textbf{Élément} & \textbf{Version} \\
+			\midrule
+			OS & Linux (distribution à préciser) & \\
+			Kernel & Linux kernel & \\
+			DNS server & BIND9 & \\
+			DNS control & rndc & \\
+			CPU metrics & turbostat & \\
+			Performance profiling & perf & \\
+			Network capture & tcpdump & \\
+			Function tracing & uftrace & \\
+			Energy measurement & Yoctopuce (driver/API) & \\
+			\midrule
+			Protocol DNS & DNS & RFC 1035 \\
+			Transport & UDP & RFC 768 \\
+			Transport (fallback) & TCP & RFC 9293 \\
+			DNS over HTTPS & DoH & RFC 8484 \\
+			DNS over TLS & DoT & RFC 7858 \\
+			\bottomrule
+		\end{tabular}
+		\caption{Environnement et outils utilisés sur le serveur DNS}
+		\label{tab:dns_env}
+	\end{table}
+
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{lll}
+			\toprule
+			\textbf{Catégorie} & \textbf{Élément} & \textbf{Version} \\
+			\midrule
+			OS & Linux / Windows (à préciser) & \\
+			DNS resolver & système (glibc / systemd-resolved / autre) & \\
+			Network capture & tcpdump & \\
+			Performance tools & perf (si utilisé côté client) & \\
+			Energy measurement & Yoctopuce (si applicable) & \\
+			\midrule
+			Protocol DNS & DNS & RFC 1035 \\
+			Transport & UDP & RFC 768 \\
+			Transport (fallback) & TCP & RFC 9293 \\
+			DNS over HTTPS & DoH & RFC 8484 \\
+			DNS over TLS & DoT & RFC 7858 \\
+			\bottomrule
+		\end{tabular}
+		\caption{Environnement et outils utilisés sur le client}
+		\label{tab:client_env}
+	\end{table}
+
+	L'ensemble de ces éléments constitue le socle expérimental des mesures réalisées dans ce travail. La connaissance précise des outils, des systèmes d'exploitation et des protocoles utilisés est essentielle pour garantir la reproductibilité des résultats et assurer une interprétation correcte des observations effectuées sur les performances du système DNS.
 
 	\subsection{Implémentation des campagnes de mesures}
 
@@ -693,6 +750,7 @@
 	\vspace{0.5cm}
 
 	Des campagnes de mesures ont été réalisées pour mesurer la consommation énergétique du résolveur \gls{dns} avec les mêmes configurations mais sans effectuer de mesures au niveau du résolveur \gls{dns} pour voir l'influence de ces mesures sur la consommation énergétique du résolveur \gls{dns}. Également, la consommation énergétique du résolveur \gls{dns} a été mesurée au repos pour avoir une base de comparaison pour les mesures réalisées avec les différentes configurations.
+
 
 	\section{Analyse des résultats}
 
