@@ -24,6 +24,10 @@
 ]{biblatex} % ISO 690 UTBM
 
 \usepackage[acronym]{glossaries}
+
+\renewcommand*{\genacrfullformat}[2]{%
+  \textit{\glsentrylong{#1}\space(\firstacronymfont{\glsentryshort{#1}})}#2%
+}
 \makeglossaries
 
 \input{biblatex.cfg}
@@ -84,14 +88,9 @@
 \usetikzlibrary{arrows.meta, fit, backgrounds}
 \graphicspath{ {/Graphs} }
 
-% Glossaire :
-
-% \newglossaryentry{bind9}{
-%     name={Bind9},
-%     description={Implémentation du serveur DNS}
-% }
 
 % Acronymes :
+
 \newacronym{dns}{DNS}{Domain Name System}
 \newacronym{dot}{DoT}{DNS Over TLS}
 \newacronym{doh}{DoH}{DNS Over HTTPS}
@@ -118,16 +117,16 @@
 \newacronym{itut}{ITU-T}{International Telecommunication Union Telecommunication Standardization Sector}
 \newacronym{ietf}{IETF}{Internet Engineering Task Force}
 \newacronym{fai}{FAI}{Fournisseur d'Accès à Internet}
-\newacronym{afnic}{AFNIC}{Association Française pour le Nommage Internet en Coopération}
+\newacronym{afnic}{AFNIC}{Association Française pour le NommageInternet en Coopération}
 \newacronym{enpc}{ENPC}{École Nationale des Ponts et Chaussées}
 \newacronym{api}{API}{Application Programming Interface}
 \newacronym{snmp}{SNMP}{Simple Network Management Protocol}
 \newacronym{qps}{QPS}{Query Per Second}
 \newacronym{llc}{LLC}{Last Level Cache}
 \newacronym{tls}{TLS}{Transport Layer Security}
+\newacronym{dvfs}{DVFS}{Dynamic Voltage and Frequency Scaling}
 
-
-
+% \renewcommand{\glsdisplayfirst}[4]{\textit{#1}#4}
 
 %----------------------------------------
 % Document
@@ -148,7 +147,7 @@
  
 	\section*{Abstract}
 
-	Le (\gls{dns}) est une infrastructure essentielle d'Internet dont la 
+	Le \gls{dns} est une infrastructure essentielle d'Internet dont la 
 	consommation énergétique reste encore peu étudiée. Ce stage, réalisé dans le cadre du projet \gls{decodes} à Télécom SudParis, vise à mieux comprendre et modéliser la consommation énergétique d'un résolveur \gls{dns}, en se concentrant sur l'implémentation \gls{bind9}.
 
 	Pour atteindre cet objectif, un environnement expérimental a été conçu afin de mesurer la consommation énergétique du résolveur sous différentes configurations (protocoles, utilisation du cache et charge). Les données collectées ont permis d'analyser l'influence de ces paramètres sur la consommation énergétique, d'étudier la complexité algorithmique de \gls{bind9} et de développer deux approches de modélisation : un modèle de machine learning basé sur des métriques système et un modèle analytique fondé sur les réseaux de files d'attente. En parallèle, une analyse de la complexité algorithmique de \gls{bind9} a été réalisée afin de mieux comprendre les facteurs logiciels influençant cette consommation.
@@ -164,7 +163,7 @@
 
 	Je tiens tout d'abord à adresser mes plus sincères remerciements à \textbf{Michel Marot}, mon encadrant de stage, pour sa disponibilité, son accompagnement et ses précieux conseils tout au long de ce projet. Son expertise, sa confiance et ses nombreuses discussions scientifiques m'ont permis de progresser tant sur le plan technique que méthodologique et ont grandement contribué à la réussite de ce stage.
 
-	Je souhaite également remercier \textbf{Rosario Patané} pour son aide et ses précieux conseils tout au long de ce stage. Son expertise dans le domaine de l'analyse de la complexité algorithmique a été particulièrement précieuse, tout comme son accompagnement lors de la préparation des présentations et de la rédaction de ce rapport. J'adresse également mes remerciements à \textbf{Lucas Brehon-Grataloup} pour son accompagnement, sa disponibilité et les échanges constructifs qui ont contribué au bon déroulement de ce stage.
+	Je souhaite également remercier \textbf{Rosario Patanè} pour son aide et ses précieux conseils tout au long de ce stage. Son expertise dans le domaine de l'analyse de la complexité algorithmique a été particulièrement précieuse, tout comme son accompagnement lors de la préparation des présentations et de la rédaction de ce rapport. J'adresse également mes remerciements à \textbf{Lucas Brehon-Grataloup} pour son accompagnement, sa disponibilité et les échanges constructifs qui ont contribué au bon déroulement de ce stage.
 
 	Je tiens également à remercier le \textbf{Centre Interdisciplinaire \gls{e4c}} de l'\gls{ipp}, financé en partie dans le cadre du troisième Programme d'investissements d'avenir (ANR-18-EUR-0006-02), pour leur soutien à ces travaux.
 
@@ -178,9 +177,9 @@
 
 
 	\tableofcontents
+
 	\listoffigures
 	\newpage
-
 
 	\printglossary[type=\acronymtype,nonumberlist]
 
@@ -447,7 +446,7 @@
 	\subsection{Mise en place de la méthodologie de mesure}
 
 	La méthodologie de mesure utilisée est inspiré par celle utilisée par les stagiaires précédents, Nicolas Renout et Gatien Roujanski. La méthodologie de mesure utilisé consiste à faire des mesures de consommations avec différents protocoles \gls{dns} (\gls{udp}, \gls{dot} et \gls{doh}), pour différents \gls{qps} (entre 60 et 600) avec et sans utilisation du cache.
-	En reprennant la méthodologie, certains problèmes ont été identifiés, notamment le fait que les mesures de consommation énergétique du \gls{dns} avec et sans cache ne sont pas faites dans les mêmes conditions, ce qui peut fausser les résultats. Il a donc fallu trouver une nouvelle méthodologie adaptée.
+	En reprenant la méthodologie, certains problèmes ont été identifiés, notamment le fait que les mesures de consommation énergétique du \gls{dns} avec et sans cache ne sont pas faites dans les mêmes conditions, ce qui peut fausser les résultats. Il a donc fallu trouver une nouvelle méthodologie adaptée.
 	Cette sous-section présente la méthodologie de mesure utilisée pour faire les mesures de consommation énergétique du \gls{dns} avec et sans cache, ainsi que les modifications apportées à la méthodologie précédente.
 	
 	\subsubsection{Sélection de l'ensemble des noms de domaines utilisés}
@@ -651,7 +650,7 @@
 	
 	\subsubsection{Détail de la configuration}
 
-	Cette sous-section présente l'environnement expérimental utilisé dans le cadre des mesures réalisées au cours de ce stage. Elle regroupe à la fois les outils logiciels employés pour la collecte et l'analyse des métriques système et réseau, ainsi que les caractéristiques des machines utilisées côté serveur DNS et côté client. Enfin, les protocoles réseau et DNS mobilisés sont également précisés afin de garantir la reproductibilité des expériences.
+	Afin de garantir la reproductibilité des expériences, la version de tout les outils et protocoles utilisés durant ce stage dans le cadre des mesures sur le client et le \gls{dns}. 
 
 	\begin{table}[H]
 		\centering
@@ -661,13 +660,12 @@
 			\midrule
 			OS & Linux (distribution à préciser) & \\
 			Kernel & Linux kernel & \\
-			DNS server & BIND9 & \\
+			DNS server & \gls{bind9} & \\
 			DNS control & rndc & \\
 			CPU metrics & turbostat & \\
 			Performance profiling & perf & \\
 			Network capture & tcpdump & \\
 			Function tracing & uftrace & \\
-			Energy measurement & Yoctopuce (driver/API) & \\
 			\midrule
 			Protocol DNS & DNS & RFC 1035 \\
 			Transport & UDP & RFC 768 \\
@@ -679,7 +677,7 @@
 		\caption{Environnement et outils utilisés sur le serveur DNS}
 		\label{tab:dns_env}
 	\end{table}
-
+	
 	\begin{table}[H]
 		\centering
 		\begin{tabular}{lll}
@@ -687,10 +685,8 @@
 			\textbf{Catégorie} & \textbf{Élément} & \textbf{Version} \\
 			\midrule
 			OS & Linux / Windows (à préciser) & \\
-			DNS resolver & système (glibc / systemd-resolved / autre) & \\
-			Network capture & tcpdump & \\
-			Performance tools & perf (si utilisé côté client) & \\
-			Energy measurement & Yoctopuce (si applicable) & \\
+			Energy measurement & Yoctopuce (driver/API) & \\
+			Python & Python 3.x & \\
 			\midrule
 			Protocol DNS & DNS & RFC 1035 \\
 			Transport & UDP & RFC 768 \\
@@ -703,7 +699,7 @@
 		\label{tab:client_env}
 	\end{table}
 
-	L'ensemble de ces éléments constitue le socle expérimental des mesures réalisées dans ce travail. La connaissance précise des outils, des systèmes d'exploitation et des protocoles utilisés est essentielle pour garantir la reproductibilité des résultats et assurer une interprétation correcte des observations effectuées sur les performances du système DNS.
+	L'ensemble de ces éléments constitue le socle expérimental des mesures réalisées dans ce travail. La connaissance précise des outils, des systèmes d'exploitation et des protocoles utilisés est essentielle pour garantir la reproductibilité des résultats et assurer une interprétation correcte des observations effectuées sur la consommation du résolveur \gls{dns}.
 
 	\subsection{Implémentation des campagnes de mesures}
 
@@ -841,7 +837,7 @@
 	
 	Il serait intéressant d'avoir des mesures pour des \gls{qps} plus élevés et avec différentes configurations \gls{dns} (nombre maximal de clients du résolveur, nombre de threads de travail, etc.) et différentes implémentations \gls{dns} (PowerDNS, Unbound, Knot DNS, etc.).\\
 
-	Des précédent résultats montraient moins de surcout de la mesure de consommation énergétique. C'est à l'ajout des mesures du cache de \gls{bind9} avec \texttt{rndc} que les résultats ont changé d'allure, c'est aussi à ce moment que la méthodologie de mesure a été revue pour bien simuler la non utilisation du cache. Il semblait plus probable que ce gros changement de comportement de consommation énergétique provienne du nouvel outil de mesure utilisé. Pour vérifier cela, une nouvelle campagne de mesure a été réalisée sans l'utilisation de \texttt{rndc}.
+	Des précédent résultats montraient moins de surcoût de la mesure de consommation énergétique. C'est à l'ajout des mesures du cache de \gls{bind9} avec \texttt{rndc} que les résultats ont changé d'allure, c'est aussi à ce moment que la méthodologie de mesure a été revue pour bien simuler la non utilisation du cache. Il semblait plus probable que ce gros changement de comportement de consommation énergétique provienne du nouvel outil de mesure utilisé. Pour vérifier cela, une nouvelle campagne de mesure a été réalisée sans l'utilisation de \texttt{rndc}.
 
 	\begin{figure}[H]
 		\centering
@@ -877,7 +873,7 @@
 		\end{minipage}
 	\end{figure}
 
-	On peut voir que la fréquence moyenne du CPU \ref{fig:Avg_MHz_avg_protocols_ci} et le pourcentage de temps d'activité du CPU \ref{fig:Busy_avg_protocols_ci} suivent les memes courbes, cela est du au DVFS (Dynamic Voltage and Frequency Scaling) qui ajuste dynamiquement la fréquence et la tension du CPU en fonction de la charge de travail. Pour ce qui est de la mesure de l'état C6 \ref{fig:C6_avg_protocols_ci}, on peut voir que le pourcentage de temps passé dans l'état C6 est inversement proportionnel à la charge de travail du CPU. Enfin, la température du CPU \ref{fig:PkgTmp_avg_protocols_ci} suit de très proche les mesures de consommation énergétique du résolveur \gls{dns} de plus, on remarque que les températures sont extrêmement élevées avec au maximum 103°C et 86°C au minimum, ce qui est très élevé pour un CPU. 
+	On peut voir que la fréquence moyenne du CPU \ref{fig:Avg_MHz_avg_protocols_ci} et le pourcentage de temps d'activité du CPU \ref{fig:Busy_avg_protocols_ci} suivent les memes courbes, cela est du au \gls{dvfs} qui ajuste dynamiquement la fréquence et la tension du CPU en fonction de la charge de travail. Pour ce qui est de la mesure de l'état C6 \ref{fig:C6_avg_protocols_ci}, on peut voir que le pourcentage de temps passé dans l'état C6 est inversement proportionnel à la charge de travail du CPU. Enfin, la température du CPU \ref{fig:PkgTmp_avg_protocols_ci} suit de très proche les mesures de consommation énergétique du résolveur \gls{dns} de plus, on remarque que les températures sont extrêmement élevées avec au maximum 103°C et 86°C au minimum, ce qui est très élevé pour un CPU. 
 
 	\subsection{Mesures de métriques liées au cache de \gls{bind9}}
 
@@ -992,7 +988,7 @@
 	\subsection{Étude de la complexité algorithmique de \gls{bind9}}
 	Les mesures de consommation énergétique du résolveur \gls{dns} sont très intéressantes, mais elles ne permettent pas de comprendre les raisons de cette consommation énergétique. Pour mieux comprendre les raisons de cette consommation énergétique, et en s'abstrayant du matériel, une solution consiste à étudier la complexité algorithmique de \gls{bind9}. En effet, la consommation énergétique d'un programme est liée à sa complexité algorithmique, des paramètres de consommations peuvent être déduits à partir des performances énergétiques des composants de la machine (CPU, RAM, etc.).
 
-	L'étude de la complexité algorithmique de \gls{bind9} s'est faite en deux parties, d'abord une étude de la complexité algorithmique statique de chaque fonction de \gls{bind9} grâce à un outil développé en python par Rosario Patané, un de mes collègues et membre du projet \gls{decodes}. La seconde partie de l'étude de la complexité algorithmique de \gls{bind9} s'est faite de manière dynamique, en mesurant le nombre d'appels par fonction de \gls{bind9} pour différentes configurations de mesure. Cela a permis d'avoir une idée de la complexité algorithmique réelle de \gls{bind9} pour différentes configurations, et ainsi d'avoir une meilleure compréhension des raisons de la consommation énergétique du résolveur \gls{dns}.
+	L'étude de la complexité algorithmique de \gls{bind9} s'est faite en deux parties, d'abord une étude de la complexité algorithmique statique de chaque fonction de \gls{bind9} grâce à un outil développé en python par Rosario Patanè, un de mes collègues et membre du projet \gls{decodes}. La seconde partie de l'étude de la complexité algorithmique de \gls{bind9} s'est faite de manière dynamique, en mesurant le nombre d'appels par fonction de \gls{bind9} pour différentes configurations de mesure. Cela a permis d'avoir une idée de la complexité algorithmique réelle de \gls{bind9} pour différentes configurations, et ainsi d'avoir une meilleure compréhension des raisons de la consommation énergétique du résolveur \gls{dns}.
 
 	\begin{figure}[H]
 		\centering
@@ -1113,13 +1109,18 @@
 	Cette approche repose toutefois sur l'hypothèse que les métriques nécessaires à la prédiction sont disponibles au moment de l'estimation. Or, dans certains contextes de déploiement ou d'exploitation, l'accès à ces informations peut être limité. Il est donc important d'évaluer à la fois la précision du modèle obtenu et sa dépendance aux données d'entrée utilisées.
 	
 	Afin d'identifier les variables les plus influentes sur la consommation énergétique du résolveur \gls{dns}, une matrice de corrélation a été calculée entre l'ensemble des métriques collectées et la consommation énergétique mesurée.
-
-	\begin{figure}[H]
+	
+	\begin{figure}[p]
 		\centering
-		\includegraphics[width=0.9\textwidth]{Graphs/correlation_matrix.png}
-		\caption{Matrice de corrélation entre les métriques et la consommation énergétique}
+		\includegraphics[
+			height=0.6\textheight,
+			keepaspectratio,
+			angle=-90
+		]{Graphs/correlation_matrix.png}
+		\caption{Matrice de corrélation}
 		\label{fig:correlation_matrix}
 	\end{figure}
+
 
 	L'analyse de cette matrice met en évidence que les variables les plus fortement corrélées avec la consommation énergétique sont principalement liées à l'utilisation du processeur (CPU) ainsi qu'au débit de requêtes (\gls{qps}). Cette observation est cohérente avec le fonctionnement interne d'un résolveur \gls{dns}, dont la charge de travail est essentiellement pilotée par le nombre de requêtes traitées et le coût de traitement associé à chaque requête.
 
