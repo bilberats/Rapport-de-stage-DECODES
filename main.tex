@@ -14,6 +14,10 @@
 \usepackage{svg}
 \usepackage{tikz}
 \usepackage{booktabs}
+\usepackage{amsmath,amssymb}
+\usepackage{pgfplots}
+% \usepackage[utf8]{inputenc}
+% \usepackage[T1]{fontenc}
 
 \usepackage[
 	backend=biber,
@@ -370,7 +374,7 @@
 
 	\begin{itemize}
 		\item \textbf{\gls{afnic}} : représentée par \textbf{Sandoche Balakricnan}, l'\gls{afnic} apporte son expertise en tant que registre internet des noms de domaines en \texttt{.fr} et acteur majeur de l'écosystème \gls{dns} en France.
-		\item \textbf{\gls{enpc}} : sous la direction de \textbf{Daphne Tuncer}, l'\gls{enpc} contribue par son savoir-faire en modélisation et en analyse des systèmes distribués.
+		\item \textbf{\gls{enpc}} : sous la direction de \textbf{Daphné Tuncer}, l'\gls{enpc} contribue par son savoir-faire en modélisation et en analyse des systèmes distribués.
 		\item \textbf{France-IX} : avec \textbf{Simon Muyal}, ce point d'échange Internet apporte une vision opérationnelle des enjeux liés au trafic \gls{dns} et à son acheminement.
 		\item \textbf{Télécom SudParis} : sous la responsabilité de \textbf{Michel Marot}, cet établissement apporte son expertise en réseaux, sécurité et optimisation des protocoles.
 	\end{itemize}
@@ -658,20 +662,14 @@
 			\toprule
 			\textbf{Catégorie} & \textbf{Élément} & \textbf{Version} \\
 			\midrule
-			OS & Linux (distribution à préciser) & \\
-			Kernel & Linux kernel & \\
-			DNS server & \gls{bind9} & \\
-			DNS control & rndc & \\
-			CPU metrics & turbostat & \\
-			Performance profiling & perf & \\
-			Network capture & tcpdump & \\
-			Function tracing & uftrace & \\
-			\midrule
-			Protocol DNS & DNS & RFC 1035 \\
-			Transport & UDP & RFC 768 \\
-			Transport (fallback) & TCP & RFC 9293 \\
-			DNS over HTTPS & DoH & RFC 8484 \\
-			DNS over TLS & DoT & RFC 7858 \\
+			OS & Linux (Debian GNU/Linux) & 12 (bookworm) \\
+			Kernel & Linux kernel & 6.1.0-37-amd64 \\
+			DNS server & \gls{bind9} & 9.18.44 \\
+			DNS control & rndc & 9.18.44 \\
+			CPU metrics & turbostat & 2025.12.02 \\
+			Performance profiling & perf & 6.1.162 \\
+			Network capture & tcpdump & 4.99.3 \\
+			Function tracing & uftrace & 0.13 \\
 			\bottomrule
 		\end{tabular}
 		\caption{Environnement et outils utilisés sur le serveur DNS}
@@ -684,15 +682,20 @@
 			\toprule
 			\textbf{Catégorie} & \textbf{Élément} & \textbf{Version} \\
 			\midrule
-			OS & Linux / Windows (à préciser) & \\
-			Energy measurement & Yoctopuce (driver/API) & \\
-			Python & Python 3.x & \\
+			OS & Linux (Debian GNU/Linux) & 13.3 \\
+			Kernel & Linux kernel & 6.1.0-21-amd64 \\
+			Language & Python & 3.11.2 \\
 			\midrule
-			Protocol DNS & DNS & RFC 1035 \\
+			Librairie & httpx & 0.28.1 \\
+			Librairie & dns & 2.8.0 \\
+			Librairie & yoctopuce & 2.1.11632 \\
+			\midrule
+			Application & DNS & RFC 1035 \\
+			Application & DoT & RFC 7858 \\
+			Application & DoH & RFC 8484 \\
+			Application & HTTP & HTTP/2 \\
 			Transport & UDP & RFC 768 \\
-			Transport (fallback) & TCP & RFC 9293 \\
-			DNS over HTTPS & DoH & RFC 8484 \\
-			DNS over TLS & DoT & RFC 7858 \\
+			Sécurité & TLS & TLS 1.3 \\
 			\bottomrule
 		\end{tabular}
 		\caption{Environnement et outils utilisés sur le client}
@@ -772,15 +775,25 @@
 	
 
 	\subsubsection{Connexions persistantes}
+
+	Des mesures avec des connexions persistantes ont été réalisées au début de mon stage avec l'ancien protocole. Les résultats obtenus sont intéressant, notamment les mesures avec cache, ces mesures montrent le coût du \gls{dns} sans résolution récursive.
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=\textwidth]{Graphs/Persistant/watts_avg_protocols_ci_old.png}
+		\caption{Consommation énergétique moyenne du \gls{dns} pour \gls{udp}, \gls{dot} et \gls{doh} avec et sans utilisation du cache avec des connexions non persistantes pour l'ancien protocole de mesure montrant la consommation du DNS sans résolution récursive}
+		\label{fig:consomation_persistante_old}
+	\end{figure}
 	
+	Avec le nouveau protocole de mesure, la différence entre la consommation du \gls{dns} avec et sans cache est moins importante, c'est normal car l'ancien protocole de mesure avec cache correspondait au cas le moins coûteux énergétiquement.
 
 	\begin{figure}[H]
 		\centering
 		\begin{minipage}{0.45\textwidth}
 			\begin{figure}[H]
 				\centering
-				\includegraphics[width=0.9\textwidth]{Graphs/Persistant/watts_avg_protocols_ci.png}
-				\caption{Consommation énergétique moyenne pour \gls{udp}, \gls{dot} et \gls{doh} avec et sans utilisation du cache avec des connexions persistantes}
+				\includegraphics[width=1\textwidth]{Graphs/Persistant/watts_avg_protocols_ci.png}
+				\caption{Consommation énergétique moyenne du \gls{dns} montrant l'impact du cache et de la persistance des connexions}
 				\label{fig:consomation_persistante}
 			\end{figure}
 		\end{minipage}
@@ -788,8 +801,8 @@
 		\begin{minipage}{0.45\textwidth}
 			\begin{figure}[H]
 				\centering
-				\includegraphics[width=0.9\textwidth]{Graphs/Persistant/persistant_external.png}
-				\caption{Consommation énergétique moyenne pour \gls{udp}, \gls{dot} et \gls{doh} avec et sans utilisation du cache avec des connexions non persistantes, sans la surcharge lié à l'enregistrement des métriques au niveau du \gls{dns}}
+				\includegraphics[width=1\textwidth]{Graphs/Persistant/external_measures_consumption.png}
+				\caption{Consommation énergétique moyenne du \gls{dns} montrant avec des connexions persistantes, sans les mesures au niveau du \gls{dns} montrant leur impact sur la consommation énergétique}
 				\label{fig:consomation_persistante_external}
 			\end{figure}
 		\end{minipage}
@@ -804,7 +817,7 @@
 	
 	Pour voir le coût de l'établissement des connexions, il faut faire des mesures avec des connexions non persistantes.
 	
-	\subsection{Connexions non persistantes}
+	\subsubsection{Connexions non persistantes}
 
 	Avec des connexions non persistantes, la consommation énergétique est plus élevée pour les protocoles utilisant \gls{tls} (\gls{doh} et \gls{doh}) en raison du coût de l'établissement de la connexion pour chaque requête. Le protocol \gls{doh} consomme le plus ce qui est cohérent avec le coût supplémentaire du protocole HTTP en plus du chiffrement \gls{tls}. \\
 
@@ -813,8 +826,8 @@
 		\begin{minipage}{0.45\textwidth}
 			\begin{figure}[H]
 				\centering
-				\includegraphics[width=0.9\textwidth]{Graphs/Non_persistant/combined_power_consumption_CI_fillbetween.png}
-				\caption{Consommation énergétique moyenne pour \gls{udp}, \gls{dot} et \gls{doh} avec et sans utilisation du cache avec des connexions non persistantes}
+				\includegraphics[width=\textwidth]{Graphs/Non_persistant/watts_avg_protocols_ci.png}
+				\caption{Consommation énergétique moyenne du \gls{dns} montrant l'impact du cache et des connexions non persistantes}
 				\label{fig:consomation_non_persistante}
 			\end{figure}
 		\end{minipage}
@@ -822,8 +835,8 @@
 		\begin{minipage}{0.45\textwidth}
 			\begin{figure}[H]
 				\centering
-				\includegraphics[width=0.9\textwidth]{Graphs/Non_persistant/external_measures_consumption.png}
-				\caption{Consommation énergétique moyenne pour \gls{udp}, \gls{dot} et \gls{doh} avec et sans utilisation du cache avec des connexions non persistantes, sans la surcharge lié à l'enregistrement des métriques au niveau du \gls{dns}}
+				\includegraphics[width=\textwidth]{Graphs/Non_persistant/external_measures_consumption.png}
+				\caption{Consommation énergétique moyenne du \gls{dns} montrant avec des connexions non persistantes, sans les mesures au niveau du \gls{dns} montrant leur impact sur la consommation énergétique}
 				\label{fig:consomation_non_persistante_external}
 			\end{figure}
 		\end{minipage}
@@ -852,28 +865,15 @@
 
 	De nombreuses métriques collectées sont liées au CPU grace à l'outil \texttt{turbostat}. Ces métriques sont intéressantes car c'est le CPU qui consomme le plus d'énergie. Visualiser certaines de ces métriques permet de mieux comprendre le comportement de la consommation énergétique du résolveur \gls{dns}. Les métriques les plus intéressantes sont la fréquence moyenne du CPU, le pourcentage de temps d'activité du CPU, le pourcentage de temps passé dans l'état C6 (état de sommeil profond) et la température du CPU. Ces métriques sont représentées sur les figures suivantes pour les différents protocoles avec et sans utilisation du cache.
 
+
 	\begin{figure}[H]
 		\centering
-		\begin{minipage}{0.45\textwidth}
-			\includegraphics[width=\textwidth]{Graphs/Non_persistant/Avg_MHz_avg_protocols_ci.png}
-			\caption{Fréquence moyenne du CPU pour les différents protocoles avec et sans utilisation du cache}
-			\label{fig:Avg_MHz_avg_protocols_ci}
-			\includegraphics[width=\textwidth]{Graphs/Non_persistant/C6_avg_protocols_ci.png}
-			\caption{Pourcentage de temps passé dans l'état C6 pour les différents protocoles avec et sans utilisation du cache}
-			\label{fig:C6_avg_protocols_ci}
-		\end{minipage}
-		\hfill
-		\begin{minipage}{0.45\textwidth}
-			\includegraphics[width=\textwidth]{Graphs/Non_persistant/Busy_avg_protocols_ci.png}
-			\caption{Pourcentage de temps d'activité du CPU pour les différents protocoles avec et sans utilisation du cache}
-			\label{fig:Busy_avg_protocols_ci}
-			\includegraphics[width=\textwidth]{Graphs/Non_persistant/PkgTmp_avg_protocols_ci.png}
-			\caption{Température du CPU pour les différents protocoles avec et sans utilisation du cache}
-			\label{fig:PkgTmp_avg_protocols_ci}
-		\end{minipage}
+		\includegraphics[width=0.9\textwidth]{Graphs/Non_persistant/four_metrics_subplot.png}
+		\caption{Métriques du CPU les plus pertinentes montrant leur correlation avec la consommation énergétique du résolveur \gls{dns}}
+		\label{fig:CPU_metrics_non_persistant}
 	\end{figure}
 
-	On peut voir que la fréquence moyenne du CPU \ref{fig:Avg_MHz_avg_protocols_ci} et le pourcentage de temps d'activité du CPU \ref{fig:Busy_avg_protocols_ci} suivent les memes courbes, cela est du au \gls{dvfs} qui ajuste dynamiquement la fréquence et la tension du CPU en fonction de la charge de travail. Pour ce qui est de la mesure de l'état C6 \ref{fig:C6_avg_protocols_ci}, on peut voir que le pourcentage de temps passé dans l'état C6 est inversement proportionnel à la charge de travail du CPU. Enfin, la température du CPU \ref{fig:PkgTmp_avg_protocols_ci} suit de très proche les mesures de consommation énergétique du résolveur \gls{dns} de plus, on remarque que les températures sont extrêmement élevées avec au maximum 103°C et 86°C au minimum, ce qui est très élevé pour un CPU. 
+	On peut voir que la fréquence moyenne du CPU et le pourcentage de temps d'activité du CPU suivent les memes courbes, cela est du au \gls{dvfs} qui ajuste dynamiquement la fréquence et la tension du CPU en fonction de la charge de travail. Pour ce qui est de la mesure de l'état C6, on peut voir que le pourcentage de temps passé dans l'état C6 est inversement proportionnel à la charge de travail du CPU. Enfin, la température du CPU suit de très proche les mesures de consommation énergétique du résolveur \gls{dns} de plus, on remarque que les températures sont extrêmement élevées avec au maximum 103°C et 86°C au minimum, ce qui est très élevé pour un CPU. 
 
 	\subsection{Mesures de métriques liées au cache de \gls{bind9}}
 
@@ -942,16 +942,15 @@
 	
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=0.9\textwidth]{Graphs/requests/resolver_qps.png}
-		\caption{Nombre de requêtes envoyées et reçues par le résolveur pour une résolution en fonction du \gls{qps}}
-		\label{fig:image2}
+		\includegraphics[width=0.9\textwidth]{Graphs/requests/resolver_packets_per_resolution.png}
+		\caption{Nombre de requêtes envoyées et reçues par le résolveur pour une résolution montrant une décroissance exponentielle avec le \gls{qps}}
+		\label{fig:resolver_packets_per_resolution}
 	\end{figure}
 	
-	Le fait que cela suive une décroissance exponentielle est étrange et doit être étudié. La manière d'étudier cela consiste à examiner la distribution des types de requêtes pour chaque valeur afin de voir quels types de requêtes sont moins présents lorsque le \gls{qps} augmente.\\
+	Cette forme de courbe suggère que plus le QPS est élevé, moins le résolveur doit envoyer (et recevoir) de requêtes. Cela s'explique par le processus de batching qui permet de traiter plusieurs requêtes pour le même nom de domaine simultanément.\\
 
 	Toutes les requêtes récursives ne concernent pas des adresses \gls{ip} : certaines sont des délégations vers un autre serveur autoritatif (NS), d'autres sont des alias vers un autre nom de domaine (CNAME). Il y a également des informations \gls{dnssec} telles que RRSIG, DNSKEY, DS, etc.
-	
-	Ainsi, pour voir la distribution de ces requêtes, voici un exemple pour une configuration.
+	Pour illustrer ces différents types de requêtes, voici un graphique montrant la distribution des types de requêtes envoyées et reçues par le resolver.
 	
 	\begin{figure}[H]
 		\centering
@@ -969,21 +968,21 @@
 	\begin{figure}[H]
 		\centering
 		\begin{minipage}{0.45\textwidth}
-			\includegraphics[width=\textwidth]{Graphs/requests/ttl_ecdf.png}
-			\caption{Distribution des\gls{ttl} pour des noms de domaine aléatoires}
+			\includegraphics[width=1\textwidth]{Graphs/requests/ttl_ecdf.png}
+			\caption{Distribution des \gls{ttl} pour des noms de domaine aléatoires}
+			\label{fig:ttl_ecdf}
 		\end{minipage}
 		\hfill
 		\begin{minipage}{0.45\textwidth}
-			\includegraphics[width=\textwidth]{Graphs/requests/tld_ttl_ecdf.png}
-			\caption{Distribution des\gls{ttl} pour les \gls{tld}}
+			\includegraphics[width=1\textwidth]{Graphs/requests/tld_ttl_ecdf.png}
+			\caption{Distribution des \gls{ttl} pour les \gls{tld}}
+			\label{fig:ttl_ecdf_tld}
 		\end{minipage}
 	\end{figure}
 	
-	Pour les noms de domaine aléatoires, la distribution est très variable, mais il y a des pics à 1h, 4h et 24h, cependant la majorité des domaines ont un\gls{ttl} de moins de 1 heure.
+	La distribution des noms de domaines aléatoire est inégale \ref{fig:ttl_ecdf}, on retrouve la majorité des noms de domaines en dessous de 1 heure, le reste des \gls{ttl} ne dépassent pas 12 heures.
 
-	Pour les \gls{tld}, des pics peuvent être observés à 24h et 48h car ce sont des valeurs rondes. On remarque également que les \gls{tld} ont généralement des\gls{ttl} plus élevés que les autres noms de domaine, ce qui est logique car ils auraient une charge plus importante étant donné qu'il n'y a pas beaucoup de \gls{tld}. Cela permet d'avoir une meilleure efficacité du cache pour les \gls{tld}, ce qui est important car ils sont souvent consultés.
-
-	% \subsubsection{Étude d'ablation}
+	Pour les \gls{tld} \ref{fig:ttl_ecdf_tld}, des pics peuvent être observés à 1h et 12h. Avec 25\% des \gls{ttl} de moins d'une heure, 25\% de une heure, 25\% entre 1h et 12h et 25\% de 12h. On remarque tout de même que les \gls{ttl} pour les \gls{tld} sont en moyenne plus élevés que pour les autres noms de domaine.
 	
 	\subsection{Étude de la complexité algorithmique de \gls{bind9}}
 	Les mesures de consommation énergétique du résolveur \gls{dns} sont très intéressantes, mais elles ne permettent pas de comprendre les raisons de cette consommation énergétique. Pour mieux comprendre les raisons de cette consommation énergétique, et en s'abstrayant du matériel, une solution consiste à étudier la complexité algorithmique de \gls{bind9}. En effet, la consommation énergétique d'un programme est liée à sa complexité algorithmique, des paramètres de consommations peuvent être déduits à partir des performances énergétiques des composants de la machine (CPU, RAM, etc.).
@@ -999,7 +998,7 @@
 
 	La figure \ref{fig:graph_static_complexity} présente les résultats de l'analyse statique de la complexité algorithmique de \gls{bind9} à travers six distributions complémentaires.
 
-	La première distribution représente les scénarios de pire cas (\textit{Worst Case Scenario}) estimés pour les fonctions du code source. Elle met en évidence que la majorité des fonctions présentent une complexité faible, tandis qu'un nombre limité de fonctions se distingue par une complexité potentiellement élevée. Cette répartition est caractéristique des grands projets logiciels, dans lesquels une faible proportion de fonctions concentre une part importante de la complexité algorithmique.
+	La première distribution représente les scénarios de pire cas (\textit{Worst Case Scenario}) estimés pour les fonctions du code source \cite{Bind9Code}. Elle met en évidence que la majorité des fonctions présentent une complexité faible, tandis qu'un nombre limité de fonctions se distingue par une complexité potentiellement élevée. Cette répartition est caractéristique des grands projets logiciels, dans lesquels une faible proportion de fonctions concentre une part importante de la complexité algorithmique.
 
 	La deuxième distribution concerne la complexité cyclomatique. Cette métrique mesure le nombre de chemins d'exécution indépendants à travers une fonction et constitue un indicateur de la complexité structurelle du code. Une valeur élevée traduit généralement la présence de nombreux branchements conditionnels, boucles ou mécanismes de gestion d'erreurs, rendant la fonction plus difficile à maintenir et à tester. Les résultats montrent que la majorité des fonctions de \gls{bind9} possèdent une complexité cyclomatique relativement faible, tandis qu'un nombre restreint de fonctions présente des valeurs significativement plus élevées.
 
@@ -1229,7 +1228,686 @@
 		\label{fig:dns_queue_model}
 	\end{figure}
 
-	Ce modèle repose sur notre compréhension actuelle du fonctionnement interne de \gls{bind9}. Bien qu'il ne prétende pas représenter l'intégralité des mécanismes mis en œuvre par le résolveur, il fournit un cadre méthodologique permettant d'analyser et d'estimer sa consommation énergétique. Les travaux futurs consisteront à mesurer les paramètres associés à chaque composante du modèle, puis à valider expérimentalement leur capacité à reproduire le comportement observé du résolveur dans différentes conditions de charge et de configuration.
+	Ce modèle repose sur notre compréhension actuelle du fonctionnement interne de \gls{bind9}. Bien qu'il ne prétende pas représenter l'intégralité des mécanismes mis en œuvre par le résolveur, il fournit un cadre méthodologique permettant d'analyser et d'estimer sa consommation énergétique. 
+
+	\noindent bind9 n'utilise pas de mémoire tampon pour mettre en attente des requêtes. Les seules attentes subies par les requêtes sont dues à des délais de traitement des requêtes
+	itératives (qu'on appelle ici récursives...). Une requête qui attend est donc {\it en service}. Comme toutes les requêtes sont traitées en même temps, on a donc un système composé
+	de sous-systèmes de serveurs en parallèle. 
+
+	\noindent bind9 utilise certaines variables pour limiter les requêtes traitées simultanément. 
+
+	\begin{table}[htbp]
+	\centering
+	\caption{Principaux paramètres numériques de BIND9 et valeurs par défaut}
+	\label{tab:bind9_defaults}
+	\begin{tabular}{l r l}
+	\hline
+	\textbf{Paramètre} & \textbf{Valeur} & \textbf{Rôle} \\
+	\hline
+	clients-per-query          & 10       & Clients par requête récursive \\
+	max-clients-per-query      & 100      & Limite maximale par requête récursive \\
+	recursive-clients          & 1000     & Requêtes récursives simultanées maximales \\
+	tcp-clients                & 150      & Connexions TCP DNS simultanées \\
+	transfers-in               & 10       & Transferts de zones entrants simultanés \\
+	transfers-out              & 10       & Transferts de zones sortants simultanés \\
+	transfers-per-ns           & 2        & Transferts simultanés par serveur distant \\
+	max-cache-ttl              & 604800   & TTL positif maximal en cache (s) \\
+	max-ncache-ttl             & 10800    & TTL négatif maximal en cache (s) \\
+	min-cache-ttl              & 0        & TTL minimal imposé (s) \\
+	max-recursion-depth        & 7        & Profondeur maximale de récursion \\
+	max-recursion-queries      & 75       & Nombre maximal de requêtes itératives \\
+	edns-udp-size              & 1232     & Taille UDP EDNS annoncée (octets) \\
+	max-udp-size               & 4096     & Taille UDP maximale (octets) \\
+	tcp-listen-queue           & 10       & File d'attente TCP \\
+	heartbeat-interval         & 60       & Intervalle heartbeat (s) \\
+	interface-interval         & 60       & Vérification des interfaces (s) \\
+	statistics-interval        & 60       & Intervalle statistiques (s) \\
+	lame-ttl                   & 600      & Durée de cache des réponses lame (s) \\
+	servfail-ttl               & 1        & Durée de cache SERVFAIL (s) \\
+	\hline
+	\end{tabular}
+	\end{table}
+
+	\vspace{0.25cm}
+	\noindent Pour notre étude énergétique, les deux seules paramètres impactants sont \verb+clients-per-query+ et \verb+recursive-clients+. La première a une valeur par défaut de 10
+	mais est adaptée dynamiquement. Elle est donc estimée dans la suite de ce document. La seconde est fixe, à 1000 par défaut. \verb+clients-per-query+ limite le nombre de requêtes
+	correspondant à une même demande client. Puisqu'il y a nécessairement plusieurs noms résolus simultanément, il y a donc plusieurs blocs de \verb+clients-per-query+ serveurs.
+	Notons qu'il faudrait revoir le débit entrant dans chacun de ces blocs et fixer les taux de services en conséquence mais comme n'intervient à ce niveau que la charge en Erlang
+	sur chacun de ces blocs, la distinction est faite indirectement lors de l'estimation desdits taux de services.\\
+
+
+	\noindent On a déjà modélisé le système par un réseau de files d'attente \ref{fig:dns_queue_model}. Pour proposer une solution approchée, on considère un autre réseau, présenté figure~\ref{modeleApproche}.
+	La boucle réseau rendant compte des recherches récursives est modélisée ici par un système à perte sans boucle mais dont le débit entrant est multiplié par un facteur $l$
+	correspondant à $1/(1-p)$ selon la notation du réseau initial. Le système est représenté par deux étages successifs.
+	Le premier étage correspond au traitement (réception) initial des requêtes. Il est composé de plusieurs serveurs en parallèle modélisés par des
+	files $M/M/C_a/C_a$. 
+	Une requête arrivant lorsque tous les serveurs du premier étage sont occupés est rejetée et produit un "serveur fail". Elle n'est donc pas envoyée vers le second étage.
+	Le second étage est également modélisé par une file $M/M/C_r/C_r$ où $C_r$ est fixé à 1000 dans l'estimation. La structure générale est représentée figure~\ref{modeleApproche}.
+
+
+	\begin{center}
+
+		\begin{figure}[htbp]
+	\centering
+			\scalebox{0.5}{\input{modelisation/modeleApproche.latex}}
+	\caption{Modèle approché de bind9}
+	\label{modeleApproche}
+	\end{figure}
+	\end{center}
+
+
+	\noindent Le premier étage représente les ressources principales de traitement. Le second étage représente les requêtes récursives faites par bind9 sur d'autres serveurs.
+
+
+
+
+	\subsubsection{Prise en compte du cache}
+
+	\paragraph{Cache sans rafraichissement.} Le système étudié reçoit des requêtes DNS avec un débit moyen
+	$\lambda$ (requêtes par seconde). Les arrivées sont supposées suivre
+	un processus de Poisson.
+	Chaque information stockée dans le cache possède une durée de vie
+	(Time To Live, TTL) constante notée $T$.
+	Une hypothèse importante du modèle est qu'une requête trouvant une
+	information valide dans le cache ne provoque pas de rafraîchissement
+	de cette information. Le TTL continue donc à décroître indépendamment
+	des requêtes reçues.
+	Sous cette hypothèse, la probabilité qu'une information ne soit pas
+	disponible dans le cache est modélisée par :
+
+
+	\[
+	\boxed{
+	P_{\rm hors~cache}=
+	\frac{1}{1+\lambda T}
+	}
+	\]
+
+
+
+
+	\noindent On considère une donnée soumise à un processus d'arrivée de requêtes
+	poissonnien de taux $\lambda$. Les intervalles entre deux arrivées
+	successives sont des variables aléatoires exponentielles :
+
+	\begin{eqnarray}
+	X &\sim& \mathrm{Exp}(\lambda),\\
+	\mathbb{E}[X] &=& \frac{1}{\lambda}.
+	\end{eqnarray}
+
+	\noindent On suppose que le TTL de la donnée est constant et égal à $T$, et
+	qu'une lecture de la donnée en cache ne provoque aucun rafraîchissement
+	du TTL.  Après une requête qui trouve la donnée absente, celle-ci est chargée dans
+	le cache et y reste pendant une durée déterministe $T$. À l'expiration
+	du TTL, la donnée est supprimée. Elle reste alors absente jusqu'à la
+	prochaine requête.
+	Soit $A$ le temps d'attente entre l'instant d'expiration du TTL et la
+	prochaine arrivée d'une requête. Il faut montrer que :
+
+	\begin{eqnarray}
+	A &\sim& \mathrm{Exp}(\lambda).
+	\end{eqnarray}
+
+	\noindent En effet, en utilisant la propriété sans mémoire de la loi exponentielle :
+
+	\begin{eqnarray}
+	\Pr(A>t)
+	&=&
+	\Pr(X>T+t \mid X>T)\\[1ex]
+	&=&
+	\frac{\Pr(X>T+t)}{\Pr(X>T)}\\[1ex]
+	&=&
+	\frac{e^{-\lambda(T+t)}}{e^{-\lambda T}}\\[1ex]
+	&=&
+	e^{-\lambda t}.
+	\end{eqnarray}
+
+	\noindent On retrouve donc la fonction de survie d'une loi exponentielle de
+	paramètre $\lambda$, d'où :
+
+	\begin{eqnarray}
+	A &\sim& \mathrm{Exp}(\lambda),\\
+	\mathbb{E}[A] &=& \frac{1}{\lambda}.
+	\end{eqnarray}
+
+	\noindent On définit un cycle de renouvellement comme l'intervalle entre deux
+	chargements successifs de la donnée dans le cache. Un cycle est composé
+	de deux phases :\\
+
+	\begin{itemize}
+		\item une phase de présence en cache de durée $T$ ;
+		\item une phase d'absence en cache de durée $A$.\\
+	\end{itemize}
+
+	\noindent La durée moyenne d'un cycle est donc :
+
+	\begin{eqnarray}
+	\mathbb{E}[C]
+	&=&
+	\mathbb{E}[T+A]\\[1ex]
+	&=&
+	T+\frac{1}{\lambda}.
+	\end{eqnarray}
+
+	\noindent Par le théorème de renouvellement, la probabilité stationnaire
+	d'observer la donnée absente du cache est égale au rapport entre la durée
+	moyenne passée dans l'état absent et la durée moyenne d'un cycle :
+
+	\begin{eqnarray}
+	P_{\mathrm{miss}}
+	&=&
+	\frac{\mathbb{E}[A]}{\mathbb{E}[C]}\\[1ex]
+	&=&
+	\frac{\frac{1}{\lambda}}
+	{T+\frac{1}{\lambda}}\\[1ex]
+	&=&
+	\frac{1}{1+\lambda T}.
+	\end{eqnarray}
+
+	\noindent Ainsi :
+
+	\begin{eqnarray}
+	P_{\mathrm{miss}}
+	&=&
+	\frac{1}{1+\lambda T}
+	\end{eqnarray}
+
+	\noindent et, par complémentarité :
+
+	\begin{eqnarray}
+	P_{\mathrm{hit}}
+	&=&
+	1-P_{\mathrm{miss}}\\[1ex]
+	&=&
+	\frac{\lambda T}{1+\lambda T}.
+	\end{eqnarray}
+
+	\noindent Le débit transmis au second étage est donc réduit d'un facteur :
+
+	\[
+	\frac{1}{1+\lambda T}
+	\]
+
+
+	\paragraph{Cas avec rafraîchissement du cache.}
+
+
+	\noindent Une autre hypothèse possible consiste à considérer qu'une requête
+	arrivant sur une entrée déjà présente dans le cache renouvelle son
+	TTL.
+	Dans ce cas, l'événement correspondant à une absence totale de requête
+	pendant une durée $T$ suit directement une loi de Poisson :
+
+
+	\[
+	P(N(T)=0)=e^{-\lambda T}
+	\]
+
+
+	\noindent La probabilité de défaut deviendrait alors :
+
+
+	\[
+	\boxed{
+	P_{\rm hors~cache}=e^{-\lambda T}
+	}
+	\]
+
+
+	\noindent Le comportement du modèle serait alors différent, notamment pour les
+	fortes charges.\\
+
+
+	\noindent Dans la suite, on utilise uniquement l'hypothèse sans rafraîchissement
+	avec :
+
+	\[
+	P_{\rm hors~cache}=\frac{1}{1+\lambda T}
+	\]
+
+
+	\subsubsection{Premier étage : modèle Erlang-B}
+
+
+	\noindent Pour un protocole donné $i$ (UDP, DoT ou DoH), le premier étage est
+	caractérisé par :
+
+	\begin{itemize}
+	\item $C_{a,i}$ : nombre de serveurs disponibles au premier étage,
+	\item $\mu_{a,i}$ : taux de service individuel du premier étage,
+	\item $\lambda$ : débit de requêtes arrivantes.
+	\end{itemize}
+
+
+	\noindent Le premier étage est une file :
+
+	\[
+	M/M/C_{a,i}/C_{a,i}
+	\]
+
+
+	\noindent Le taux d'occupation est :
+
+	\[
+	A_{a,i}=\frac{\lambda}{\mu_{a,i}}
+	\]
+
+
+	\noindent La probabilité de rejet est donnée par la formule d'Erlang-B :
+
+
+	\[
+	B(C,A)=
+	\frac{A^C/C!}
+	{\displaystyle\sum_{k=0}^{C}A^k/k!}
+	\]
+
+
+	\noindent Le débit effectivement traité par le premier étage vaut donc :
+
+	\[
+	\lambda_{a,i}
+	=
+	\lambda
+	\left(
+	1-
+	B
+	\left(
+	C_{a,i},
+	\frac{\lambda}{\mu_{a,i}}
+	\right)
+	\right)
+	\]
+
+
+	\noindent Ce débit représente la quantité de requêtes effectivement traitées
+	par les ressources du premier étage, par unité de temps.
+
+
+	\subsubsection{Second étage}
+
+
+	\noindent Les requêtes traitées par le premier étage sont envoyées vers le second.
+	Le modèle introduit un facteur $l$ représentant l'amplification du
+	trafic entre les deux étages.
+	Avec la modélisation du cache présentée précédemment, le débit arrivant
+	au second étage est :
+
+	\[
+	\lambda_{r,i}
+	=
+	\frac{
+	l\lambda_{a,i}
+	}
+	{1+\lambda T}
+	\]
+
+
+	\noindent Le second étage est également modélisé par une file $M/M/C_r/C_r$ avec $C_r=1000$ et un taux de service commun $\mu_r$. La probabilité de rejet du second étage vaut:
+
+	\[
+	B_r=
+	B
+	\left(
+	C_r,
+	\frac{\lambda_{r,i}}{\mu_r}
+	\right).
+	\]
+
+
+	\subsubsection{Modèle énergétique}
+
+
+	\noindent Le modèle énergétique utilisé ne cherche pas à calculer une énergie
+	accumulée mais une puissance instantanée.
+	Ainsi, le coût énergétique est supposé proportionnel au débit de
+	requêtes traité par chaque étage. Un modèle proportionnel au nombre moyen de clients dans une file correspondrait à une quantité d'énergie (en Joules), alors que la grandeur mesurée
+	ici est une puissance (Watt). Le coût du premier étage est donc :
+
+	\[
+	P_{a,i}=a_{a,i}\lambda_{a,i}
+	\]
+
+	\noindent Le coût du second étage est :
+
+
+	\[
+	P_r=
+	a_r\lambda_{r,i}(1-B_r)
+	\]
+
+
+	\noindent Le modèle complet devient alors :
+
+
+	\begin{align}
+	P_i(\lambda)
+	&=
+	a_{a,i}\lambda
+	\left(
+	1-
+	B\left(C_{a,i},\frac{\lambda}{\mu_{a,i}}\right)
+	\right)
+	\nonumber\\
+	&\quad+
+	a_r
+	\frac{
+	l\lambda
+	\left(
+	1-
+	B\left(C_{a,i},\frac{\lambda}{\mu_{a,i}}\right)
+	\right)
+	}
+	{1+\lambda T}
+	\quad\times
+	\left[
+	1-
+	B\left(
+	C_r,
+	\frac{
+	l\lambda
+	(1-B(C_{a,i},\lambda/\mu_{a,i}))
+	}
+	{\mu_r(1+\lambda T)}
+	\right)
+	\right]
+	+b .
+	\end{align}
+
+
+
+	\noindent Cette expression est utilisée pour chacun des trois protocoles :
+
+	\[
+	i\in\{UDP,DoT,DoH\}
+	\]
+
+
+	\noindent Les paramètres $C_r$, $\mu_r$, $l$, $T$, $a_r$ et $b$ sont communs,
+	alors que $a_{a,i}$, $C_{a,i}$ et $\mu_{a,i}$ dépendent du protocole.
+
+
+
+
+	\subsection{Méthode d'estimation des paramètres}
+
+
+	\noindent Les paramètres sont obtenus par minimisation d'une erreur quadratique
+	entre les mesures expérimentales et le modèle.
+	La fonction objectif utilisée est :
+
+
+	\[
+	J=
+	\frac1{6N}
+	\sum_{j=1}^{N}
+	\sum_i
+	\left(
+	P_i(q_j)-P_{i,j}^{mes}
+	\right)^2
+	\]
+
+
+	où :\\
+
+	\begin{itemize}
+	\item $N$ est le nombre de points expérimentaux,
+	\item $q_j$ est le débit mesuré,
+	\item $P_{i,j}^{mes}$ est la puissance mesurée,
+	\item $P_i(q_j)$ est la prédiction du modèle.\\
+	\end{itemize}
+
+
+	\noindent L'optimisation est réalisée avec l'algorithme de Nelder-Mead.
+	Cette méthode ne nécessite pas de calcul de gradient et est adaptée
+	aux modèles comportant des paramètres discrets comme le nombre de
+	serveurs $C_a$.\\
+
+
+	\noindent Les paramètres obtenus sont les suivants (cf. tables~\ref{param1} et \ref{param2}).
+	L'erreur finale obtenue est :
+	\[
+	\boxed{
+	J=5.641782617397\times10^{-2}
+	}
+	\]
+
+
+
+	\begin{table}[h]
+	\centering
+	\begin{tabular}{lcc}
+	\toprule
+	Paramètre & Valeur & Description\\
+	\midrule
+	$l$ & 1.8092142062 & amplification trafic\\
+	$T$ & 463.8215739360 & TTL cache\\
+	$b$ & 31.4794837097 & offset énergétique\\
+	$a_r$ & 0.0154433308 & coût second étage\\
+	$\mu_r$ & 55.6251558161 & service second étage\\
+	$C_r$ & 1000 & fixé\\
+	\bottomrule
+	\end{tabular}
+	\caption{Paramètres communs estimés}
+		\label{param1}
+	\end{table}
+
+
+
+	\begin{table}[h]
+	\centering
+	\begin{tabular}{lccc}
+	\toprule
+	Protocole & $a_a$ & $C_a$ & $\mu_a$\\
+	\midrule
+	UDP
+	&0.0128657655&13&44.3397529922\\
+
+	DoT
+	&0.0225331164&20&22.8950701918\\
+
+	DoH
+	&0.0204781190&15&33.5475106740\\
+	\bottomrule
+	\end{tabular}
+
+	\caption{Paramètres spécifiques aux premiers étages}
+		\label{param2}
+	\end{table}
+
+	\subsection{Validation expérimentale}
+	\subsubsection{Validation à faible charge}
+
+
+	\noindent Le modèle estimé est comparé aux mesures expérimentales fournies pour
+	les trois protocoles DNS $UDP, DoT, DoH$. Les données expérimentales contiennent pour chaque débit $q$ deux
+	valeurs :\\
+
+	\begin{itemize}
+	\item une mesure sans utilisation du cache,
+	\item une mesure avec cache.\\
+	\end{itemize}
+
+
+	\noindent Les paramètres estimés précédemment sont utilisés sans modification.
+	La première comparaison est réalisée sur l'intervalle correspondant
+	aux mesures disponibles $[0\leq q\leq550]$. Elle est donnée figure~\ref{comparaison_0_550}.
+
+	\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.85\linewidth]{modelisation/comparaison_0_550.pdf}
+	\caption{
+	Comparaison modèle-mesures dans la plage expérimentale.
+	}
+		\label{comparaison_0_550}
+	\end{figure}
+
+
+
+	\subsubsection{Extrapolation à forte charge}
+	\noindent Afin d'étudier le comportement du modèle lorsque le système est
+	fortement chargé, une seconde représentation est effectuée jusqu'à $[0\leq q\leq7000]$.
+	Le même jeu de paramètres est conservé. Elle est donnée figure~\ref{comparaison_0_7000}.
+
+
+
+
+
+	\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.85\linewidth]{modelisation/comparaison_0_7000.pdf}
+	\caption{
+	Extrapolation du modèle jusqu'à une charge élevée.
+	}
+		\label{comparaison_0_7000}
+	\end{figure}
+
+
+
+	\subsubsection{Influence de l'hypothèse de cache}
+
+
+	\noindent Le modèle utilisé repose sur :
+	\[
+	P_{\rm hors~cache}
+	=
+	\frac{1}{1+\lambda T}
+	\]
+
+
+	\noindent Cette hypothèse correspond à un cache avec TTL fixe et sans
+	rafraîchissement lors d'un accès.
+	Une autre possibilité consisterait à considérer qu'une arrivée de requête renouvelle systématiquement
+	la durée de vie de l'entrée si elle est déjà présente.
+	Le taux de défaut deviendrait alors :
+
+	\[
+	P_{\rm hors~cache}=e^{-\lambda T}
+	\]
+
+
+	\noindent Dans ce cas, le débit transmis au second étage serait :
+
+
+	\[
+	\lambda_r
+	=
+	l\lambda_a e^{-\lambda T}
+	\]
+
+
+	\noindent et non plus :
+
+
+	\[
+	\lambda_r
+	=
+	\frac{l\lambda_a}{1+\lambda T}
+	\]
+
+
+	\noindent Les courbes obtenues avec cette seconde hypothèse nécessiteraient donc
+	une nouvelle estimation complète des paramètres.
+	Les valeurs :
+
+	\[
+	l,T,a_a,a_r,\mu_a,\mu_r
+	\]
+
+	\noindent ne peuvent pas être conservées car elles rendent comptent de la
+	dynamique spécifique du cache sans rafraîchissement à chaque arrivée.
+
+
+	\subsubsection{Limites du modèle}
+
+
+	\noindent Deux phénomènes physiques importants ne sont actuellement pas pris en
+	compte.
+
+
+	\paragraph{Coût énergétique du cache.}
+
+
+	\noindent Le modèle suppose que le cache est gratuit.
+	La puissance totale est donc écrite :
+
+	\[
+	P=P_{\rm traitement}
+	\]
+
+
+	\noindent En réalité, un cache possède un coût propre :\\
+
+	\begin{itemize}
+	\item consommation mémoire,
+	\item accès mémoire,
+	\item gestion des entrées,
+	\item expiration des TTL,
+	\item synchronisation.\\
+	\end{itemize}
+
+
+	\noindent Une extension possible serait d'ajouter un terme :
+
+	\[
+	P_{\rm cache}=a_c N_c
+	\]
+
+
+	\noindent où $N_c$ représente le nombre moyen d'entrées présentes dans le cache.
+	Le modèle deviendrait alors :
+
+
+	\[
+	P=
+	P_{\rm traitement}
+	+
+	P_{\rm cache}
+	\]
+
+
+	\paragraph{Arrivée permanente de nouveaux noms de domaine.}
+
+
+	\noindent Le modèle actuel suppose implicitement que les requêtes concernent un
+	ensemble stable de noms déjà connus.
+	Or un système DNS réel reçoit continuellement de nouveaux noms :
+
+	\[
+	\lambda=
+	\lambda_{\rm connus}
+	+
+	\lambda_{\rm nouveaux}
+	\]
+
+
+	\noindent Les nouveaux noms ont une probabilité élevée de provoquer un défaut de
+	cache et modifient donc la dynamique du second étage. Une modélisation plus complète devrait introduire :\\
+
+	\begin{itemize}
+	\item une distribution des popularités des noms,
+	\item une dynamique de remplissage du cache,
+	\item un renouvellement des objets stockés.\\
+	\end{itemize}
+
+
+	\noindent Une loi de type Zipf pourrait par exemple être utilisée pour représenter
+	la distribution des fréquences de requêtes.
+
+
+	\subsection{Conclusion}
+
+
+	Le modèle proposé permet de relier la consommation énergétique d'un
+	système DNS à sa charge, à ses capacités de traitement et à son
+	mécanisme de cache.
+	L'utilisation de files Erlang-B permet de représenter les phénomènes de
+	saturation et de rejet.
+	Les paramètres obtenus reproduisent correctement les mesures
+	expérimentales dans la plage étudiée.
+	Des extensions futures devront cependant intégrer le coût énergétique
+	du cache et la dynamique réelle d'apparition des nouveaux noms de
+	domaine.
 
 
 	\chapter*{Conclusion}
