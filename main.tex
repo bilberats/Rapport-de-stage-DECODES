@@ -987,55 +987,43 @@
 	\subsection{Étude de la complexité algorithmique de \gls{bind9}}
 	Les mesures de consommation énergétique du résolveur \gls{dns} sont très intéressantes, mais elles ne permettent pas de comprendre les raisons de cette consommation énergétique. Pour mieux comprendre les raisons de cette consommation énergétique, et en s'abstrayant du matériel, une solution consiste à étudier la complexité algorithmique de \gls{bind9}. En effet, la consommation énergétique d'un programme est liée à sa complexité algorithmique, des paramètres de consommations peuvent être déduits à partir des performances énergétiques des composants de la machine (CPU, RAM, etc.).
 
-	L'étude de la complexité algorithmique de \gls{bind9} s'est faite en deux parties, d'abord une étude de la complexité algorithmique statique de chaque fonction de \gls{bind9} grâce à un outil développé en python par Rosario Patanè, un de mes collègues et membre du projet \gls{decodes}. La seconde partie de l'étude de la complexité algorithmique de \gls{bind9} s'est faite de manière dynamique, en mesurant le nombre d'appels par fonction de \gls{bind9} pour différentes configurations de mesure. Cela a permis d'avoir une idée de la complexité algorithmique réelle de \gls{bind9} pour différentes configurations, et ainsi d'avoir une meilleure compréhension des raisons de la consommation énergétique du résolveur \gls{dns}.
+	L'étude de la complexité algorithmique de \gls{bind9} s'est faite en deux parties, d'abord une étude de la complexité algorithmique statique de chaque fonction du code source de \gls{bind9} \cite{Bind9Code} grâce à un outil développé en python par Rosario Patanè, un de mes collègues et membre du projet \gls{decodes}. La seconde partie de l'étude de la complexité algorithmique de \gls{bind9} s'est faite de manière dynamique, en mesurant le nombre d'appels par fonction de \gls{bind9} pour différentes configurations de mesure. Cela a permis d'avoir une idée de la complexité algorithmique réelle de \gls{bind9} pour différentes configurations, et ainsi d'avoir une meilleure compréhension des raisons de la consommation énergétique du résolveur \gls{dns}.
 
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.9\textwidth]{Graphs/bind9_complexity_distribution.png}
-		\caption{Graphiques de l'analyse de la complexité algorithmique statique de \gls{bind9}}
+		\caption{Distribution inégale de la complexité algorithmique de \gls{bind9} montrant une majorité de fonctions avec une faible complexité et un certain nombre de fonction récursives}
 		\label{fig:graph_static_complexity}
 	\end{figure}
 
-	La figure \ref{fig:graph_static_complexity} présente les résultats de l'analyse statique de la complexité algorithmique de \gls{bind9} à travers six distributions complémentaires.
+	La figure présente la distribution des scénarios de pire cas (\textit{Worst Case Scenario}) estimés pour les fonctions du code source de \gls{bind9} \cite{Bind9Code}. On observe qu'une grande majorité des fonctions possède une faible complexité algorithmique, tandis qu'un nombre limité de fonctions présente des complexités significativement plus élevées. Cette répartition est caractéristique des grands projets logiciels, où une faible proportion de fonctions concentre l'essentiel de la complexité algorithmique.
 
-	La première distribution représente les scénarios de pire cas (\textit{Worst Case Scenario}) estimés pour les fonctions du code source \cite{Bind9Code}. Elle met en évidence que la majorité des fonctions présentent une complexité faible, tandis qu'un nombre limité de fonctions se distingue par une complexité potentiellement élevée. Cette répartition est caractéristique des grands projets logiciels, dans lesquels une faible proportion de fonctions concentre une part importante de la complexité algorithmique.
+	Outre la complexité algorithmique, l'outil d'analyse fournit également plusieurs variables supplémentaires, notamment la complexité cyclomatique, le nombre de lignes de code, le nombre de jetons (\textit{tokens}), le nombre d'appels entrants (\textit{Call Count}) ainsi qu'un score de confiance associé aux estimations. Bien que ces informations soient disponibles et puissent être exploitées dans certaines analyses, elles ne sont pas présentées en détail dans ce rapport, leur intérêt étant plus limité au regard des objectifs de cette étude.
 
-	La deuxième distribution concerne la complexité cyclomatique. Cette métrique mesure le nombre de chemins d'exécution indépendants à travers une fonction et constitue un indicateur de la complexité structurelle du code. Une valeur élevée traduit généralement la présence de nombreux branchements conditionnels, boucles ou mécanismes de gestion d'erreurs, rendant la fonction plus difficile à maintenir et à tester. Les résultats montrent que la majorité des fonctions de \gls{bind9} possèdent une complexité cyclomatique relativement faible, tandis qu'un nombre restreint de fonctions présente des valeurs significativement plus élevées.
+	L'analyse statique permet également de reconstruire le graphe d'appels des fonctions de \gls{bind9}. Dans cette représentation, chaque nœud correspond à une fonction et chaque arête représente une relation d'appel identifiée dans le code source. Il est ainsi possible d'enrichir ce graphe avec les métriques de complexité calculées pour chaque fonction, offrant une vision globale de l'architecture logicielle et de la répartition de la complexité au sein du projet.
 
-	Les distributions du nombre de lignes de code et du nombre de jetons (\textit{tokens}) permettent d'évaluer la taille des fonctions selon deux perspectives complémentaires. Alors que les lignes de code donnent une estimation de la longueur des fonctions, le nombre de jetons fournit une mesure plus précise de leur richesse syntaxique. Dans les deux cas, les distributions mettent en évidence une forte concentration de petites fonctions et un nombre limité de fonctions particulièrement volumineuses.
-
-	La distribution du nombre d'appels entrants (\textit{Call Count}) indique combien de fonctions différentes peuvent invoquer une fonction donnée. Cette métrique permet d'identifier les fonctions centrales dans l'architecture logicielle. Les résultats montrent que quelques fonctions jouent un rôle structurant au sein de \gls{bind9} et sont réutilisées par de nombreuses autres fonctions.
-
-	Enfin, la distribution du score de confiance reflète le niveau de fiabilité attribué aux estimations de complexité produites par l'outil d'analyse statique. Les valeurs observées permettent d'évaluer la robustesse des résultats et d'identifier les estimations nécessitant une interprétation plus prudente.
-
-	\begin{figure}[H]
-		\centering
-		\includegraphics[width=0.9\textwidth]{Graphs/Graph_calls_static.png}
-		\caption{Graphe des relations d'appels entre les fonctions de \gls{bind9} avec leur complexités algorithmiques statiques}
-		\label{fig:callgraph_static_complexity}
-	\end{figure}
-
-	La figure \ref{fig:callgraph_static_complexity} représente le graphe des relations d'appels entre les fonctions de \gls{bind9}, construit à partir de l'analyse statique du code source et enrichi par les métriques de complexité algorithmique associées à chaque fonction. Chaque nœud correspond à une fonction et chaque arête représente une relation d'appel identifiée dans le code. Cette représentation permet de visualiser simultanément la structure des dépendances entre fonctions et la répartition de la complexité au sein du logiciel. Les fonctions fortement connectées apparaissent comme des éléments centraux de l'architecture, tandis que les fonctions présentant une complexité algorithmique élevée peuvent être identifiées comme des zones potentiellement plus difficiles à maintenir, tester ou analyser. Ce graphe fournit ainsi une vue d'ensemble de l'organisation statique de \gls{bind9} et de la manière dont la complexité est distribuée dans son code source.
+	Cette représentation n'est toutefois pas présentée dans ce rapport, le graphe d'appels de \gls{bind9} comportant près de 10,000 fonctions. Une telle visualisation est donc trop dense pour être exploitable à l'échelle du logiciel complet. Le principe de cette reconstruction est néanmoins illustré dans la section suivante à l'aide d'un exemple plus restreint et plus lisible.
 
 	La suite des graphiques se concentre sur l'analyse dynamique de la complexité algorithmique de \gls{bind9}.
 
-	\begin{figure}[H]
+	\begin{figure}[h]
 		\centering
 		\includegraphics[width=0.9\textwidth]{Graphs/bind_complexity_callgraph.png}
-		\caption{Graph d'appels des 55 fonctions les plus appelées de \gls{bind9} avec leur complexité algorithmique statique}
+		\caption{Graphe d'appels des 52 fonctions les plus appelées de \gls{bind9}, enrichi par leur complexité algorithmique statique.}
 		\label{fig:graph_appels_functions}
 	\end{figure}
 
-	La figure \ref{fig:graph_appels_functions} se concentre sur les 55 fonctions recevant le plus grand nombre d'appels au sein de \gls{bind9}. Cette vue simplifiée facilite l'identification des fonctions critiques du système en supprimant les fonctions périphériques moins sollicitées. L'analyse met en évidence un nombre réduit de fonctions particulièrement centrales qui constituent les principaux points de passage lors de l'exécution du résolveur. Ces fonctions représentent des candidates privilégiées pour les analyses de performance et de consommation énergétique.
+	La figure \ref{fig:graph_appels_functions} illustre un extrait du graphe d'appels de \gls{bind9}, limité aux 52 fonctions recevant le plus grand nombre d'appels. Cette représentation permet d'obtenir une vue plus lisible de la structure des dépendances entre les fonctions tout en conservant les principaux éléments de l'architecture du logiciel. Les métriques de complexité algorithmique statique associées à chaque fonction permettent d'identifier simultanément les fonctions les plus centrales et celles présentant une complexité plus élevée. Ces fonctions constituent des candidates pertinentes pour des analyses plus approfondies, notamment en matière de performances et de consommation énergétique.
 
-	\begin{figure}[H]
+
+	\begin{figure}[h]
 		\centering
 		\includegraphics[width=0.9\textwidth]{Graphs/uftrace_selected.png}
-		\caption{Nombre d'appels des 10 fonctions les plus appelées de \gls{bind9} en fonction du \gls{qps} pour \gls{doh} avec utilisation du cache}
+		\caption{Nombre d'appels de trois fonctions de \gls{bind9} sélectionnées en fonction du \gls{qps} montrant les trois types de comportements observés}
 		\label{fig:fonctions_variant_avec_qps}
 	\end{figure}
 	
-	La figure \ref{fig:fonctions_variant_avec_qps} présente l'évolution du nombre d'appels des fonctions les plus sollicitées de \gls{bind9} en fonction du gls{qps} dans le cas du protocole \gls{udp} avec utilisation du cache. Une augmentation linéaire du nombre d'appels est attendue lorsque la charge augmente, traduisant la proportionnalité entre le trafic traité et l'activité interne du résolveur. Les différences observées entre les fonctions reflètent leur rôle respectif dans la pile de traitement \gls{udp}. Il n'y a aucune différence entre les mesures faites avec et sans cache et entre les différents protocoles, la différence doit se voir dans les temps d'exécution de ces fonctions cependant.
+	La figure \ref{fig:fonctions_variant_avec_qps} présente l'évolution du nombre d'appels des fonctions les plus sollicitées de \gls{bind9} en fonction du \gls{qps} dans le cas du protocole \gls{udp} avec utilisation du cache. Une augmentation linéaire du nombre d'appels est attendue lorsque la charge augmente, traduisant la proportionnalité entre le trafic traité et l'activité interne du résolveur. Les différences observées entre les fonctions reflètent leur rôle respectif dans la pile de traitement \gls{udp}. Il n'y a aucune différence entre les mesures faites avec et sans cache et entre les différents protocoles, la différence doit se voir dans les temps d'exécution de ces fonctions cependant.
 	
 	\begin{table}[H]
 		\centering
@@ -1048,7 +1036,7 @@
 		300 & 179\,724 & 179\,726  & 359\,448 \\
 		\hline
 		\end{tabular}
-		\caption{Nombre d'appels des fonctions les plus appelées de \gls{bind9} en fonction du débit de requêtes (\gls{qps}) pour une durée de mesure de 10 minutes.}
+		\caption{Nombre d'appels des fonctions les plus appelées de \gls{bind9} en fonction du \gls{qps} pour une durée de mesure de 10 minutes.}
 		\label{tab:function_calls_qps}
 	\end{table}
 
@@ -1060,7 +1048,7 @@
 		\label{fig:executions_top_22}
 	\end{figure}
 
-	On remarque que 3 fonctions sont particulièrement sollicitées, à savoir \texttt{dns\_acl\_allowed}, \texttt{dns\_view\_attach} et \texttt{dns\_tsigkey\_identity}. Ces fonctions représentent à elle seule plus de 97\% des appels effectués par \gls{bind9}. Elles semblent être appelées au moins une fois par requête. Voici une brève description de ces fonctions ainsi que de la fonction \texttt{cfg\_tuple\_get} qui est également très sollicitée, mais dans une moindre mesure.
+	Avec la figure \ref{fig:executions_top_22}, on remarque que 3 fonctions sont particulièrement sollicitées, à savoir \texttt{dns\_acl\_allowed}, \texttt{dns\_view\_attach} et \texttt{dns\_tsigkey\_identity}. Ces fonctions représentent à elle seule plus de 97\% des appels effectués par \gls{bind9}. Elles semblent être appelées au moins une fois par requête. Voici une brève description de ces fonctions ainsi que de la fonction \texttt{cfg\_tuple\_get} qui est également très sollicitée, mais dans une moindre mesure.
 
 	\begin{itemize}
 		\item \texttt{dns\_acl\_allowed} \textbf{(O(1))} : vérifie si une requête ou un client est autorisé selon les règles de contrôle d'accès (ACL) configurées dans \gls{bind9}.
@@ -1121,15 +1109,15 @@
 	\end{figure}
 
 
-	L'analyse de cette matrice met en évidence que les variables les plus fortement corrélées avec la consommation énergétique sont principalement liées à l'utilisation du processeur (CPU) ainsi qu'au débit de requêtes (\gls{qps}). Cette observation est cohérente avec le fonctionnement interne d'un résolveur \gls{dns}, dont la charge de travail est essentiellement pilotée par le nombre de requêtes traitées et le coût de traitement associé à chaque requête.
+	L'analyse de cette matrice met en évidence que les variables les plus fortement corrélées avec la consommation énergétique sont principalement liées à l'utilisation du processeur (CPU) ainsi qu'au \gls{qps}. Cette observation est cohérente avec le fonctionnement interne d'un résolveur \gls{dns}, dont la charge de travail est essentiellement pilotée par le nombre de requêtes traitées et le coût de traitement associé à chaque requête.
 
 	Les métriques CPU reflètent directement l'intensité du calcul nécessaire au traitement des requêtes, notamment la gestion des threads, les opérations de résolution récursive et les mécanismes de cache. De son côté, le \gls{qps} représente une mesure directe de la charge entrante, influençant linéairement ou non linéairement l'activité globale du système.
 
 	À l'inverse, certaines métriques telles que les accès disques ou certaines statistiques réseau présentent une corrélation plus faible avec la consommation énergétique dans les conditions expérimentales étudiées. Cela suggère que, pour les configurations testées, la consommation du résolveur est principalement dominée par des facteurs de calcul plutôt que par des goulots d'étranglement d'entrée/sortie.
 
-	Ces résultats confirment que les variables liées au CPU et au débit de requêtes constituent des indicateurs essentiels pour la modélisation de la consommation énergétique du résolveur \gls{dns}.
+	Ces résultats confirment que les variables liées au CPU et au \gls{qps} constituent des indicateurs essentiels pour la modélisation de la consommation énergétique du résolveur \gls{dns}.
 
-	Cette analyse de corrélation met en évidence les variables les plus fortement liées à la consommation énergétique du résolveur \gls{dns}, en particulier celles associées à l'activité CPU et au débit de requêtes (\gls{qps}). Sur la base de ces observations, plusieurs modèles de machine learning sont ensuite entraînés afin de quantifier et exploiter ces relations pour la prédiction de la consommation énergétique.
+	Cette analyse de corrélation met en évidence les variables les plus fortement liées à la consommation énergétique du résolveur \gls{dns}, en particulier celles associées à l'activité CPU et au \gls{qps}. Sur la base de ces observations, plusieurs modèles de machine learning sont ensuite entraînés afin de quantifier et exploiter ces relations pour la prédiction de la consommation énergétique.
 
 	
 	\begin{table}[H]
