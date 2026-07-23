@@ -605,7 +605,7 @@
 		\item \textbf{Mesures de critères systèmes :} \texttt{turbostat} (CPU), mesures système données par le kernel (I/O, NIC), \texttt{perf} (RAM)
 		\item \textbf{Mesures de consommation énergétique externes :} \texttt{Yoctopuce}
 		\item \textbf{Logs réseau :} \texttt{tcpdump}
-		\item \textbf{Mesures spécifiques à \gls{bind9} :} \texttt{rndc} (Informations sur le cache de \gls{bind9}), \texttt{uftrace} (Rapports des fonctions exécutées par \gls{bind9})
+		\item \textbf{Mesures spécifiques à \gls{bind9} :} \texttt{rndc} (Informations sur le cache de \gls{bind9}), \texttt{uftrace} \cite{UFtrace} (Rapports des fonctions exécutées par \gls{bind9})
 	\end{itemize}
 
 	Les outils de mesures de critères systèmes ont été sélectionnés à l'aide d'un rapport de stage écrit par une étudiante ayant fait une étude comparative de différents outils de mesure de consommation énergétique de serveurs \cite{EnergyMeasurementTools}. Le détail des métriques collectées par ces outils est présenté dans les annexes.
@@ -991,7 +991,7 @@
 
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=0.9\textwidth]{Graphs/Static_complexity_report.png}
+		\includegraphics[width=0.9\textwidth]{Graphs/bind9_complexity_distribution.png}
 		\caption{Graphiques de l'analyse de la complexité algorithmique statique de \gls{bind9}}
 		\label{fig:graph_static_complexity}
 	\end{figure}
@@ -1030,12 +1030,12 @@
 
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=0.9\textwidth]{Graphs/uftrace_top_10_doh.png}
+		\includegraphics[width=0.9\textwidth]{Graphs/uftrace_selected.png}
 		\caption{Nombre d'appels des 10 fonctions les plus appelées de \gls{bind9} en fonction du \gls{qps} pour \gls{doh} avec utilisation du cache}
-		\label{fig:top_10_functions_doh_QPS}
+		\label{fig:fonctions_variant_avec_qps}
 	\end{figure}
 	
-	La figure \ref{fig:top_10_functions_doh_QPS} présente l'évolution du nombre d'appels des dix fonctions les plus sollicitées de \gls{bind9} en fonction du débit de requêtes (\gls{qps}) dans le cas du protocole \gls{doh} avec utilisation du cache. Une augmentation globalement linéaire du nombre d'appels est attendue lorsque la charge augmente, traduisant la proportionnalité entre le trafic traité et l'activité interne du résolveur. Les différences observées entre les fonctions reflètent leur rôle respectif dans la pile de traitement \gls{doh}. Il n'y a aucune différence entre les mesures faites avec et sans cache, la différence doit se voir dans les temps d'exécution de ces fonctions cependant.
+	La figure \ref{fig:fonctions_variant_avec_qps} présente l'évolution du nombre d'appels des fonctions les plus sollicitées de \gls{bind9} en fonction du gls{qps} dans le cas du protocole \gls{udp} avec utilisation du cache. Une augmentation linéaire du nombre d'appels est attendue lorsque la charge augmente, traduisant la proportionnalité entre le trafic traité et l'activité interne du résolveur. Les différences observées entre les fonctions reflètent leur rôle respectif dans la pile de traitement \gls{udp}. Il n'y a aucune différence entre les mesures faites avec et sans cache et entre les différents protocoles, la différence doit se voir dans les temps d'exécution de ces fonctions cependant.
 	
 	\begin{table}[H]
 		\centering
@@ -1056,8 +1056,8 @@
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.9\textwidth]{Graphs/bind_complexity_executions.png}
-		\caption{Nombre d'appels des 40 fonctions les plus appelées de \gls{bind9} avec leur complexité algorithmique statique}
-		\label{fig:executions_top_40}
+		\caption{Nombre d'appels des 22 fonctions les plus appelées de \gls{bind9} avec leur complexité algorithmique statique}
+		\label{fig:executions_top_22}
 	\end{figure}
 
 	On remarque que 3 fonctions sont particulièrement sollicitées, à savoir \texttt{dns\_acl\_allowed}, \texttt{dns\_view\_attach} et \texttt{dns\_tsigkey\_identity}. Ces fonctions représentent à elle seule plus de 97\% des appels effectués par \gls{bind9}. Elles semblent être appelées au moins une fois par requête. Voici une brève description de ces fonctions ainsi que de la fonction \texttt{cfg\_tuple\_get} qui est également très sollicitée, mais dans une moindre mesure.
