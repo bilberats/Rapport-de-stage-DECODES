@@ -10,7 +10,6 @@
 \glossaryentry{IP Paris?\glossentry{ipp}|setentrycounter[]{page}"\glsnumberformat}{2}
 \glossaryentry{DECODES?\glossentry{decodes}|setentrycounter[]{page}"\glsnumberformat}{2}
 \glossaryentry{DECODES?\glossentry{decodes}|setentrycounter[]{page}"\glsnumberformat}{2}
-\glossaryentry{RST?\glossentry{rst}|setentrycounter[]{page}"\glsnumberformat}{3}
 \glossaryentry{DNS?\glossentry{dns}|setentrycounter[]{page}"\glsnumberformat}{3}
 \glossaryentry{UDP?\glossentry{udp}|setentrycounter[]{page}"\glsnumberformat}{3}
 \glossaryentry{Bind9?\glossentry{bind9}|setentrycounter[]{page}"\glsnumberformat}{3}
@@ -64,16 +63,16 @@
 \glossaryentry{DNS?\glossentry{dns}|setentrycounter[]{page}"\glsnumberformat}{9}
 \glossaryentry{Bind9?\glossentry{bind9}|setentrycounter[]{page}"\glsnumberformat}{9}
 \glossaryentry{DNS?\glossentry{dns}|setentrycounter[]{page}"\glsnumberformat}{9}
+\glossaryentry{IP Paris?\glossentry{ipp}|setentrycounter[]{page}"\glsnumberformat}{10}
 \glossaryentry{ENSTA Paris?\glossentry{ensta}|setentrycounter[]{page}"\glsnumberformat}{10}
 \glossaryentry{ENSAE Paris?\glossentry{ensae}|setentrycounter[]{page}"\glsnumberformat}{10}
 \glossaryentry{IMT?\glossentry{imt}|setentrycounter[]{page}"\glsnumberformat}{10}
 \glossaryentry{INT?\glossentry{int}|setentrycounter[]{page}"\glsnumberformat}{10}
 \glossaryentry{IP Paris?\glossentry{ipp}|setentrycounter[]{page}"\glsnumberformat}{10}
-\glossaryentry{IP Paris?\glossentry{ipp}|setentrycounter[]{page}"\glsnumberformat}{10}
-\glossaryentry{RST?\glossentry{rst}|setentrycounter[]{page}"\glsnumberformat}{11}
 \glossaryentry{RST?\glossentry{rst}|setentrycounter[]{page}"\glsnumberformat}{11}
 \glossaryentry{SAMOVAR?\glossentry{samovar}|setentrycounter[]{page}"\glsnumberformat}{11}
 \glossaryentry{RST?\glossentry{rst}|setentrycounter[]{page}"\glsnumberformat}{11}
+\glossaryentry{THD?\glossentry{thd}|setentrycounter[]{page}"\glsnumberformat}{11}
 \glossaryentry{DNS?\glossentry{dns}|setentrycounter[]{page}"\glsnumberformat}{13}
 \glossaryentry{DNS?\glossentry{dns}|setentrycounter[]{page}"\glsnumberformat}{13}
 \glossaryentry{Bind9?\glossentry{bind9}|setentrycounter[]{page}"\glsnumberformat}{13}
@@ -82,8 +81,8 @@
 \glossaryentry{IP?\glossentry{ip}|setentrycounter[]{page}"\glsnumberformat}{13}
 \glossaryentry{DNS?\glossentry{dns}|setentrycounter[]{page}"\glsnumberformat}{13}
 \glossaryentry{DNS?\glossentry{dns}|setentrycounter[]{page}"\glsnumberformat}{13}
-\glossaryentry{DNS?\glossentry{dns}|setentrycounter[]{page}"\glsnumberformat}{13}
-\glossaryentry{DNS?\glossentry{dns}|setentrycounter[]{page}"\glsnumberformat}{13}
+\glossaryentry{DNS?\glossentry{dns}|setentrycounter[]{page}"\glsnumberformat}{14}
+\glossaryentry{DNS?\glossentry{dns}|setentrycounter[]{page}"\glsnumberformat}{14}
 \glossaryentry{DNS?\glossentry{dns}|setentrycounter[]{page}"\glsnumberformat}{14}
 \glossaryentry{DNS?\glossentry{dns}|setentrycounter[]{page}"\glsnumberformat}{14}
 \glossaryentry{DNS?\glossentry{dns}|setentrycounter[]{page}"\glsnumberformat}{14}
@@ -102,6 +101,7 @@
 \glossaryentry{DNS?\glossentry{dns}|setentrycounter[]{page}"\glsnumberformat}{15}
 \glossaryentry{TLS?\glossentry{tls}|setentrycounter[]{page}"\glsnumberformat}{15}
 \glossaryentry{DNS?\glossentry{dns}|setentrycounter[]{page}"\glsnumberformat}{15}
+\glossaryentry{TLS?\glossentry{tls}|setentrycounter[]{page}"\glsnumberformat}{15}
 \glossaryentry{TLS?\glossentry{tls}|setentrycounter[]{page}"\glsnumberformat}{15}
 \glossaryentry{TLS?\glossentry{tls}|setentrycounter[]{page}"\glsnumberformat}{15}
 \glossaryentry{DNS?\glossentry{dns}|setentrycounter[]{page}"\glsnumberformat}{15}

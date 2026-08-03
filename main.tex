@@ -92,7 +92,6 @@
 \usetikzlibrary{arrows.meta, fit, backgrounds}
 \graphicspath{ {/Graphs} }
 
-
 % Acronymes :
 
 \newacronym{dns}{DNS}{Domain Name System}
@@ -130,7 +129,6 @@
 \newacronym{tls}{TLS}{Transport Layer Security}
 \newacronym{dvfs}{DVFS}{Dynamic Voltage and Frequency Scaling}
 
-% \renewcommand{\glsdisplayfirst}[4]{\textit{#1}#4}
 
 %----------------------------------------
 % Document
@@ -143,6 +141,8 @@
 %----------------------------------------
 
 \begin{document}
+	\renewcommand{\labelitemii}{$\bullet$}
+
 	\arialfont
 	\glsdisablehyper
 
@@ -206,66 +206,81 @@
 
 	\chapter{Présentation de Télécom SudParis}
 
+	Ce chapitre présente l'organisme d'accueil dans lequel s'est déroulé mon stage ainsi que son environnement de travail. Après une présentation de Télécom SudParis et de son positionnement au sein de l'enseignement supérieur et de la recherche, il décrit le département d'accueil et le contexte dans lequel les travaux ont été réalisés.
+
 	\section{Présentation de l'organisme d'accueil}
+
+	Cette section présente Télécom SudParis, son positionnement dans les principaux établissements d'enseignement supérieur français, ainsi que le département au sein duquel le stage a été réalisé.
 
 	\subsection{Télécom SudParis dans son environnement international, européen et français}
 
-	Télécom SudParis est une grande école d'ingénieurs française spécialisée dans les technologies du numérique, les télécommunications, les réseaux, l'informatique et la cybersécurité. Depuis 2019, elle est membre de l'Institut Polytechnique de Paris, qui rassemble plusieurs grandes écoles françaises de premier plan telles que l'École Polytechnique, Télécom Paris, l'\gls{ensta} et l'\gls{ensae}. Cette intégration lui permet de bénéficier d'une forte visibilité académique et scientifique à l'échelle internationale.
+	Télécom SudParis est une grande école d'ingénieurs française spécialisée dans les technologies du numérique, les télécommunications, les réseaux, l'informatique et la cybersécurité. Depuis 2019, elle est membre de l'\gls{ipp}, qui rassemble plusieurs grandes écoles françaises de premier plan telles que l'École Polytechnique, Télécom Paris, l'\gls{ensta} et l'\gls{ensae}. Cette intégration renforce sa visibilité académique et scientifique à l'échelle internationale.
 
-	Au niveau européen, Télécom SudParis participe à de nombreux projets de recherche et collabore avec des universités, laboratoires et entreprises du secteur numérique. Ses activités de recherche couvrent notamment les réseaux de communication, la cybersécurité, l'intelligence artificielle et les systèmes distribués.
+	À l'échelle européenne, l'école participe à de nombreux projets de recherche en collaboration avec des universités, des laboratoires et des entreprises du secteur numérique. Ses travaux portent notamment sur les réseaux de communication, la cybersécurité, l'intelligence artificielle et les systèmes distribués.
 
-	Au niveau national, l'école appartient également à l'\gls{imt}, premier groupe public français d'écoles d'ingénieurs et de management dédié à la transformation numérique, industrielle et énergétique. Télécom SudParis contribue ainsi à la formation d'ingénieurs et de chercheurs capables de répondre aux enjeux technologiques actuels et futurs.
+	Au niveau national, elle appartient également à l'\gls{imt}, premier groupe public français d'écoles d'ingénieurs et de management consacré aux transformations numérique, industrielle et énergétique. À ce titre, elle contribue à la formation d'ingénieurs et de chercheurs capables de répondre aux défis technologiques actuels et futurs.
 
 	\subsection{Télécom SudParis au sein de l'Institut Mines-Télécom et de l'Institut Polytechnique de Paris}
 
-	Fondée en 1979 sous le nom d'\gls{int}, Télécom SudParis est aujourd'hui l'une des écoles de l'Institut Mines-Télécom tout en étant membre de l'\gls{ipp}. Elle a pour mission de former des ingénieurs, chercheurs et experts du numérique grâce à un enseignement de haut niveau associé à une activité de recherche reconnue.
+	Fondée en 1979 sous le nom d'\gls{int}, l'école est aujourd'hui à la fois membre de l'Institut Mines-Télécom et de l'\gls{ipp}. Sa mission est de former des ingénieurs, chercheurs et experts du numérique en s'appuyant sur un enseignement de haut niveau et une activité de recherche reconnue.
 
-	L'école est organisée autour de plusieurs départements d'enseignement et de recherche couvrant différents domaines du numérique, tels que les réseaux, l'informatique, les systèmes embarqués ou encore la cybersécurité. Elle entretient de nombreux partenariats avec des acteurs industriels et académiques, en France comme à l'étranger.
+	Son organisation repose sur plusieurs départements d'enseignement et de recherche couvrant les principaux domaines du numérique, parmi lesquels les réseaux, l'informatique, les systèmes embarqués et la cybersécurité. Elle développe également de nombreux partenariats avec des acteurs académiques et industriels, en France comme à l'international.
 
-	Durant mon stage, j'ai été accueilli sur le campus de Palaiseau, situé au sein du cluster scientifique de l'\gls{ipp}. Bien que Télécom SudParis possède historiquement un campus principal à Évry-Courcouronnes, une partie de ses activités d'enseignement et de recherche est aujourd'hui implantée sur le campus de Palaiseau, notamment dans les locaux partagés avec Télécom Paris.
+	Bien que le campus historique soit implanté à Évry-Courcouronnes, une partie des activités d'enseignement et de recherche est désormais menée à Palaiseau, dans des locaux partagés avec Télécom Paris.
 
-	\subsection{Le département \gls{rst}}
+	\subsection{Le département RST}
 
-	Mon stage s'est déroulé au sein du département \textbf{\gls{rst}} de Télécom SudParis. Ce département constitue le pôle d'expertise de l'école dans le domaine des réseaux informatiques et des télécommunications. Il est implanté à la fois sur les campus d'Évry-Courcouronnes et de Palaiseau.
+	Mon stage s'est déroulé au sein du département \gls{rst}, pôle d'expertise de l'école dans les domaines des réseaux informatiques et des télécommunications. Celui-ci est réparti entre les campus d'Évry-Courcouronnes et de Palaiseau.
 
-	Le département RST intervient aussi bien dans l'enseignement que dans la recherche. Il assure la coordination des formations liées aux réseaux et propose notamment des spécialisations en sécurité des systèmes et réseaux ainsi qu'en architecture et intelligence pour les réseaux.
+	Le département intervient aussi bien dans les activités d'enseignement que dans la recherche. Il coordonne les formations liées aux réseaux et propose notamment des spécialisations en sécurité des systèmes et réseaux ainsi qu'en architecture et intelligence pour les réseaux.
 
-	Ses activités de recherche portent sur de nombreux domaines tels que les protocoles de communication, la cybersécurité, la qualité de service, la virtualisation des réseaux, l'optimisation des infrastructures numériques ou encore les réseaux du futur. Les enseignants-chercheurs du département sont notamment associés au laboratoire \gls{samovar} et collaborent avec de nombreux partenaires académiques et industriels, à l'échelle nationale et internationale.
-
-	C'est dans cet environnement de recherche et d'innovation, spécialisé dans les réseaux et les télécommunications, que s'est déroulé mon stage.
+	Ses travaux de recherche couvrent de nombreux domaines tels que les protocoles de communication, la cybersécurité, la qualité de service, la virtualisation des réseaux, l'optimisation des infrastructures numériques ou encore les réseaux du futur. Les enseignants-chercheurs sont notamment rattachés au laboratoire \gls{samovar} et collaborent avec de nombreux partenaires académiques et industriels.
 
 	\section{Environnement de travail}
 
-	Ce stage s'est déroulé dans un environnement de recherche académique, sensiblement différent du cadre industriel ou entrepreneurial. Réalisé au sein du département \gls{rst} de Télécom SudParis, il s'inscrivait dans une démarche de recherche publique dont l'objectif principal est la production de connaissances et l'étude approfondie de problématiques scientifiques.
+	Au-delà de la structure d'accueil, le contexte dans lequel le stage s'est déroulé a fortement influencé son organisation et les méthodes de travail adoptées. Cette section décrit les principales caractéristiques de cet environnement.
 
-	Contrairement à un contexte industriel, où les contraintes de temps et de rentabilité occupent souvent une place centrale, la recherche académique privilégie une approche davantage fondée sur l'analyse, l'expérimentation et la validation rigoureuse des résultats. Cette méthodologie favorise l'exploration de différentes pistes de travail et laisse une plus grande place à la réflexion scientifique.
+	Ce stage s'est déroulé dans un contexte de recherche académique, sensiblement différent d'un environnement industriel ou entrepreneurial. Réalisé au sein du département \gls{rst}, il s'inscrivait dans une démarche de recherche publique dont l'objectif principal est la production de connaissances et l'étude approfondie de problématiques scientifiques.
 
-	Télécom SudParis est implantée sur deux sites principaux : Évry-Courcouronnes et Palaiseau. Mon activité s'est déroulée majoritairement sur le campus de Palaiseau, au sein des locaux partagés avec Télécom Paris. Ce campus récent offre un cadre de travail moderne et agréable, caractérisé par des espaces lumineux et des infrastructures adaptées aux activités d'enseignement et de recherche.
+	Contrairement au secteur industriel, où les contraintes de délais et de rentabilité sont souvent prédominantes, la recherche académique privilégie une approche fondée sur l'analyse, l'expérimentation et la validation rigoureuse des résultats. Cette méthodologie favorise l'exploration de différentes pistes de travail et laisse davantage de place à la réflexion scientifique.
 
-	J'ai également été amené à me rendre ponctuellement sur le site d'Évry-Courcouronnes, où étaient hébergés les serveurs utilisés pour les expérimentations. Ces déplacements ont notamment permis la configuration initiale des équipements ainsi que des échanges avec les membres de l'équipe technique.
+	Mon activité s'est déroulée principalement sur le campus de Palaiseau, dans les locaux partagés avec Télécom Paris. Ce campus offre un cadre de travail moderne, composé d'espaces adaptés aux activités d'enseignement, de recherche et de collaboration.
 
-	Enfin, je disposais d'espaces de travail sur les deux sites, partagés avec d'autres stagiaires et doctorants. Cet environnement calme et collaboratif a favorisé la concentration et le bon déroulement des activités de recherche et de développement liées au projet.
+	J'ai également été amené à me rendre ponctuellement sur le site d'Évry-Courcouronnes à la plateforme \gls{thd}, où étaient hébergés les serveurs utilisés pour les expérimentations. Ces déplacements ont notamment permis la configuration des équipements ainsi que des échanges avec l'équipe technique.
+
+	Enfin, je disposais d'espaces de travail sur les deux sites, partagés avec d'autres stagiaires et doctorants. Cet environnement calme et collaboratif a favorisé la concentration ainsi que les échanges scientifiques tout au long du stage.
 
 	\paragraph{}
 
-	Ce cadre de travail m'a permis de découvrir le fonctionnement d'un environnement de recherche académique et de développer une plus grande autonomie dans la conduite d'un projet scientifique. La flexibilité de l'organisation, associée à un encadrement régulier, m'a offert l'opportunité d'explorer différentes approches méthodologiques tout en conservant une démarche rigoureuse. Cette expérience a constitué une introduction concrète au travail de recherche et a fourni le contexte nécessaire à la réalisation des travaux présentés dans les chapitres suivants.
+	Ce cadre de travail m'a permis de découvrir le fonctionnement d'un laboratoire de recherche et de développer une plus grande autonomie dans la conduite d'un projet scientifique. La flexibilité de l'organisation, associée à un encadrement régulier, m'a offert l'opportunité d'explorer différentes approches méthodologiques tout en conservant une démarche rigoureuse. Cette expérience a constitué une première immersion dans la recherche académique et a fourni le contexte nécessaire à la réalisation des travaux présentés dans les chapitres suivants.
+
 	
 	\chapter{Contexte théorique}
 
-	Afin de comprendre les travaux réalisés au cours de ce stage, il est nécessaire de présenter les principaux concepts liés au \gls{dns}, aux protocoles utilisés pour le transport des requêtes \gls{dns} ainsi qu'au logiciel \gls{bind9}, qui constitue la plateforme d'expérimentation principale de cette étude.
+	Afin de comprendre les travaux réalisés au cours de ce stage, il est nécessaire de présenter les principaux concepts liés au \gls{dns} ainsi qu'aux protocoles utilisés pour le transport des requêtes \gls{dns}. Cette présentation permettra également d'introduire le logiciel \gls{bind9}, qui constitue la principale plateforme d'expérimentation de cette étude.
 
 	\section{Fonctionnement du \gls{dns}}
 
 	Le \gls{dns} est un service essentiel d'Internet dont le rôle principal est de traduire les noms de domaine compréhensibles par les utilisateurs, tels que \texttt{www.example.com}, en adresses \gls{ip} utilisables par les équipements réseau.
 
-	Le \gls{dns} repose sur une architecture distribuée et hiérarchique. Chaque niveau de cette hiérarchie est responsable d'une partie de l'espace des noms de domaine, ce qui permet au système de rester scalable malgré la taille d'Internet.
+	Le \gls{dns} repose sur une architecture distribuée et hiérarchique. Chaque niveau de cette hiérarchie est responsable d'une partie de l'espace des noms de domaine, ce qui permet au système de rester scalable malgré le nombre d'équipements et de services interconnectés sur Internet.
 
+	% \begin{figure}[H]
+	% 	\centering
+	% 	% Insérer ici votre schéma de résolution DNS
+	% 	\includegraphics[width=0.8\textwidth]{diagrams_and_images/dns_resolution.png}
+	% 	% \caption{Exemple simplifié d'une résolution \gls{dns} récursive.}
+	% 	\caption{Exemple simplifié d'une résolution \gls{dns} récursive.\footnote{Source : \url{https://www.ibm.com/fr-fr/think/topics/dns}}}
+	% 	\label{fig:dns_resolution}
+	% \end{figure}
 	\begin{figure}[H]
 		\centering
-		% Insérer ici votre schéma de résolution DNS
 		\includegraphics[width=0.8\textwidth]{diagrams_and_images/dns_resolution.png}
 		\caption{Exemple simplifié d'une résolution \gls{dns} récursive.}
 		\label{fig:dns_resolution}
+
+		\vspace{0.3em}
+		{\footnotesize Source : \url{https://www.ibm.com/fr-fr/think/topics/dns}}
 	\end{figure}
 
 	\subsection{Serveurs autoritatifs et résolveurs}
@@ -310,13 +325,13 @@
 
 	Le protocole \gls{dns} over \gls{tls} encapsule les échanges \gls{dns} dans une connexion \gls{tls}.
 
-	Cette approche garantit la confidentialité et l'intégrité des données échangées entre le client et le résolveur. En contrepartie, l'établissement et le maintien de la connexion \gls{tls} introduisent un coût supplémentaire en termes de calcul et de consommation de ressources.
+	Cette approche garantit la confidentialité et l'intégrité des données échangées entre le client et le résolveur avec l'échange de clés \gls{tls} qui assurent un chiffrement sécurisé. En contrepartie, l'établissement et le maintien de la connexion \gls{tls} introduisent un coût supplémentaire en termes de calcul et de consommation de ressources.
 
 	\subsection{DNS over HTTPS (DoH)}
 
 	Le protocole \gls{dns} over HTTPS transporte les requêtes \gls{dns} au travers du protocole HTTPS.
 
-	En plus du chiffrement apporté par \gls{tls}, cette approche permet aux requêtes \gls{dns} de se fondre dans le trafic Web classique. Cette caractéristique améliore la confidentialité des utilisateurs mais ajoute également une couche protocolaire supplémentaire susceptible d'avoir un impact sur les performances et la consommation énergétique des serveurs.
+	En plus du chiffrement apporté par \gls{tls}, cette approche permet aux requêtes \gls{dns} de ne pas être distinguées des autres requêtes HTTP. Cette caractéristique améliore la confidentialité des utilisateurs mais ajoute également une couche protocolaire supplémentaire susceptible d'avoir un impact sur les performances et la consommation énergétique des serveurs.
 
 	L'une des motivations de ce stage est précisément d'évaluer l'influence de ces différents protocoles sur la consommation des infrastructures \gls{dns}.
 
@@ -328,7 +343,7 @@
 
 	\gls{bind9} offre de nombreuses fonctionnalités avancées, notamment la gestion du cache, le support des protocoles \gls{dns} modernes tels que \gls{dot} et \gls{doh}, ainsi que des outils détaillés de supervision et de collecte de statistiques. Ces caractéristiques en font une plateforme particulièrement adaptée à la réalisation de mesures expérimentales et à la construction de modèles de consommation énergétique.
 
-	L'ensemble des mesures et analyses présentées dans les chapitres suivants a ainsi été réalisé à partir de différentes configurations de \gls{bind9} exécutées sur les serveurs du projet \gls{decodes}.
+	L'ensemble des mesures et analyses présentées dans les chapitres suivants a ainsi été réalisé à partir de différentes configurations de \gls{bind9} exécutées sur les serveurs du projet \gls{decodes} (ANR-18-EUR-0006-02)\ref{sec:projet_decodes}.
 
 	\chapter{Travail réalisé}
 
@@ -341,6 +356,7 @@
 	Ce chapitre a pour objectif de présenter de manière structurée les différentes missions réalisées. Il débute par une description du projet \gls{decodes} ainsi que la place que j'occupe dans ce projet et des objectifs du stage, notamment dans une perspective de poursuite en thèse. Il détaille ensuite l'organisation du travail, la méthodologie utilisée pour établir un protocol de mesure ainsi que la mise en place de l'environnement expérimental, en continuité avec les travaux réalisés par les stagiaires précédents. Enfin, il présente les principaux résultats obtenus ainsi que les analyses effectuées à partir des données collectées.
 
 	\section{Description du projet \gls{decodes}}
+	\label{sec:projet_decodes}
 
 	Le projet \gls{decodes} s'inscrit dans un contexte où la consommation énergétique des infrastructures numériques, et en particulier celle des \textbf{centres de données}, devient un enjeu majeur. Alors que les services numériques connaissent une croissance exponentielle, leur empreinte électrique devrait encore s'accroître significativement dans les années à venir. Pourtant, parmi les composants critiques d'Internet, le \gls{dns}, bien que fondamental pour le fonctionnement du réseau, reste largement sous-estimé dans les analyses de consommation énergétique. La consommation du \gls{dns} est probablement marginale par rapport à celle des centres de données, mais cela reste un exemple de consommation énergétique d'un service réseau distribué, qui est en fonctionnement continu et qui est utilisé par tous les services numériques. La méthodologie qui sera développée dans le cadre de ce projet pourra être adaptée à d'autres services distribués, tels que les systèmes de messagerie, les réseaux sociaux ou les plateformes de streaming. De plus, étant donné que tous les services numériques reposent sur le \gls{dns}, la consommation d'autres types de services pourraient être estimée à partir des données récoltées pour l'estimation de la consommation énergétique du \gls{dns}. Enfin, la consommation énergétique du \gls{dns} peut servir d'indicateur pour détecter des défaillances dans les infrastructures réseau.
 
@@ -383,7 +399,7 @@
 
 	\subsection{Organisation du travail}
 
-	L'organisation du travail reposait sur une large autonomie dans la conduite des activités de recherche. Les objectifs généraux étaient définis par les encadrants, mais le choix des méthodologies, des outils et des protocoles expérimentaux relevait en grande partie de mon initiative. Cette liberté m'a permis d'explorer différentes approches et d'adapter progressivement mes travaux en fonction des résultats obtenus.
+	L'organisation du travail reposait sur une large autonomie dans la conduite des activités de recherche. Les objectifs généraux étaient définis par mon tuteur de stage (Michel Marot), mais le choix des méthodologies, des outils et des protocoles expérimentaux relevait en grande partie de mon initiative. Cette liberté m'a permis d'explorer différentes approches et d'adapter progressivement mes travaux en fonction des résultats obtenus.
 
 	Le suivi du stage était assuré au travers de réunions régulières avec mes encadrants, généralement organisées de manière hebdomadaire. Ces échanges permettaient de présenter l'avancement des travaux, de discuter des difficultés rencontrées et d'orienter les prochaines étapes de la recherche.
 
@@ -392,7 +408,7 @@
 	Les travaux réalisés au cours du stage se sont articulés autour de quatre grandes phases :
 
 	\begin{enumerate}
-		\item \textbf{Étude bibliographique}
+		\item \textbf{Étude bibliographique} (\ref{sec:etat_de_lart})
 
 		Une première phase a consisté à acquérir une compréhension approfondie du sujet à travers l'étude de la littérature scientifique relative au \gls{dns}, aux infrastructures réseau et aux méthodes de mesure de la consommation énergétique.
 
@@ -412,8 +428,9 @@
 
 
 	\section{État de l'art}
+	\label{sec:etat_de_lart}
 
-	Dans cette partie, nous allons voir les travaux précédents sur l'étude de la consommation énergétique des résolveurs \gls{dns}, ainsi que les travaux connexes à ce qui a été étudié durant ce stage. Cette partie est importante pour comprendre les contributions de ce stage et les limites des travaux précédents. Cet état de l'art s'appuie principalement sur les travaux réalisés dans le cadre du projet \gls{decodes}. En particulier, il reprend et synthétise les analyses bibliographiques présentées par Capucine Barré et al. dans l'article \cite{barre2026dns_cpu}, ainsi que celles de Nicolas Renout, Gatien Roujanski et al. dans \cite{renout2026dns_analysis}. Il intègre également les éléments de contexte et les problématiques exposés dans la présentation générale du projet \gls{decodes}. En raison des contraintes temporelles du stage, une revue bibliographique exhaustive n'a pas pu être menée indépendamment. 
+	Dans cette partie, nous allons voir les travaux précédents sur l'étude de la consommation énergétique des résolveurs \gls{dns}, ainsi que les travaux connexes à ce qui a été étudié durant ce stage. Cette partie est importante pour comprendre les contributions de ce stage et les limites des travaux précédents. Cet état de l'art s'appuie principalement sur les travaux réalisés dans le cadre du projet \gls{decodes}. En particulier, il reprend et synthétise les analyses bibliographiques présentées par Capucine Barré et al. dans l'article \cite{barre2026dns_cpu}, ainsi que celles de Nicolas Renout, Gatien Roujanski et al. dans \cite{renout2026dns_analysis}. Il intègre également les éléments de contexte et les problématiques exposées dans la présentation générale du projet \gls{decodes}. En raison des contraintes temporelles du stage, une revue bibliographique exhaustive n'a pas pu être menée indépendamment. 
 
 	La consommation énergétique des infrastructures numériques est devenue un enjeu majeur avec la croissance continue des services Internet et des centres de données. Si de nombreux travaux se sont intéressés aux serveurs, au cloud computing ou aux réseaux de communication, le \gls{dns}, pourtant indispensable au fonctionnement d'Internet, reste relativement peu étudié du point de vue énergétique.
 
@@ -457,7 +474,7 @@
 	
 	Pour faire les mesures de consommation du \gls{dns}, il faut envoyer des requêtes de résolution de noms de domaines. Un ensemble de 17 millions de noms de domaine est accessible sur GitHub avec leur popularité \cite{DomainNameDataset}. 
 
-	Avec autant de noms de domaines, on peut se demander si avoir un ensemble de 17 millions de noms de domaines est nécessaire pour faire les mesures, ou si un ensemble plus petit pourrait être suffisant. La taille de l'ensemble de noms de domaines a-t-elle une influence sur les mesures de consommation énergétique du \gls{dns} ? 
+	Avec autant de noms de domaines, on peut se demander si avoir un ensemble de 17 millions de noms de domaines est nécessaire pour faire les mesures, ou si un ensemble plus petit pourrait être suffisant. \textbf{La taille de l'ensemble de noms de domaines a-t-elle une influence sur les mesures de consommation énergétique du \gls{dns} ?} 
 
 	Une question méthodologique importante concerne la manière de réaliser les mesures de consommation du résolveur \gls{dns} en absence de cache. Dans les travaux précédents, deux configurations extrêmes ont été utilisées : un unique nom de domaine afin de simuler un fonctionnement entièrement dépendant du cache, et un ensemble très large de noms de domaine (environ 360 000) afin de forcer l'absence d'efficacité du cache.
 
@@ -599,7 +616,7 @@
 	\end{figure}
 
 	\subsubsection{Outils de mesure utilisés}
-	Un grand nombre de métriques sont collectées pour aider à estimer et modéliser la consommation énergétique du résolveur \gls{dns}. Ces métriques peuvent se classer dans 4 catégories : les mesures de critères systèmes, les mesures de consommation énergétiques externes, les logs réseau et les mesures spécifiques au logiciel (\gls{bind9}).
+	Un grand nombre de métriques sont collectées (\ref{annexe:metrics}) pour aider à estimer et modéliser la consommation énergétique du résolveur \gls{dns}. Ces métriques peuvent se classer dans 4 catégories : les mesures de critères systèmes, les mesures de consommation énergétiques externes, les logs réseau et les mesures spécifiques au logiciel (\gls{bind9}).
 	Pour collecter ces métriques les outils utilisés selon la catégories sont :
 	\begin{itemize}
 		\item \textbf{Mesures de critères systèmes :} \texttt{turbostat} (CPU), mesures système données par le kernel (I/O, NIC), \texttt{perf} (RAM)
@@ -610,7 +627,7 @@
 
 	Les outils de mesures de critères systèmes ont été sélectionnés à l'aide d'un rapport de stage écrit par une étudiante ayant fait une étude comparative de différents outils de mesure de consommation énergétique de serveurs \cite{EnergyMeasurementTools}. Le détail des métriques collectées par ces outils est présenté dans les annexes.
 	
-	Concernant les outils de mesure spécifiques à \gls{bind9}, \texttt{rndc} est un outil de contrôle de \gls{bind9} qui permet d'obtenir des informations sur le cache, les statistiques de requêtes, etc. \texttt{uftrace} est un outil de traçage de fonctions qui permet d'obtenir des rapports détaillés sur les fonctions exécutées par des logiciels comme \gls{bind9}, ce qui est particulièrement utile pour l'analyse de la complexité algorithmique.
+	Concernant les outils de mesure spécifiques à \gls{bind9}, \texttt{rndc} est un outil de contrôle de \gls{bind9} qui permet d'obtenir des informations sur le cache, les statistiques de requêtes, etc. \texttt{uftrace} est un outil de traçage de fonctions qui permet d'obtenir des rapports détaillés sur les fonctions exécutées par des logiciels comme \gls{bind9}.
 	
 	\subsubsection{Scripts de mesure développés}
 
@@ -1925,6 +1942,7 @@
 	
 	\section*{Détail des métriques collectées}
 	\addcontentsline{toc}{section}{Détail des métriques collectées}
+	\label{annexe:metrics}
 	
 	\subsubsection*{Nouvelles métriques}
 	Le cache sera surveillé à l'aide de 6 variables disponibles via \texttt{rndc}, un module utilisé pour visualiser les métriques de \gls{bind9}.
