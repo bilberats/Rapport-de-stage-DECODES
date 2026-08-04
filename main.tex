@@ -152,11 +152,11 @@
 	\section*{Abstract}
 
 	Le \gls{dns} est une infrastructure essentielle d'Internet dont la 
-	consommation énergétique reste encore peu étudiée. Ce stage, réalisé dans le cadre du projet \gls{decodes} à Télécom SudParis, vise à mieux comprendre et modéliser la consommation énergétique d'un résolveur \gls{dns}, en se concentrant sur l'implémentation \gls{bind9}.
+	consommation énergétique reste encore peu étudiée. Ce stage, réalisé dans le cadre du projet \gls{decodes} à Télécom SudParis, vise à mieux comprendre et \textbf{modéliser la consommation énergétique d'un résolveur \gls{dns}}, en se concentrant sur l'implémentation \gls{bind9}.
 
-	Pour atteindre cet objectif, un environnement expérimental a été conçu afin de mesurer la consommation énergétique du résolveur sous différentes configurations (protocoles, utilisation du cache et charge). Les données collectées ont permis d'analyser l'influence de ces paramètres sur la consommation énergétique, d'étudier la complexité algorithmique de \gls{bind9} et de développer deux approches de modélisation : un modèle de machine learning basé sur des métriques système et un modèle analytique fondé sur les réseaux de files d'attente. En parallèle, une analyse de la complexité algorithmique de \gls{bind9} a été réalisée afin de mieux comprendre les facteurs logiciels influençant cette consommation.
+	Pour atteindre cet objectif, un environnement expérimental a été conçu afin de mesurer la consommation énergétique du résolveur sous différentes configurations (protocoles, utilisation du cache et charge). Les données collectées ont permis d'analyser l'influence de ces paramètres sur la consommation énergétique, d'étudier la complexité algorithmique de \gls{bind9} et de développer deux approches de modélisation : un modèle de \textbf{machine learning} basé sur des métriques système et un modèle analytique fondé sur les \textbf{réseaux de files d'attente}. En parallèle, une analyse de la \textbf{complexité algorithmique de \gls{bind9}} a été réalisée afin de mieux comprendre les facteurs logiciels influençant cette consommation.
 
-	Les résultats montrent qu'il est possible de prédire avec précision la consommation énergétique du résolveur à partir des métriques collectées, tout en mettant en évidence les principales composantes responsables de cette consommation. Ces travaux constituent une première étape vers la modélisation énergétique de systèmes distribués plus complexes.
+	Les résultats montrent qu'il est possible de prédire avec précision la consommation énergétique du résolveur à partir des métriques collectées, tout en mettant en évidence les principales composantes responsables de cette consommation. \textbf{Ces travaux constituent une première étape vers la modélisation énergétique de systèmes distribués plus complexes.}
 
 	\textbf{Mots-clés :} \gls{dns}, \gls{bind9}, consommation énergétique, modélisation, machine learning, réseaux de files d'attente, complexité algorithmique.
 
@@ -191,15 +191,15 @@
 	\chapter*{Introduction}
 	\addcontentsline{toc}{chapter}{Introduction}
 
-	Les \gls{dns} constituent une infrastructure essentielle du fonctionnement d'Internet. Utilisés quotidiennement par des milliards de requêtes, ils assurent la traduction entre les noms de domaine et les adresses \gls{ip} nécessaires à la communication entre machines. Malgré leur rôle central, leur consommation énergétique reste encore peu caractérisée, en particulier dans le cadre de leur fonctionnement distribué.
+	Les \gls{dns} constituent une infrastructure essentielle du fonctionnement d'Internet. \textbf{Utilisés quotidiennement par des milliards de requêtes}, ils assurent la traduction entre les noms de domaine et les adresses \gls{ip} nécessaires à la communication entre machines. Malgré leur rôle central, leur consommation énergétique reste encore peu caractérisée, en particulier dans le cadre de leur fonctionnement distribué.
 
-	La mesure de la consommation énergétique d'un système tel que le \gls{dns} constitue un défi méthodologique important. En effet, le processus de résolution implique plusieurs acteurs (clients, résolveurs récursifs, serveurs autoritatifs) ainsi que différents protocoles de communication. Estimer la consommation globale nécessite donc de prendre en compte l'ensemble de ces composantes. Afin de simplifier ce problème, ce travail se concentre dans un premier temps sur l'estimation de la consommation énergétique du résolveur \gls{dns}, considéré comme l'élément central du processus de résolution.
+	La mesure de la consommation énergétique d'un système tel que le \gls{dns} constitue un défi méthodologique important. En effet, le processus de résolution implique plusieurs acteurs (clients, résolveurs récursifs, serveurs autoritatifs) ainsi que différents protocoles de communication. Estimer la consommation globale nécessite donc de prendre en compte l'ensemble de ces composantes. Afin de simplifier ce problème, \textbf{ce travail se concentre dans un premier temps sur l'estimation de la consommation énergétique du résolveur \gls{dns}}, considéré comme l'élément central du processus de résolution.
 
 	Ce stage s'inscrit dans le cadre du projet \gls{decodes} et s'appuie sur les travaux de précédents stagiaires, notamment ceux ayant étudié la consommation énergétique de \gls{bind9} \cite{renout2026dns_analysis}. Ces études constituent une base expérimentale importante, mais présentent certaines limites, notamment un manque d'interprétabilité des modèles proposés et une difficulté à généraliser les résultats à d'autres configurations ou résolveurs.
 
-	L'objectif de ce travail est de proposer et d'évaluer différentes approches de modélisation de la consommation énergétique d'un résolveur \gls{dns}. Deux axes principaux sont étudiés. Le premier repose sur des techniques d'apprentissage automatique visant à prédire la consommation énergétique à partir de métriques système et réseau. Le second s'appuie sur un modèle analytique basé sur les réseaux de files d'attente, permettant une représentation plus structurée et interprétable du fonctionnement interne du résolveur. En parallèle, une analyse de la complexité algorithmique de \gls{bind9} est explorée afin d'apporter un éclairage complémentaire sur les mécanismes influençant la consommation.
+	L'objectif de ce travail est de proposer et d'évaluer différentes approches de modélisation de la consommation énergétique d'un résolveur \gls{dns}. \textbf{Deux axes principaux sont étudiés.} Le premier repose sur des techniques d'apprentissage automatique visant à \textbf{prédire la consommation énergétique à partir de métriques système et réseau.} Le second s'appuie sur un \textbf{modèle analytique basé sur les réseaux de files d'attente}, permettant une représentation plus structurée et interprétable du fonctionnement interne du résolveur. En parallèle, \textbf{une analyse de la complexité algorithmique de \gls{bind9}} est explorée afin d'apporter un éclairage complémentaire sur les mécanismes influençant la consommation.
 
-	Les contributions de ce travail sont multiples. Elles incluent la mise en place d'une méthodologie de mesure de la consommation énergétique d'un résolveur \gls{dns}, l'étude du surcoût lié à l'instrumentation, la construction et l'évaluation de modèles de prédiction basés sur le machine learning, ainsi que le développement d'un modèle analytique fondé sur les réseaux de files d'attente. Une étude préliminaire de la complexité algorithmique de \gls{bind9} complète également ces travaux.
+	Les contributions de ce travail sont multiples. Elles incluent la mise en place d'une méthodologie de mesure de la consommation énergétique d'un résolveur \gls{dns}, \textbf{l'étude du surcoût lié à l'instrumentation}, la construction et l'\textbf{évaluation de modèles de prédiction basés sur le machine learning}, ainsi que le développement d'un \textbf{modèle analytique fondé sur les réseaux de files d'attente}. Une étude préliminaire de la complexité algorithmique de \gls{bind9} complète également ces travaux.
 
 	Le rapport est organisé en plusieurs chapitres. Le premier présente le contexte institutionnel et l'environnement de travail au sein de Télécom SudParis. Le deuxième chapitre introduit les notions théoriques nécessaires à la compréhension du \gls{dns} et des protocoles associés. Le troisième chapitre détaille le travail réalisé, incluant la mise en place de l'environnement expérimental, les campagnes de mesures, l'analyse des résultats et les approches de modélisation développées. Enfin, une conclusion synthétise les résultats obtenus et propose des perspectives d'amélioration et de recherche.
 
@@ -214,17 +214,17 @@
 
 	\subsection{Télécom SudParis dans son environnement international, européen et français}
 
-	Télécom SudParis est une grande école d'ingénieurs française spécialisée dans les technologies du numérique, les télécommunications, les réseaux, l'informatique et la cybersécurité. Depuis 2019, elle est membre de l'\gls{ipp}, qui rassemble plusieurs grandes écoles françaises de premier plan telles que l'École Polytechnique, Télécom Paris, l'\gls{ensta} et l'\gls{ensae}. Cette intégration renforce sa visibilité académique et scientifique à l'échelle internationale.
+	Télécom SudParis est une grande école d'ingénieurs française spécialisée dans les technologies du numérique, les télécommunications, les réseaux, l'informatique et la cybersécurité. Depuis 2019, elle est membre de l'\gls{ipp}, qui rassemble plusieurs grandes écoles françaises de premier plan telles que l'École Polytechnique, Télécom Paris, l'\gls{ensta} et l'\gls{ensae}. \textbf{Cette intégration renforce sa visibilité académique et scientifique à l'échelle internationale.}
 
-	À l'échelle européenne, l'école participe à de nombreux projets de recherche en collaboration avec des universités, des laboratoires et des entreprises du secteur numérique. Ses travaux portent notamment sur les réseaux de communication, la cybersécurité, l'intelligence artificielle et les systèmes distribués.
+	À l'échelle européenne, l'école participe à de nombreux projets de recherche en collaboration avec des universités, des laboratoires et des entreprises du secteur numérique. Ses travaux portent notamment sur \textbf{les réseaux de communication, la cybersécurité, l'intelligence artificielle et les systèmes distribués.}
 
 	Au niveau national, elle appartient également à l'\gls{imt}, premier groupe public français d'écoles d'ingénieurs et de management consacré aux transformations numérique, industrielle et énergétique. À ce titre, elle contribue à la formation d'ingénieurs et de chercheurs capables de répondre aux défis technologiques actuels et futurs.
 
 	\subsection{Télécom SudParis au sein de l'Institut Mines-Télécom et de l'Institut Polytechnique de Paris}
 
-	Fondée en 1979 sous le nom d'\gls{int}, l'école est aujourd'hui à la fois membre de l'Institut Mines-Télécom et de l'\gls{ipp}. Sa mission est de former des ingénieurs, chercheurs et experts du numérique en s'appuyant sur un enseignement de haut niveau et une activité de recherche reconnue.
+	Fondée en 1979 sous le nom d'\gls{int}, l'école est aujourd'hui à la fois membre de l'Institut Mines-Télécom et de l'\gls{ipp}. Sa mission est de former des ingénieurs, chercheurs et experts du numérique en s'appuyant sur \textbf{un enseignement de haut niveau et une activité de recherche reconnue.}
 
-	Son organisation repose sur plusieurs départements d'enseignement et de recherche couvrant les principaux domaines du numérique, parmi lesquels les réseaux, l'informatique, les systèmes embarqués et la cybersécurité. Elle développe également de nombreux partenariats avec des acteurs académiques et industriels, en France comme à l'international.
+	Son organisation repose sur plusieurs départements d'enseignement et de recherche couvrant les principaux domaines du numérique, parmi lesquels \textbf{les réseaux, l'informatique, les systèmes embarqués et la cybersécurité.} Elle développe également de nombreux partenariats avec des acteurs académiques et industriels, en France comme à l'international.
 
 	Bien que le campus historique soit implanté à Évry-Courcouronnes, une partie des activités d'enseignement et de recherche est désormais menée à Palaiseau, dans des locaux partagés avec Télécom Paris.
 
@@ -234,25 +234,25 @@
 
 	Le département intervient aussi bien dans les activités d'enseignement que dans la recherche. Il coordonne les formations liées aux réseaux et propose notamment des spécialisations en sécurité des systèmes et réseaux ainsi qu'en architecture et intelligence pour les réseaux.
 
-	Ses travaux de recherche couvrent de nombreux domaines tels que les protocoles de communication, la cybersécurité, la qualité de service, la virtualisation des réseaux, l'optimisation des infrastructures numériques ou encore les réseaux du futur. Les enseignants-chercheurs sont notamment rattachés au laboratoire \gls{samovar} et collaborent avec de nombreux partenaires académiques et industriels.
+	Ses travaux de recherche couvrent de nombreux domaines tels que \textbf{les protocoles de communication, la cybersécurité, la qualité de service, la virtualisation des réseaux, l'optimisation des infrastructures numériques ou encore les réseaux du futur}. Les enseignants-chercheurs sont notamment rattachés au laboratoire \gls{samovar} et collaborent avec de nombreux partenaires académiques et industriels.
 
 	\section{Environnement de travail}
 
 	Au-delà de la structure d'accueil, le contexte dans lequel le stage s'est déroulé a fortement influencé son organisation et les méthodes de travail adoptées. Cette section décrit les principales caractéristiques de cet environnement.
 
-	Ce stage s'est déroulé dans un contexte de recherche académique, sensiblement différent d'un environnement industriel ou entrepreneurial. Réalisé au sein du département \gls{rst}, il s'inscrivait dans une démarche de recherche publique dont l'objectif principal est la production de connaissances et l'étude approfondie de problématiques scientifiques.
+	Ce stage s'est déroulé dans un contexte de recherche académique, sensiblement différent d'un environnement industriel ou entrepreneurial. Réalisé au sein du département \gls{rst}, il s'inscrivait dans une démarche de recherche publique dont l'objectif principal est \textbf{la production de connaissances et l'étude approfondie de problématiques scientifiques.}
 
-	Contrairement au secteur industriel, où les contraintes de délais et de rentabilité sont souvent prédominantes, la recherche académique privilégie une approche fondée sur l'analyse, l'expérimentation et la validation rigoureuse des résultats. Cette méthodologie favorise l'exploration de différentes pistes de travail et laisse davantage de place à la réflexion scientifique.
+	Contrairement au secteur industriel, où les contraintes de délais et de rentabilité sont souvent prédominantes, la recherche académique privilégie une approche fondée sur l'analyse, l'expérimentation et la validation rigoureuse des résultats. Cette méthodologie \textbf{favorise l'exploration de différentes pistes de travail} et laisse davantage de place à la \textbf{réflexion scientifique}.
 
 	Mon activité s'est déroulée principalement sur le campus de Palaiseau, dans les locaux partagés avec Télécom Paris. Ce campus offre un cadre de travail moderne, composé d'espaces adaptés aux activités d'enseignement, de recherche et de collaboration.
 
 	J'ai également été amené à me rendre ponctuellement sur le site d'Évry-Courcouronnes à la plateforme \gls{thd}, où étaient hébergés les serveurs utilisés pour les expérimentations. Ces déplacements ont notamment permis la configuration des équipements ainsi que des échanges avec l'équipe technique.
 
-	Enfin, je disposais d'espaces de travail sur les deux sites, partagés avec d'autres stagiaires et doctorants. Cet environnement calme et collaboratif a favorisé la concentration ainsi que les échanges scientifiques tout au long du stage.
+	Enfin, je disposais d'espaces de travail sur les deux sites, partagés avec d'autres stagiaires et doctorants. Cet environnement \textbf{calme et collaboratif} a favorisé la \textbf{concentration} ainsi que \textbf{les échanges scientifiques} tout au long du stage.
 
 	\paragraph{}
 
-	Ce cadre de travail m'a permis de découvrir le fonctionnement d'un laboratoire de recherche et de développer une plus grande autonomie dans la conduite d'un projet scientifique. La flexibilité de l'organisation, associée à un encadrement régulier, m'a offert l'opportunité d'explorer différentes approches méthodologiques tout en conservant une démarche rigoureuse. Cette expérience a constitué une première immersion dans la recherche académique et a fourni le contexte nécessaire à la réalisation des travaux présentés dans les chapitres suivants.
+	Ce cadre de travail m'a permis de découvrir le fonctionnement d'un laboratoire de recherche et de \textbf{développer une plus grande autonomie dans la conduite d'un projet scientifique}. La flexibilité de l'organisation, associée à un encadrement régulier, m'a offert l'opportunité d'\textbf{explorer différentes approches méthodologiques tout en conservant une démarche rigoureuse}. Cette expérience a constitué une première immersion dans la recherche académique et a fourni le contexte nécessaire à la réalisation des travaux présentés dans les chapitres suivants.
 
 	
 	\chapter{Contexte théorique}
@@ -484,15 +484,15 @@
 	Premièrement, pour voir l'influence de la taille de l'ensemble de noms de domaines sur la consommation énergétique du \gls{dns}, il est intéressant de regarder si le cache peut être saturé, et si c'est possible a combien de noms de domaines cela correspond-t-il en moyenne ? 
 	Pour savoir cela, j'ai fait des mesures de différentes métriques associées au cache de \gls{bind9} pour différents ensembles de noms de domaines entre 100 000 et 14 millions de noms de domaines. En premier lieu avec des ensembles de noms de domaines entre 100 000 et 1 million de noms de domaines avec un interval de 100 000 noms de domaines entre chaque mesure, puis avec des ensembles de noms de domaines entre 1 et 14 millions de noms de domaines avec un interval de 1 million de noms de domaines entre chaque mesure.
 	
-	\begin{figure}[H]
+	\begin{figure}[ht]
 		\centering
-		\includegraphics[width=0.9\textwidth]{Graphs/cache_metrics_1M.png}
+		\includegraphics[width=1\textwidth]{Graphs/cache_metrics_1M.png}
 		\caption{Évolution des valeurs associées au cache de \gls{bind9} pour différents ensemble de noms de domaines entre 100 000 et 1 millions de noms de domaines}
 		\label{fig:Evolution du cache 1M}
 	\end{figure}
-	\begin{figure}[H]
+	\begin{figure}[ht]
 		\centering
-		\includegraphics[width=0.9\textwidth]{Graphs/cache_metrics_14M.png}
+		\includegraphics[width=1\textwidth]{Graphs/cache_metrics_14M.png}
 		\caption{Évolution des valeurs associées au cache de \gls{bind9} pour différents ensemble de noms de domaines entre 1 et 14 millions de noms de domaines}
 		\label{fig:Evolution du cache 14M}
 	\end{figure}
@@ -530,7 +530,7 @@
 		\includegraphics[width=0.9\textwidth]{Graphs/domains_sets_watts_avg_protocols_ci.png}
 		\caption{Consommation énergétique moyenne pour différents ensembles de noms de domaine entre 100,000 et 1 million de noms de domaine}
 		\label{fig:consommation domaine sets 1M}
-	\end{figure}
+	\end{figure}	
 	
 	Ces mesures ont été perturbées par des \gls{ip} externes envoyant des requêtes au serveur \gls{dns} durant les mesures, ce qui a faussé les résultats. Cependant, on peut observer une petite différence de consommation énergétique entre les différentes tailles d'ensemble de noms de domaine, mais cette différence n'est pas significative. Cette différence peut s'expliquer par le fait que la durée de récupération des données du cache est plus longue pour les ensembles de noms de domaine plus grands, ce qui peut entraîner une consommation énergétique légèrement plus élevée. Également, cette différence peut aussi s'expliquer par le fait que certains noms de domaines ne sont plus solvable, la proportion de ces domaines augmente avec la taille de l'ensemble de noms de domaine, cela entraîne une augmentation de la consommation car les domaines non résolus ne sont pas comptés dans le calcul du \gls{qps}.
 
@@ -631,7 +631,7 @@
 	
 	\subsubsection{Scripts de mesure développés}
 
-	Afin de mesurer les métriques nécessaires à l'évaluation de la consommation énergétique du résolveur \gls{dns} et à la modélisation de celle-ci, plusieurs scripts de collecte ont été développés. Ces scripts permettent d'extraire des indicateurs système, réseau et énergétiques de manière synchronisée sur l'ensemble de la chaîne de mesure.
+	Afin de mesurer les métriques nécessaires à l'évaluation de la consommation énergétique du résolveur \gls{dns} et à la modélisation de celle-ci, plusieurs scripts de collecte ont été développés. Ces scripts permettent d'extraire des indicateurs système, réseau et énergétiques de manière synchronisée sur l'ensemble dex la chaîne de mesure.
 
 	\begin{itemize}
 		\item \textbf{Scripts de mesure des indicateurs système :}
