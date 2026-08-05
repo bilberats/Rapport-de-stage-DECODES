@@ -920,7 +920,7 @@
 		\label{fig:resolver_packets_per_resolution}
 	\end{figure}
 	
-	Cette forme de courbe suggère que plus le QPS est élevé, moins le résolveur doit envoyer (et recevoir) de requêtes. Cela s'explique par le processus de batching qui permet de traiter plusieurs requêtes pour le même nom de domaine simultanément.\\
+	Cette forme de courbe suggère que plus le QPS est élevé, moins le résolveur doit envoyer (et recevoir) de requêtes. Cela s'explique par le processus de \textbf{batching} qui permet de traiter plusieurs requêtes pour le même nom de domaine simultanément.\\
 
 	Toutes les requêtes récursives ne concernent pas des adresses \gls{ip} : certaines sont des délégations vers un autre serveur autoritatif (NS), d'autres sont des alias vers un autre nom de domaine (CNAME). Il y a également des informations \gls{dnssec} telles que RRSIG, DNSKEY, DS, etc.
 	Pour illustrer ces différents types de requêtes, voici un graphique montrant la distribution des types de requêtes envoyées et reçues par le resolver.
@@ -928,7 +928,7 @@
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.9\textwidth]{Graphs/requests/query_type_distribution.png}
-		\caption{Distribution des types de requêtes pour les résolutions récursives}
+		\caption{Distribution des types de requêtes pour les résolutions récursives avec une majorité de type A et AAAA avec leur réponses}
 		\label{fig:distribution_types}
 	\end{figure}
 	
@@ -953,14 +953,14 @@
 		\end{minipage}
 	\end{figure}
 	
-	La distribution des noms de domaines aléatoire est inégale \ref{fig:ttl_ecdf}, on retrouve la majorité des noms de domaines en dessous de 1 heure, le reste des \gls{ttl} ne dépassent pas 12 heures.
+	La distribution des noms de domaines aléatoire est inégale \ref{fig:ttl_ecdf}, on retrouve \textbf{la majorité des noms de domaines en dessous de 1 heure}, le reste des \gls{ttl} ne dépassent pas 12 heures.
 
-	Pour les \gls{tld} \ref{fig:ttl_ecdf_tld}, des pics peuvent être observés à 1h et 12h. Avec 25\% des \gls{ttl} de moins d'une heure, 25\% de une heure, 25\% entre 1h et 12h et 25\% de 12h. On remarque tout de même que les \gls{ttl} pour les \gls{tld} sont en moyenne plus élevés que pour les autres noms de domaine.
+	Pour les \gls{tld} \ref{fig:ttl_ecdf_tld}, des \textbf{pics} peuvent être observés \textbf{à 1h et 12h}. Avec \textbf{25\% des \gls{ttl} de moins d'une heure, 25\% de une heure, 25\% entre 1h et 12h et 25\% de 12h}. On remarque tout de même que les \gls{ttl} pour les \gls{tld} sont en moyenne plus élevés que pour les noms de domaine.
 	
 	\subsection{Étude de la complexité algorithmique de \gls{bind9}}
-	Les mesures de consommation énergétique du résolveur \gls{dns} sont très intéressantes, mais elles ne permettent pas de comprendre les raisons de cette consommation énergétique. Pour mieux comprendre les raisons de cette consommation énergétique, et en s'abstrayant du matériel, une solution consiste à étudier la complexité algorithmique de \gls{bind9}. En effet, la consommation énergétique d'un programme est liée à sa complexité algorithmique, des paramètres de consommations peuvent être déduits à partir des performances énergétiques des composants de la machine (CPU, RAM, etc.).
+	Les mesures de consommation énergétique du résolveur \gls{dns} sont très intéressantes, mais \textbf{elles ne permettent pas de comprendre les raisons de cette consommation énergétique}. Pour mieux comprendre les raisons de cette consommation énergétique, et en s'abstrayant du matériel, une solution consiste à étudier la complexité algorithmique de \gls{bind9}. En effet, \textbf{la consommation énergétique d'un programme est liée à sa complexité algorithmique}, des paramètres de consommations peuvent être déduits à partir des performances énergétiques des composants de la machine (CPU, RAM, etc.).
 
-	L'étude de la complexité algorithmique de \gls{bind9} s'est faite en deux parties, d'abord une étude de la complexité algorithmique statique de chaque fonction du code source de \gls{bind9} \cite{Bind9Code} grâce à un outil développé en python par Rosario Patanè, un de mes collègues et membre du projet \gls{decodes}. La seconde partie de l'étude de la complexité algorithmique de \gls{bind9} s'est faite de manière dynamique, en mesurant le nombre d'appels par fonction de \gls{bind9} pour différentes configurations de mesure. Cela a permis d'avoir une idée de la complexité algorithmique réelle de \gls{bind9} pour différentes configurations, et ainsi d'avoir une meilleure compréhension des raisons de la consommation énergétique du résolveur \gls{dns}.
+	L'étude de la complexité algorithmique de \gls{bind9} s'est faite en deux parties, d'abord une étude de la complexité algorithmique statique de chaque fonction du code source de \gls{bind9} \cite{Bind9Code} grâce à un outil développé en python par Rosario Patanè, un de mes collègues et membre du projet \gls{decodes}. La seconde partie de l'étude de la complexité algorithmique de \gls{bind9} s'est faite de manière dynamique, en mesurant \textbf{le nombre d'appels par fonction} de \gls{bind9} pour différentes configurations de mesure. Cela a permis \textbf{d'avoir une idée de la complexité algorithmique réelle de \gls{bind9} pour différentes configurations}, et ainsi d'avoir une meilleure compréhension des raisons de la consommation énergétique du résolveur \gls{dns}.
 
 	\begin{figure}[H]
 		\centering
@@ -969,24 +969,24 @@
 		\label{fig:graph_static_complexity}
 	\end{figure}
 
-	La figure présente la distribution des scénarios de pire cas (\textit{Worst Case Scenario}) estimés pour les fonctions du code source de \gls{bind9} \cite{Bind9Code}. On observe qu'une grande majorité des fonctions possède une faible complexité algorithmique, tandis qu'un nombre limité de fonctions présente des complexités significativement plus élevées. Cette répartition est caractéristique des grands projets logiciels, où une faible proportion de fonctions concentre l'essentiel de la complexité algorithmique.
+	La figure présente la distribution des scénarios de pire cas (\textit{Worst Case Scenario}) estimés pour les fonctions du code source de \gls{bind9} \cite{Bind9Code}. On observe qu'\textbf{une grande majorité des fonctions possède une faible complexité algorithmique}, tandis qu'un nombre limité de fonctions présente des complexités significativement plus élevées. Cette répartition est caractéristique des grands projets logiciels, où une faible proportion de fonctions concentre l'essentiel de la complexité algorithmique.
 
-	Outre la complexité algorithmique, l'outil d'analyse fournit également plusieurs variables supplémentaires, notamment la complexité cyclomatique, le nombre de lignes de code, le nombre de jetons (\textit{tokens}), le nombre d'appels entrants (\textit{Call Count}) ainsi qu'un score de confiance associé aux estimations. Bien que ces informations soient disponibles et puissent être exploitées dans certaines analyses, elles ne sont pas présentées en détail dans ce rapport, leur intérêt étant plus limité au regard des objectifs de cette étude.
+	Outre la complexité algorithmique, l'outil d'analyse fournit également plusieurs variables supplémentaires, notamment \textbf{la complexité cyclomatique, le nombre de lignes de code, le nombre de jetons (\textit{tokens}), le nombre d'appels entrants (\textit{Call Count}) ainsi qu'un score de confiance associé aux estimations}. Bien que ces informations soient disponibles et puissent être exploitées dans certaines analyses, elles ne sont pas présentées en détail dans ce rapport, leur intérêt étant plus limité au regard des objectifs de cette étude.
 
-	L'analyse statique permet également de reconstruire le graphe d'appels des fonctions de \gls{bind9}. Dans cette représentation, chaque nœud correspond à une fonction et chaque arête représente une relation d'appel identifiée dans le code source. Il est ainsi possible d'enrichir ce graphe avec les métriques de complexité calculées pour chaque fonction, offrant une vision globale de l'architecture logicielle et de la répartition de la complexité au sein du projet.
+	L'analyse statique permet également de reconstruire le graphe d'appels des fonctions de \gls{bind9}. Dans cette représentation, \textbf{chaque nœud correspond à une fonction et chaque arête représente une relation d'appel identifiée dans le code source.} Il est ainsi possible d'enrichir ce graphe avec les métriques de complexité calculées pour chaque fonction, offrant une vision globale de l'architecture logicielle et de la répartition de la complexité au sein du projet.
 
-	Cette représentation n'est toutefois pas présentée dans ce rapport, le graphe d'appels de \gls{bind9} comportant près de 10,000 fonctions. Une telle visualisation est donc trop dense pour être exploitable à l'échelle du logiciel complet. Le principe de cette reconstruction est néanmoins illustré dans la section suivante à l'aide d'un exemple plus restreint et plus lisible.
+	Cette représentation n'est toutefois pas présentée dans ce rapport, le graphe d'appels de \gls{bind9} comportant près de 10,000 fonctions. Une telle visualisation est donc trop dense pour être exploitable à l'échelle du logiciel complet. Le principe de cette reconstruction est néanmoins illustré dans la section suivante à l'aide d'un ensemble de fonctions plus restreint et plus lisible.
 
 	La suite des graphiques se concentre sur l'analyse dynamique de la complexité algorithmique de \gls{bind9}.
 
 	\begin{figure}[h]
 		\centering
 		\includegraphics[width=0.9\textwidth]{Graphs/bind_complexity_callgraph.png}
-		\caption{Graphe d'appels des 52 fonctions les plus appelées de \gls{bind9}, enrichi par leur complexité algorithmique statique.}
+		\caption{Graphe d'appels des fonctions les plus appelées de \gls{bind9}, enrichi par leur complexité algorithmique statique. On observe une seule fonction récursive.}
 		\label{fig:graph_appels_functions}
 	\end{figure}
 
-	La figure \ref{fig:graph_appels_functions} illustre un extrait du graphe d'appels de \gls{bind9}, limité aux 52 fonctions recevant le plus grand nombre d'appels. Cette représentation permet d'obtenir une vue plus lisible de la structure des dépendances entre les fonctions tout en conservant les principaux éléments de l'architecture du logiciel. Les métriques de complexité algorithmique statique associées à chaque fonction permettent d'identifier simultanément les fonctions les plus centrales et celles présentant une complexité plus élevée. Ces fonctions constituent des candidates pertinentes pour des analyses plus approfondies, notamment en matière de performances et de consommation énergétique.
+	La figure \ref{fig:graph_appels_functions} illustre un extrait du graphe d'appels de \gls{bind9}, limité aux 52 fonctions recevant le plus grand nombre d'appels. Cette représentation permet d'obtenir une vue plus lisible de la structure des dépendances entre les fonctions tout en conservant les principaux éléments de l'architecture du logiciel. Les métriques de complexité algorithmique statique associées à chaque fonction permettent d'identifier simultanément les fonctions les plus centrales et celles présentant une complexité plus élevée. Ces fonctions constituent des candidates pertinentes pour des \textbf{analyses plus approfondies, notamment en matière de performances et de consommation énergétique.}
 
 
 	\begin{figure}[h]
@@ -996,7 +996,7 @@
 		\label{fig:fonctions_variant_avec_qps}
 	\end{figure}
 	
-	La figure \ref{fig:fonctions_variant_avec_qps} présente l'évolution du nombre d'appels des fonctions les plus sollicitées de \gls{bind9} en fonction du \gls{qps} dans le cas du protocole \gls{udp} avec utilisation du cache. Une augmentation linéaire du nombre d'appels est attendue lorsque la charge augmente, traduisant la proportionnalité entre le trafic traité et l'activité interne du résolveur. Les différences observées entre les fonctions reflètent leur rôle respectif dans la pile de traitement \gls{udp}. Il n'y a aucune différence entre les mesures faites avec et sans cache et entre les différents protocoles, la différence doit se voir dans les temps d'exécution de ces fonctions cependant.
+	La figure \ref{fig:fonctions_variant_avec_qps} présente l'évolution du nombre d'appels des fonctions les plus sollicitées de \gls{bind9} en fonction du \gls{qps} dans le cas du protocole \gls{udp} avec utilisation du cache. Une augmentation linéaire du nombre d'appels est attendue lorsque la charge augmente, traduisant la proportionnalité entre le trafic traité et l'activité interne du résolveur. Les différences observées entre les fonctions reflètent leur rôle respectif dans la pile de traitement \gls{udp}.\textbf{ Il n'y a aucune différence entre les mesures faites avec et sans cache et entre les différents protocoles}, la différence doit se voir dans les temps d'exécution de ces fonctions cependant.
 	
 	\begin{table}[H]
 		\centering
@@ -1021,7 +1021,7 @@
 		\label{fig:executions_top_22}
 	\end{figure}
 
-	Avec la figure \ref{fig:executions_top_22}, on remarque que 3 fonctions sont particulièrement sollicitées, à savoir \texttt{dns\_acl\_allowed}, \texttt{dns\_view\_attach} et \texttt{dns\_tsigkey\_identity}. Ces fonctions représentent à elle seule plus de 97\% des appels effectués par \gls{bind9}. Elles semblent être appelées au moins une fois par requête. Voici une brève description de ces fonctions ainsi que de la fonction \texttt{cfg\_tuple\_get} qui est également très sollicitée, mais dans une moindre mesure.
+	Avec la figure \ref{fig:executions_top_22}, on remarque que 3 fonctions sont particulièrement sollicitées, à savoir \texttt{dns\_acl\_allowed}, \texttt{dns\_view\_attach} et \texttt{dns\_tsigkey\_identity}. \textbf{Ces fonctions représentent à elle seule plus de 97\% des appels effectués par \gls{bind9}}. Elles semblent être appelées au moins une fois par requête. Voici une brève description de ces fonctions ainsi que de la fonction \texttt{cfg\_tuple\_get} qui est également très sollicitée, mais dans une moindre mesure.
 
 	\begin{itemize}
 		\item \texttt{dns\_acl\_allowed} \textbf{(O(1))} : vérifie si une requête ou un client est autorisé selon les règles de contrôle d'accès (ACL) configurées dans \gls{bind9}.
@@ -1034,29 +1034,29 @@
 	\end{itemize}
 
 
-	L'analyse statique et dynamique de la complexité de \gls{bind9} met en évidence une répartition hétérogène des traitements au sein du résolveur. Si la majorité des fonctions présentent une complexité relativement faible et un nombre limité d'appels, un ensemble restreint de fonctions occupe une position centrale dans l'architecture du logiciel et concentre une part importante de l'activité observée lors du traitement des requêtes \gls{dns}.
+	L'analyse statique et dynamique de la complexité de \gls{bind9} met en évidence une \textbf{répartition hétérogène des traitements au sein du résolveur.} Si la majorité des fonctions présentent une complexité relativement faible et un nombre limité d'appels, un ensemble restreint de fonctions occupe une position centrale dans l'architecture du logiciel et concentre une part importante de l'activité observée lors du traitement des requêtes \gls{dns}.
 
 	L'étude des graphes d'appels permet d'identifier ces fonctions critiques ainsi que leurs relations avec les différents sous-systèmes du résolveur. Les mesures dynamiques montrent par ailleurs que certaines fonctions voient leur nombre d'appels évoluer proportionnellement à la charge appliquée, ce qui suggère un lien direct entre leur activité, les performances du résolveur et sa consommation de ressources.
 
-	Ces résultats fournissent une meilleure compréhension du fonctionnement interne de \gls{bind9} et permettent d'identifier les composantes susceptibles d'avoir le plus fort impact sur les performances et la consommation énergétique. Ils constituent ainsi une base de travail pertinente pour la construction de modèles visant à représenter le comportement du résolveur.
+	Ces résultats fournissent une meilleure compréhension du fonctionnement interne de \gls{bind9} et permettent d'\textbf{identifier les composantes susceptibles d'avoir le plus fort impact sur les performances et la consommation énergétique.} Ils constituent ainsi une base de travail pertinente pour la construction de modèles visant à représenter le comportement du résolveur.
 
-	Cependant, il manque une analyse du temps d'exécution de ces fonctions, qui pourrait donner des informations supplémentaires sur la consommation énergétique du résolveur. De plus, il est probable que nous observions des différences dans le temps d'exécution de ces fonctions selon la configuration de mesure (avec ou sans cache, protocole utilisé, etc.). Il est également important de noter qu'il manque probablement des fonctions critiques dans cette analyse, pour pouvoir mesurer les fonctions manquantes, il faudrait intégrer les librairies utilisées par \gls{bind9} dans l'analyse de la complexité algorithmique. Cela permettrait d'avoir une vue plus complète de la consommation énergétique du résolveur \gls{dns}.
+	Cependant, il manque une \textbf{analyse du temps d'exécution de ces fonctions}, qui pourrait donner des informations supplémentaires sur la consommation énergétique du résolveur. De plus, il est probable que nous observions des différences dans le temps d'exécution de ces fonctions selon la configuration de mesure (avec ou sans cache, protocole utilisé, etc.). \textbf{Il est également important de noter qu'il manque probablement des fonctions critiques dans cette analyse}, pour pouvoir mesurer les fonctions manquantes, il faudrait intégrer les librairies utilisées par \gls{bind9} dans l'analyse de la complexité algorithmique. Cela permettrait d'avoir une vue plus complète de la consommation énergétique du résolveur \gls{dns}.
 
 
-	Les différentes campagnes de mesures réalisées ont permis de caractériser le comportement du résolveur \gls{dns} sous plusieurs angles complémentaires : utilisation du cache, consommation des ressources système, consommation énergétique et complexité algorithmique. L'analyse des résultats met en évidence l'influence de paramètres tels que le protocole utilisé, la charge appliquée ou encore l'utilisation du cache sur les performances et la consommation du système.
+	Les différentes campagnes de mesures réalisées ont permis de caractériser le comportement du résolveur \gls{dns} sous plusieurs angles complémentaires : \textbf{utilisation du cache, consommation des ressources système, consommation énergétique et complexité algorithmique.} L'analyse des résultats met en évidence l'influence de paramètres tels que le protocole utilisé, la charge appliquée ou encore l'utilisation du cache sur les performances et la consommation du système.
 
-	Au-delà des observations quantitatives, ces expérimentations ont également permis\\ d'identifier les principaux mécanismes impliqués dans le traitement des requêtes \gls{dns} et de mieux comprendre leur contribution relative à la charge du résolveur. Les métriques collectées constituent ainsi un ensemble de données riche permettant de relier l'activité interne de \gls{bind9} aux ressources matérielles effectivement consommées.
+	Au-delà des observations quantitatives, ces expérimentations ont également permis\\ d'identifier les principaux mécanismes impliqués dans le traitement des requêtes \gls{dns} et de mieux comprendre leur contribution relative à la charge du résolveur. Les métriques collectées constituent ainsi un ensemble de données riche permettant de \textbf{relier l'activité interne de \gls{bind9} aux ressources matérielles effectivement consommées.}
 
-	Ces résultats constituent le socle expérimental nécessaire à la phase de modélisation. Les analyses précédentes ont permis d'identifier les variables pertinentes, d'estimer les paramètres caractéristiques du système et de valider les hypothèses formulées sur le fonctionnement du résolveur. La section suivante s'appuie sur ces observations afin de construire et d'évaluer différents modèles capables d'estimer la consommation énergétique d'un résolveur \gls{dns} à partir de ses caractéristiques de fonctionnement.
+	Ces résultats constituent le socle expérimental nécessaire à la phase de modélisation. Les analyses précédentes ont permis d'identifier les variables pertinentes, d'estimer les paramètres caractéristiques du système et de valider les hypothèses formulées sur le fonctionnement du résolveur. La section suivante s'appuie sur ces observations afin de \textbf{construire et d'évaluer différents modèles capables d'estimer la consommation énergétique d'un résolveur \gls{dns}} à partir de ses caractéristiques de fonctionnement.
 
 
 	\section{Modélisation}
 	
 	L'objectif principal de ce projet est de mieux comprendre et d'étudier la consommation énergétique des infrastructures \gls{dns}, en se concentrant plus particulièrement sur le résolveur \gls{bind9}. Les campagnes de mesures présentées dans les sections précédentes ont permis de constituer un ensemble de données comprenant à la fois des mesures de consommation énergétique, des métriques système et réseau ainsi que des informations relatives à la complexité algorithmique du logiciel.
 
-	Toutefois, les mesures seules ne permettent pas d'expliquer ou de prédire directement le comportement énergétique du résolveur dans de nouvelles conditions d'utilisation. Une étape de modélisation est donc nécessaire afin de transformer ces observations expérimentales en outils capables d'estimer la consommation énergétique du système.
+	Toutefois, les mesures seules ne permettent pas d'expliquer ou de prédire directement le comportement énergétique du résolveur \textbf{dans de nouvelles conditions d'utilisation.} Une étape de modélisation est donc nécessaire afin de transformer ces observations expérimentales en outils capables d'estimer la consommation énergétique du système.
 
-	Deux approches complémentaires sont étudiées dans ce travail. La première repose sur des techniques d'apprentissage automatique permettant d'établir une relation entre les métriques observées et la consommation énergétique mesurée. La seconde s'appuie sur un modèle analytique fondé sur les réseaux de files d'attente, dont l'objectif est de représenter les différentes étapes du traitement d'une requête \gls{dns} et leur contribution à la consommation globale.
+	Deux approches complémentaires sont étudiées dans ce travail. La première repose sur des \textbf{techniques d'apprentissage automatique} permettant d'établir une relation entre les métriques observées et la consommation énergétique mesurée. La seconde s'appuie sur un \textbf{modèle analytique fondé sur les réseaux de files d'attente}, dont l'objectif est de représenter les différentes étapes du traitement d'une requête \gls{dns} et leur contribution à la consommation globale.
 
 	Ces approches répondent à des problématiques différentes mais complémentaires. Les modèles statistiques visent principalement à maximiser la précision des prédictions, tandis que les modèles analytiques cherchent à fournir une compréhension des mécanismes internes responsables de la consommation énergétique. Enfin, un troisième axe de recherche, basé sur l'analyse de la complexité algorithmique du résolveur, est actuellement à l'étude mais n'a pas encore abouti à un modèle exploitable.
 
@@ -1064,9 +1064,9 @@
 	
 	Les campagnes de mesures réalisées ont permis de collecter un grand nombre de métriques caractérisant l'activité du résolveur \gls{dns}, notamment l'utilisation du processeur, de la mémoire, du réseau, des entrées-sorties ainsi que différents indicateurs liés au fonctionnement du cache. Ces informations constituent une base de données riche permettant d'envisager une approche par apprentissage automatique.
 
-	L'objectif de cette approche est de construire un modèle capable de prédire la consommation énergétique du résolveur à partir des métriques observées. Un tel modèle présente plusieurs intérêts. D'une part, il permet d'estimer rapidement la consommation énergétique sans avoir recours à un wattmètre externe. D'autre part, il permet d'identifier les métriques les plus influentes dans la consommation observée et d'évaluer leur contribution relative.
+	L'objectif de cette approche est de construire un modèle capable de prédire la consommation énergétique du résolveur à partir des métriques observées. Un tel modèle présente plusieurs intérêts. D'une part, il \textbf{permet d'estimer rapidement la consommation énergétique sans avoir recours à un wattmètre externe}. D'autre part, il permet d'identifier les métriques les plus influentes dans la consommation observée et d'évaluer leur contribution relative.
 
-	Cette approche repose toutefois sur l'hypothèse que les métriques nécessaires à la prédiction sont disponibles au moment de l'estimation. Or, dans certains contextes de déploiement ou d'exploitation, l'accès à ces informations peut être limité. Il est donc important d'évaluer à la fois la précision du modèle obtenu et sa dépendance aux données d'entrée utilisées.
+	\textbf{Cette approche repose toutefois sur l'hypothèse que les métriques nécessaires à la prédiction sont disponibles au moment de l'estimation.} Or, dans certains contextes de déploiement ou d'exploitation, l'accès à ces informations peut être limité. Il est donc important d'évaluer à la fois la précision du modèle obtenu et sa dépendance aux données d'entrée utilisées.
 	
 	Afin d'identifier les variables les plus influentes sur la consommation énergétique du résolveur \gls{dns}, une matrice de corrélation a été calculée entre l'ensemble des métriques collectées et la consommation énergétique mesurée.
 	
@@ -1082,9 +1082,9 @@
 	\end{figure}
 
 
-	L'analyse de cette matrice met en évidence que les variables les plus fortement corrélées avec la consommation énergétique sont principalement liées à l'utilisation du processeur (CPU) ainsi qu'au \gls{qps}. Cette observation est cohérente avec le fonctionnement interne d'un résolveur \gls{dns}, dont la charge de travail est essentiellement pilotée par le nombre de requêtes traitées et le coût de traitement associé à chaque requête.
+	L'analyse de cette matrice met en évidence que les variables les plus fortement corrélées avec \textbf{la consommation énergétique sont principalement liées à l'utilisation du processeur (CPU) ainsi qu'au \gls{qps}}. Cette observation est cohérente avec le fonctionnement interne d'un résolveur \gls{dns}, dont la charge de travail est essentiellement pilotée par le nombre de requêtes traitées et le coût de traitement associé à chaque requête.
 
-	Les métriques CPU reflètent directement l'intensité du calcul nécessaire au traitement des requêtes, notamment la gestion des threads, les opérations de résolution récursive et les mécanismes de cache. De son côté, le \gls{qps} représente une mesure directe de la charge entrante, influençant linéairement ou non linéairement l'activité globale du système.
+	\textbf{Les métriques CPU reflètent directement l'intensité du calcul nécessaire au traitement des requêtes}, notamment la gestion des threads, les opérations de résolution récursive et les mécanismes de cache. De son côté, le \gls{qps} représente une mesure directe de la charge entrante, influençant linéairement ou non linéairement l'activité globale du système.
 
 	À l'inverse, certaines métriques telles que les accès disques ou certaines statistiques réseau présentent une corrélation plus faible avec la consommation énergétique dans les conditions expérimentales étudiées. Cela suggère que, pour les configurations testées, la consommation du résolveur est principalement dominée par des facteurs de calcul plutôt que par des goulots d'étranglement d'entrée/sortie.
 
@@ -1106,28 +1106,28 @@
 			LinearSVR               & 1.7789 & 1.3338 & 0.9398 & 1.4847 & 132.775 \\
 			\hline
 		\end{tabular}
-		\caption{Comparaison des performances des modèles de régression pour la prédiction de la consommation énergétique du résolveur \gls{dns}}
+		\caption{Comparaison des performances des modèles de régression pour la prédiction de la consommation énergétique du résolveur \gls{dns}.}
 		\label{tab:ml_results}
 	\end{table}
 	
 	Les résultats présentés dans le tableau \ref{tab:ml_results} comparent plusieurs modèles de régression utilisés pour la prédiction de la consommation énergétique du résolveur \gls{dns} à partir des métriques collectées.
 	
-	Globalement, les modèles basés sur des méthodes d'ensemble (\textit{ensemble methods}) obtiennent les meilleures performances. En particulier, XGBoost atteint les erreurs les plus faibles en termes de MSE et RMSE, tout en conservant un temps d'entraînement très réduit par rapport aux autres approches. Cela en fait le modèle le plus performant en termes de compromis entre précision et coût de calcul.
+	Globalement, les modèles basés sur des méthodes d'ensemble (\textit{ensemble methods}) obtiennent les meilleures performances. En particulier, XGBoost atteint les erreurs les plus faibles en termes de MSE et RMSE, tout en conservant un temps d'entraînement très réduit par rapport aux autres approches. \textbf{Cela en fait le modèle le plus performant en termes de compromis entre précision et coût de calcul.}
 
 	Les modèles RandomForest et ExtraTrees présentent des performances légèrement inférieures, avec des erreurs plus élevées et un temps d'entraînement significativement plus important dans le cas de RandomForest. HistGradientBoosting offre des performances proches de XGBoost, mais avec un léger surcoût en erreur et en temps d'entraînement.
 	
 	Enfin, le modèle linéaire LinearSVR présente les performances les moins bonnes sur l'ensemble des métriques. Cela suggère que la relation entre les variables explicatives et la consommation énergétique n'est pas linéaire, justifiant l'utilisation de modèles non linéaires plus complexes.
 	
-	L'ensemble des modèles présente néanmoins des erreurs relativement faibles (MAPE autour de 1.2-1.5\%), ce qui indique que les métriques collectées permettent une prédiction fiable de la consommation énergétique du résolveur \gls{dns} dans les conditions expérimentales étudiées.
+	\textbf{L'ensemble des modèles présente néanmoins des erreurs relativement faibles} (MAPE autour de 1.2-1.5\%), ce qui indique que les métriques collectées permettent une prédiction fiable de la consommation énergétique du résolveur \gls{dns} dans les conditions expérimentales étudiées.
 	
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.9\textwidth]{Graphs/RandomForest_predictions.png}
-		\caption{Estimation par RandomForest et consommation énergétique réelle}
+		\caption{Estimation par RandomForest et consommation énergétique réelle, montrant une bonne prédiction de la puissance consommée.}
 		\label{fig:Estimation_RandomForest}
 	\end{figure}
 
-	Le test de prédiction est réalisé sur 20\% des données, il correspond donc à plusieurs mesures de configurations différentes mise bout à bout. Ce qui explique donc ces irrégularités et cette périodicité. 
+	Le test de prédiction est réalisé sur 20\% des données, il \textbf{correspond donc à plusieurs mesures de configurations différentes mise bout à bout.} Ce qui explique donc ces irrégularités et cette périodicité. 
 	
 	L'ensemble des expérimentations réalisées dans cette section montre que la consommation énergétique du résolveur \gls{dns} peut être prédite avec une bonne précision à partir des métriques système, réseau et applicatives collectées lors des campagnes de mesures. Les différents modèles testés présentent des performances globalement proches, avec toutefois des différences notables en termes de précision et de coût d'entraînement.
 
@@ -1135,14 +1135,14 @@
 
 	De plus, XGBoost bénéficie d'optimisations d'implémentation importantes, notamment en termes de parallélisation et de gestion efficace des structures de données, ce qui explique son temps d'entraînement particulièrement faible par rapport à d'autres méthodes d'ensemble comme RandomForest ou ExtraTrees, tout en conservant une meilleure précision.
 
-	Ainsi, XGBoost constitue le meilleur compromis entre performance prédictive, robustesse et coût de calcul dans le cadre de ce problème. Ces résultats confirment l'intérêt des méthodes d'ensemble à base d'arbres pour la modélisation de systèmes complexes tels que les résolveurs \gls{dns}, où les relations entre variables sont fortement non linéaires et dépendantes du contexte d'exécution.
+	Ainsi, \textbf{XGBoost constitue le meilleur compromis entre performance prédictive, robustesse et coût de calcul} dans le cadre de ce problème. Ces résultats confirment l'intérêt des méthodes d'ensemble à base d'arbres pour la modélisation de systèmes complexes tels que les résolveurs \gls{dns}, où les relations entre variables sont fortement non linéaires et dépendantes du contexte d'exécution.
 
 
 	\subsection{Modèle de réseau de files d'attente}
 	
-	Une approche permettant d'estimer la consommation énergétique d'un résolveur \gls{dns} consiste à décomposer le processus de résolution en plusieurs étapes élémentaires et à évaluer la contribution énergétique de chacune d'entre elles. Contrairement à une approche purement empirique, dépendante du matériel ou de l'implémentation utilisée, cette méthode vise à construire un modèle plus général permettant d'estimer la consommation d'un résolveur dans différentes conditions d'utilisation.
+	Une approche permettant d'estimer la consommation énergétique d'un résolveur \gls{dns} consiste à \textbf{décomposer le processus de résolution en plusieurs étapes élémentaires et à évaluer la contribution énergétique} de chacune d'entre elles. Contrairement à une approche purement empirique, dépendante du matériel ou de l'implémentation utilisée, cette méthode vise à \textbf{construire un modèle plus général} permettant d'estimer la consommation d'un résolveur dans différentes conditions d'utilisation.
 	
-	Les réseaux de files d'attente constituent un cadre particulièrement adapté à cet objectif. Ils permettent de représenter les différentes ressources mobilisées lors du traitement d'une requête ainsi que les délais associés aux temps d'attente et aux temps de service. Chaque étape du processus de résolution peut ainsi être modélisée indépendamment avant d'être intégrée dans un modèle global.
+	Les réseaux de files d'attente constituent un cadre particulièrement adapté à cet objectif. Ils permettent de \textbf{représenter les différentes ressources mobilisées lors du traitement d'une requête ainsi que les délais associés aux temps d'attente et aux temps de service}. Chaque étape du processus de résolution peut ainsi être modélisée indépendamment avant d'être intégrée dans un modèle global.
 
 	À partir de notre compréhension du fonctionnement interne de \gls{bind9}, un modèle de réseau de files d'attente a été élaboré. Celui-ci représente les principales étapes impliquées dans le traitement d'une requête \gls{dns}, depuis l'établissement éventuel de la connexion jusqu'à la génération de la réponse. Les différentes composantes du modèle sont les suivantes :
 
@@ -1165,7 +1165,7 @@
 		\item $S$ : temps moyen de service.
 	\end{itemize}
 
-	L'estimation de ces paramètres repose sur une étude d'ablation. Cette méthodologie consiste a ajouter progressivement les différentes étapes du processus de résolution à une configuration minimale mobilisant le moins de mécanismes possible. L'objectif est d'isoler la contribution de chaque composante à la latence observée ainsi qu'à la consommation des ressources matérielles, notamment le processeur et la mémoire.
+	L'estimation de ces paramètres repose sur une \textbf{étude d'ablation}. Cette méthodologie consiste a ajouter progressivement les différentes étapes du processus de résolution à une configuration minimale mobilisant le moins de mécanismes possible. L'objectif est d'isoler la contribution de chaque composante à la latence observée ainsi qu'à la consommation des ressources matérielles, notamment le processeur et la mémoire.
 
 	Les protocoles de mesure envisagés pour caractériser les différentes composantes sont les suivants :
 
@@ -1189,7 +1189,7 @@
 		\label{fig:dns_queue_model}
 	\end{figure}
 
-	Ce modèle repose sur notre compréhension actuelle du fonctionnement interne de \gls{bind9}. Bien qu'il ne prétende pas représenter l'intégralité des mécanismes mis en œuvre par le résolveur, il fournit un cadre méthodologique permettant d'analyser et d'estimer sa consommation énergétique. 
+	Ce modèle repose sur notre compréhension actuelle du fonctionnement interne de \gls{bind9}. Bien qu'il ne prétende pas représenter l'intégralité des mécanismes mis en œuvre par le résolveur, \textbf{il fournit un cadre méthodologique permettant d'analyser et d'estimer sa consommation énergétique. }
 
 	\noindent bind9 n'utilise pas de mémoire tampon pour mettre en attente des requêtes. Les seules attentes subies par les requêtes sont dues à des délais de traitement des requêtes
 	itératives (qu'on appelle ici récursives...). Une requête qui attend est donc {\it en service}. Comme toutes les requêtes sont traitées en même temps, on a donc un système composé
@@ -1874,13 +1874,13 @@
 	\chapter*{Conclusion}
 	\addcontentsline{toc}{chapter}{Conclusion}
 
-	Ce stage s'inscrit dans le cadre du projet \gls{decodes}, dont l'objectif est de mieux comprendre et de modéliser la consommation énergétique des infrastructures \gls{dns}. Plus précisément, ce travail s'est concentré sur l'étude du résolveur \gls{bind9} à travers la mise en place d'un environnement expérimental, la réalisation de campagnes de mesures et le développement de différentes approches de modélisation. Au-delà du cas particulier du \gls{dns}, cette étude constitue une première étape vers une problématique plus générale : l'estimation de la consommation énergétique des systèmes distribués.
+	Ce stage s'inscrit dans le cadre du projet \gls{decodes}, dont l'objectif est de mieux comprendre et de modéliser la consommation énergétique des infrastructures \gls{dns}. Plus précisément, ce travail s'est concentré sur l'étude du résolveur \gls{bind9} à travers \textbf{la mise en place d'un environnement expérimental, la réalisation de campagnes de mesures et le développement de différentes approches de modélisation.} Au-delà du cas particulier du \gls{dns}, cette étude constitue une première étape vers une problématique plus générale : \textbf{l'estimation de la consommation énergétique des systèmes distribués.}
 
-	Les travaux réalisés ont permis de proposer une méthodologie complète de mesure de la consommation énergétique d'un résolveur \gls{dns}, d'analyser l'impact de différents protocoles et mécanismes tels que le cache, et d'étudier plusieurs approches de modélisation. Les modèles de machine learning ont démontré qu'il est possible de prédire avec précision la consommation énergétique à partir de métriques système, tandis que le modèle de réseau de files d'attente offre une approche plus interprétable permettant d'analyser la contribution des différentes étapes du traitement d'une requête. En parallèle, l'analyse de la complexité algorithmique de \gls{bind9} apporte un point de vue complémentaire en reliant le comportement du logiciel à sa consommation, tout en s'affranchissant largement des caractéristiques matérielles de la plateforme d'exécution.
+	Les travaux réalisés ont permis de proposer une méthodologie complète de mesure de la consommation énergétique d'un résolveur \gls{dns}, d'analyser l'impact de différents protocoles et mécanismes tels que le cache, et d'étudier plusieurs approches de modélisation. Les modèles de machine learning ont démontré qu'il est possible de prédire avec précision la consommation énergétique à partir de métriques système, tandis que le modèle de réseau de files d'attente offre une \textbf{approche plus interprétable permettant d'analyser la contribution des différentes étapes du traitement d'une requête.} En parallèle, l'analyse de la complexité algorithmique de \gls{bind9} apporte un point de vue complémentaire en reliant le comportement du logiciel à sa consommation, tout en s'affranchissant largement des caractéristiques matérielles de la plateforme d'exécution.
 
-	Ces travaux ouvrent également plusieurs perspectives. Les différences de consommation observées entre les mesures instrumentées et les mesures sans collecte de métriques système méritent d'être étudiées plus en profondeur, car elles mettent en évidence le coût non négligeable de l'instrumentation. Cette problématique est particulièrement importante dans la perspective d'un déploiement en environnement de production, notamment au sein des centres de données, où la mise en œuvre de mesures énergétiques externes est complexe. Par ailleurs, la construction de modèles représentatifs de résolveurs \gls{dns} en production nécessitera un accès à des données réelles, ce qui soulève des enjeux de collaboration avec les opérateurs de centres de données et de partage des données d'exploitation.
+	Ces travaux ouvrent également plusieurs perspectives. Les différences de consommation observées entre les mesures instrumentées et les mesures sans collecte de métriques système méritent d'être étudiées plus en profondeur, car elles \textbf{mettent en évidence le coût non négligeable de l'instrumentation.} Cette problématique est particulièrement importante dans la perspective d'un déploiement en environnement de production, notamment au sein des centres de données, où la mise en œuvre de mesures énergétiques externes est complexe. Par ailleurs, la construction de modèles représentatifs de résolveurs \gls{dns} en production nécessitera un accès à des données réelles, ce qui \textbf{soulève des enjeux de collaboration avec les opérateurs de centres de données et de partage des données d'exploitation.}
 
-	Sur le plan personnel, ce stage a constitué une expérience particulièrement enrichissante. Il m'a permis de découvrir le fonctionnement de la recherche académique, de participer à un projet scientifique de longue durée et d'acquérir une méthodologie rigoureuse pour la conception d'expérimentations, l'analyse critique des résultats et la modélisation de systèmes complexes. Cette expérience a renforcé mon intérêt pour la recherche et je suis particulièrement enthousiaste à l'idée de poursuivre ces travaux dans le cadre d'une thèse.
+	Sur le plan personnel, ce stage a constitué une expérience particulièrement enrichissante. Il m'a permis de découvrir le fonctionnement de la recherche académique, de participer à un projet scientifique de longue durée et d'acquérir une méthodologie rigoureuse pour la conception d'expérimentations, l'analyse critique des résultats et la modélisation de systèmes complexes. \textbf{Cette expérience a renforcé mon intérêt pour la recherche et je suis particulièrement enthousiaste à l'idée de poursuivre ces travaux dans le cadre d'une thèse.}
 
 	Enfin, je tiens à remercier chaleureusement mes encadrants pour leur disponibilité, leurs conseils et leur accompagnement tout au long de ce stage. Je remercie également l'ensemble doctorants et autres stagiaires présents à Télécom Paris pour les discussions enrichissantes, les échanges d'idées et les bons moments partagés. 
 
