@@ -29,9 +29,6 @@
 
 \usepackage[acronym]{glossaries}
 
-\renewcommand*{\genacrfullformat}[2]{%
-  \textit{\glsentrylong{#1}\space(\firstacronymfont{\glsentryshort{#1}})}#2%
-}
 \makeglossaries
 
 \input{biblatex.cfg}
@@ -69,8 +66,7 @@
 \setutbmcompanytutor{MAROT Michel}
 \setutbmschooltutor{BAALA CANALDA Oumaya}
 \setutbmabstract{
-	Le Domain Name System (\gls{dns}) est une infrastructure essentielle d'Internet dont la 
-	consommation énergétique reste encore peu étudiée. Ce stage, réalisé dans le cadre du projet \gls{decodes} à Télécom SudParis, vise à mieux comprendre et modéliser la consommation énergétique d'un résolveur \gls{dns}, en se concentrant sur l'implémentation \gls{bind9}.
+	Le Domain Name System (\gls{dns}) est une infrastructure essentielle d'Internet dont la consommation énergétique reste encore peu étudiée. Ce stage, réalisé dans le cadre du projet \gls{decodes} à Télécom SudParis, vise à mieux comprendre et modéliser la consommation énergétique d'un résolveur \gls{dns}, en se concentrant sur l'implémentation \gls{bind9}.
 
 	Pour atteindre cet objectif, un environnement expérimental a été conçu afin de mesurer la consommation énergétique du résolveur sous différentes configurations (protocoles, utilisation du cache et charge). Les données collectées ont permis d'analyser l'influence de ces paramètres sur la consommation énergétique, d'étudier la complexité algorithmique de \gls{bind9} et de développer deux approches de modélisation : un modèle de machine learning basé sur des métriques système et un modèle analytique fondé sur les réseaux de files d'attente. En parallèle, une analyse de la complexité algorithmique de \gls{bind9} a été réalisée afin de mieux comprendre les facteurs logiciels influençant cette consommation.
 
@@ -150,10 +146,9 @@
 	\makeutbmfrontcover{}
  
 	\section*{Abstract}
-
-	Le \gls{dns} est une infrastructure essentielle d'Internet dont la 
-	consommation énergétique reste encore peu étudiée. Ce stage, réalisé dans le cadre du projet \gls{decodes} à Télécom SudParis, vise à mieux comprendre et \textbf{modéliser la consommation énergétique d'un résolveur \gls{dns}}, en se concentrant sur l'implémentation \gls{bind9}.
-
+	\sloppy	
+	\noindent Le \gls{dns} est une infrastructure essentielle d'Internet dont la consommation énergétique reste encore peu étudiée. Ce stage, réalisé dans le cadre du projet \gls{decodes} à Télécom SudParis, vise à mieux comprendre et \textbf{modéliser la consommation énergétique d'un résolveur \gls{dns}}, en se concentrant sur l'implémentation \gls{bind9}.
+	\fussy
 	Pour atteindre cet objectif, un environnement expérimental a été conçu afin de mesurer la consommation énergétique du résolveur sous différentes configurations (protocoles, utilisation du cache et charge). Les données collectées ont permis d'analyser l'influence de ces paramètres sur la consommation énergétique, d'étudier la complexité algorithmique de \gls{bind9} et de développer deux approches de modélisation : un modèle de \textbf{machine learning} basé sur des métriques système et un modèle analytique fondé sur les \textbf{réseaux de files d'attente}. En parallèle, une analyse de la \textbf{complexité algorithmique de \gls{bind9}} a été réalisée afin de mieux comprendre les facteurs logiciels influençant cette consommation.
 
 	Les résultats montrent qu'il est possible de prédire avec précision la consommation énergétique du résolveur à partir des métriques collectées, tout en mettant en évidence les principales composantes responsables de cette consommation. \textbf{Ces travaux constituent une première étape vers la modélisation énergétique de systèmes distribués plus complexes.}
