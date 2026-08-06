@@ -121,7 +121,7 @@
 \newacronym{itut}{ITU-T}{International Telecommunication Union Telecommunication Standardization Sector}
 \newacronym{ietf}{IETF}{Internet Engineering Task Force}
 \newacronym{fai}{FAI}{Fournisseur d'Accès à Internet}
-\newacronym{afnic}{AFNIC}{Association Française pour le NommageInternet en Coopération}
+\newacronym{afnic}{AFNIC}{Association Française pour le Nommage Internet en Coopération}
 \newacronym{enpc}{ENPC}{École Nationale des Ponts et Chaussées}
 \newacronym{api}{API}{Application Programming Interface}
 \newacronym{snmp}{SNMP}{Simple Network Management Protocol}
@@ -1122,6 +1122,7 @@
 	
 	\begin{table}[H]
 		\centering
+		\small
 		\begin{tabular}{lccccc}
 			\hline
 			\textbf{Modèle} & \textbf{MSE} & \textbf{RMSE} & \textbf{MAE} & \textbf{MAPE (\%)} & \textbf{Temps d'entraînement (s)} \\
@@ -1257,7 +1258,7 @@
 	\end{table}
 
 	\vspace{0.25cm}
-	\noindent Pour notre étude énergétique, les deux seules paramètres impactants sont \verb+clients-per-query+ et \verb+recursive-clients+. La première a une valeur par défaut de 10
+	\noindent Pour notre étude énergétique, les deux seules paramètres impactants sont \texttt{clients-per- query} et \verb+recursive-clients+. La première a une valeur par défaut de 10
 	mais est adaptée dynamiquement. Elle est donc estimée dans la suite de ce document. La seconde est fixe, à 1000 par défaut. \verb+clients-per-query+ limite le nombre de requêtes
 	correspondant à une même demande client. Puisqu'il y a nécessairement plusieurs noms résolus simultanément, il y a donc plusieurs blocs de \verb+clients-per-query+ serveurs.
 	Notons qu'il faudrait revoir le débit entrant dans chacun de ces blocs et fixer les taux de services en conséquence mais comme n'intervient à ce niveau que la charge en Erlang
