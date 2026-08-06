@@ -1900,64 +1900,88 @@
 	\addcontentsline{toc}{section}{Détail des métriques collectées}
 	\label{annexe:metrics}
 	
-	\subsubsection*{Nouvelles métriques}
-	Le cache sera surveillé à l'aide de 6 variables disponibles via \texttt{rndc}, un module utilisé pour visualiser les métriques de \gls{bind9}.
-	
-	Les nouvelles métriques sont :
-	
-	\begin{description}
-		\item[Accès au cache] \hfill \\
-		Le nombre total de requêtes \gls{dns} \textbf{servies directement depuis le cache}. \\
-		Cela inclut les réponses positives (par exemple, les enregistrements A, AAAA, MX) qui ont été précédemment mises en cache. \\
-		\textit{Unité : Compteur (entier non signé).}
-		
-		\item[Échecs de cache] \hfill \\
-		Le nombre total de requêtes \gls{dns} \textbf{non servies depuis le cache}, nécessitant une résolution externe (par exemple, en interrogeant un serveur \gls{dns} autoritatif ou récursif). \\
-		\textit{Unité : Compteur (entier non signé).}
-		
-		\item[Accès au cache (à partir des requêtes)] \hfill \\
-		Le nombre de \textbf{réponses en cache} pour les requêtes entrantes. \\
-		Contrairement aux \texttt{accès au cache}, cette métrique se concentre sur les \textbf{requêtes initiales} servies depuis le cache. \\
-		\textit{Unité : Compteur (entier non signé).}
-		
-		\item[Échecs de cache (à partir des requêtes)] \hfill \\
-		Le nombre de requêtes entrantes \textbf{non résolues par le cache}, nécessitant une résolution externe. \\
-		Complémentaire aux \texttt{accès au cache (à partir des requêtes)} pour évaluer l'efficacité du cache sur les requêtes entrantes. \\
-		\textit{Unité : Compteur (entier non signé).}
-		
-		\item[Mémoire de l'arbre de cache] \hfill \\
-		Mémoire \textbf{utilisée par la structure arborescente du cache} (en octets). \\
-		Représente la mémoire allouée pour organiser les entrées du cache dans une structure arborescente (optimisée pour des recherches rapides). \\CPU
-		\textit{Unité : Octets.}
-		
-		\item[Mémoire du tas de cache] \hfill \\
-		Mémoire \textbf{utilisée par le tas du cache} (en octets). \\
-		Représente la mémoire allouée dynamiquement pour les entrées du cache non organisées dans l'arbre. \\
-		\textit{Unité : Octets.}
 
-		\item[Entrées de cache supprimées en raison de l'épuisement de la mémoire] \hfill \\
-		Le nombre d'\textbf{entrées de cache supprimées} en raison de \textbf{l'épuisement de la mémoire}. \\
-		Indique que le cache a atteint sa limite de mémoire allouée (\texttt{max-cache-size}) et a dû supprimer des entrées pour libérer de l'espace. \\
-		\textit{Unité : Compteur (entier non signé).} \\
-		\textit{Note : Une valeur > 0 suggère que \texttt{max-cache-size} devrait être augmentée.}
-		
-		\item[Entrées de cache supprimées en raison de l'expiration du\gls{ttl}] \hfill \\
-		Le nombre d'\textbf{entrées de cache supprimées} car leur \textbf{\gls{ttl} a expiré}. \\
-		Représente le nombre d'enregistrements \gls{dns} automatiquement supprimés du cache après avoir atteint leur durée de vie maximale. \\
-		\textit{Unité : Compteur (entier non signé).}
-	\end{description}
+	\begin{longtable}{|p{3.5cm}|p{2cm}|p{3cm}|p{7cm}|}
+		\hline
+		\textbf{Nom} & \textbf{Unité} & \textbf{Provenance} & \textbf{Description} \\
+		\hline
+		\endfirsthead
 
-	\texttt{Time\_Of\_Day\_Seconds}: Wall-clock timestamp of the sample (seconds since midnight).
-	\texttt{Avg\_MHz}: Average CPU frequency including idle time.
-	\texttt{Busy\%}: Percentage of time the CPU cores were active (not idle).
-	\texttt{Bzy\_MHz}: Average CPU frequency while cores were busy.
-	\texttt{C6\%}: Percentage of time cores spent in deep sleep (C6).
-	\texttt{CoreTmp}: Average CPU core temperature (°C).
-	\texttt{PkgTmp}: Temperature of the full CPU package (°C).
-	\texttt{PkgWatt}: Total CPU package power consumption (watts).
-	\texttt{CorWatt}: Power consumed by CPU cores only (watts).
-	\texttt{LLCkRPS}: Total \gls{llc} accesses per second, in thousands (loads + stores).
-	\texttt{LLC\%hit}: Percentage of \gls{llc} accesses that hit the cache instead of going to DRAM.
+		\hline
+		\textbf{Nom} & \textbf{Unité} & \textbf{Provenance} & \textbf{Description} \\
+		\hline
+		\endhead
+
+		datetime & Date/heure & Système & Horodatage de la mesure. \\
+		\hline
+
+		dns\_udp\_captured & Requêtes & tcpdump & Nombre de requêtes DNS reçues via UDP observées sur l'interface réseau. \\
+		\hline
+
+		dns\_bind\_captured & Requêtes & \gls{bind9} & Nombre de requêtes DNS effectivement traitées par le serveur BIND9. \\
+		\hline
+
+		dns\_bind\_missed\_ captured & Requêtes & \gls{bind9} & Nombre de requêtes reçues non résolues par \gls{bind9}. \\
+		\hline
+
+		Avg\_MHz & MHz & turbostat & Fréquence moyenne des cœurs du processeur durant l'intervalle de mesure. \\
+		\hline
+
+		Busy\% & \% & turbostat & Pourcentage de temps pendant lequel les cœurs sont actifs (hors états de veille). \\
+		\hline
+
+		Bzy\_MHz & MHz & turbostat & Fréquence moyenne des cœurs uniquement lorsqu'ils sont actifs. \\
+		\hline
+
+		LLCkRPS & kRéf./s & turbostat & Nombre de références au cache de dernier niveau (Last Level Cache) par seconde, exprimé en milliers. \\
+		\hline
+
+		LLC\%hit & \% & turbostat & Taux de succès des accès au cache de dernier niveau (LLC). \\
+		\hline
+
+		C6\% & \% & turbostat & Pourcentage du temps passé dans l'état de sommeil profond C6 du processeur. \\
+		\hline
+
+		CoreTmp & $^\circ$C & turbostat & Température moyenne des cœurs du processeur. \\
+		\hline
+
+		PkgTmp & $^\circ$C & turbostat & Température du package processeur. \\
+		\hline
+
+		PkgWatt & W & turbostat & Puissance électrique consommée par l'ensemble du processeur. \\
+		\hline
+
+		CorWatt & W & turbostat & Puissance consommée par les cœurs du processeur uniquement. \\
+		\hline
+
+		read\_kB & kB & /sys/block/sda/ stat & Volume de données lues sur le périphérique de stockage pendant l'intervalle de mesure. \\
+		\hline
+
+		write\_kB & kB & /sys/block/sda/ stat & Volume de données écrites sur le périphérique de stockage pendant l'intervalle de mesure. \\
+		\hline
+
+		total\_kB & kB & /sys/block/sda/ stat & Somme des volumes de lecture et d'écriture sur le disque. \\
+		\hline
+
+		rx\_bytes & octets & /sys/class/net/ eno1/statistics/ & Nombre d'octets reçus par l'interface réseau durant l'intervalle de mesure. \\
+		\hline
+
+		tx\_bytes & octets & /sys/class/net/ eno1/statistics/ & Nombre d'octets transmis par l'interface réseau durant l'intervalle de mesure. \\
+		\hline
+
+		total\_bytes & octets & /sys/class/net/ eno1/statistics/ & Somme des octets reçus et transmis sur l'interface réseau. \\
+		\hline
+
+		LLC-loads & Accès & perf & Nombre d'opérations de lecture (loads) effectuées dans le cache de dernier niveau. \\
+		\hline
+
+		LLC-stores & Accès & perf & Nombre d'opérations d'écriture (stores) effectuées dans le cache de dernier niveau. \\
+		\hline
+
+		watts & W & Yoctopuce & Consommation électrique du DNS par mesure externe. \\
+		\hline
+
+	\end{longtable}
 
 	\section*{Types de requêtes \gls{dns}} \label{types}
 	\addcontentsline{toc}{section}{Types de requêtes \gls{dns}}
