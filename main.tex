@@ -16,6 +16,7 @@
 \usepackage{booktabs}
 \usepackage{amsmath,amssymb}
 \usepackage{pgfplots}
+\usepackage{makecell}
 % \usepackage[utf8]{inputenc}
 % \usepackage[T1]{fontenc}
 
@@ -66,7 +67,7 @@
 \setutbmcompany{Télécom SudParis}
 \setutbmcompanyaddress{19 Place Marguerite Perey \\ 91120 Palaiseau}
 \setutbmcompanywebsite{www.telecom-sudparis.eu}
-\setutbmcompanytutor{MAROT Michel}
+\setutbmcompanytutor{MAROT Michel et TUNCER Daphné}
 \setutbmschooltutor{BAALA CANALDA Oumaya}
 \setutbmabstract{
 	Le Domain Name System (\gls{dns}) est une infrastructure essentielle d'Internet dont la 
@@ -167,7 +168,7 @@
 
 	Je tiens tout d'abord à adresser mes plus sincères remerciements à \textbf{Michel Marot}, mon encadrant de stage, pour sa disponibilité, son accompagnement et ses précieux conseils tout au long de ce projet. Son expertise, sa confiance et ses nombreuses discussions scientifiques m'ont permis de progresser tant sur le plan technique que méthodologique et ont grandement contribué à la réussite de ce stage.
 
-	Je souhaite également remercier \textbf{Rosario Patanè} pour son aide et ses précieux conseils tout au long de ce stage. Son expertise dans le domaine de l'analyse de la complexité algorithmique a été particulièrement précieuse, tout comme son accompagnement lors de la préparation des présentations et de la rédaction de ce rapport. J'adresse également mes remerciements à \textbf{Lucas Brehon-Grataloup} pour son accompagnement, sa disponibilité et les échanges constructifs qui ont contribué au bon déroulement de ce stage.
+	Je souhaite également remercier \textbf{Rosario Patanè}, qui encadrait également mon stage, pour son aide et ses précieux conseils tout au long de ce stage. Son expertise dans le domaine de l'analyse de la complexité algorithmique a été particulièrement précieuse, tout comme son accompagnement lors de la préparation des présentations et de la rédaction de ce rapport. J'adresse également mes remerciements à \textbf{Lucas Brehon-Grataloup} pour son accompagnement, sa disponibilité et les échanges constructifs qui ont contribué au bon déroulement de ce stage.
 
 	Je tiens également à remercier le \textbf{Centre Interdisciplinaire \gls{e4c}} de l'\gls{ipp}, financé en partie dans le cadre du troisième Programme d'investissements d'avenir (ANR-18-EUR-0006-02), pour leur soutien à ces travaux.
 
@@ -818,7 +819,7 @@
 	\end{figure}
 	
 	
-	Il existe une différence claire de consommation énergétique entre l'utilisation avec et sans cache \ref{fig:consomation_persistante}. Les courbes pour l'utilisation sans cache ont une forme de \textbf{décroissance exponentielle}. En observant les courbes d'utilisation du cache, l'ordre est étrange : \gls{udp} n'utilise aucune connexion, il devrait donc être en dessous de toutes les autres courbes. 
+	Il existe une différence claire de consommation énergétique entre l'utilisation avec et sans cache \ref{fig:consomation_persistante}. Les courbes pour l'utilisation sans cache ont une forme de \textbf{décroissance exponentielle}. En observant les courbes d'utilisation du cache, l'ordre est contre-intuitif : \gls{udp} n'utilise aucune connexion, il devrait donc être en dessous de toutes les autres courbes. 
 	
 	La différence entre les protocoles utilisant \gls{tls} (\gls{doh} et \gls{doh}) et le protocole utilisant \gls{udp} est due au coût du chiffrement principalement. Étant donné que pour ces mesures, les connexions sont persistantes, le coût de l'établissement de la connexion s'efface sur une longue période. Ces résultats sont donc cohérents avec ce qui est attendu. \\
 
@@ -1099,8 +1100,8 @@
 			\hline
 			\textbf{Modèle} & \textbf{MSE} & \textbf{RMSE} & \textbf{MAE} & \textbf{MAPE (\%)} & \textbf{Temps d'entraînement (s)} \\
 			\hline
-			RandomForest            & 1.2743 & 1.1288 & 0.7988 & 1.2587 & 111.6585 \\
-			XGBoost                 & 1.2034 & 1.0970 & 0.7975 & 1.2632 & 1.6706 \\
+			RandomForest            & 1.2743 & 1.1288 & 0.7988 & \textbf{1.2587} & 111.6585 \\
+			\textbf{XGBoost}        & \textbf{1.2034} & \textbf{1.0970} & \textbf{0.7975} & 1.2632 & \textbf{1.6706} \\
 			HistGradientBoosting    & 1.2305 & 1.1093 & 0.8075 & 1.2811 & 3.3806 \\
 			ExtraTrees              & 1.3478 & 1.1609 & 0.8222 & 1.2965 & 44.4482 \\
 			LinearSVR               & 1.7789 & 1.3338 & 0.9398 & 1.4847 & 132.775 \\
@@ -1122,9 +1123,9 @@
 	
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=0.9\textwidth]{Graphs/RandomForest_predictions.png}
-		\caption{Estimation par RandomForest et consommation énergétique réelle, montrant une bonne prédiction de la puissance consommée.}
-		\label{fig:Estimation_RandomForest}
+		\includegraphics[width=0.9\textwidth]{Graphs/XGBoost_predictions.png}
+		\caption{Estimation par XGBoost et consommation énergétique réelle, montrant une bonne prédiction de la puissance consommée.}
+		\label{fig:Estimation_XGBoost}
 	\end{figure}
 
 	Le test de prédiction est réalisé sur 20\% des données, il \textbf{correspond donc à plusieurs mesures de configurations différentes mise bout à bout.} Ce qui explique donc ces irrégularités et cette périodicité. 
@@ -1923,6 +1924,31 @@
 
 		dns\_bind\_missed\_ captured & Requêtes & \gls{bind9} & Nombre de requêtes reçues non résolues par \gls{bind9}. \\
 		\hline
+
+		cache\_hits & Accès & rndc & Nombre total d'accès au cache ayant abouti à une correspondance. \\
+    	\hline
+
+		cache\_misses & Accès & rndc & Nombre total d'accès au cache n'ayant pas abouti à une correspondance. \\
+		\hline
+
+		cache\_hits\_query & Requêtes & rndc & Nombre de requêtes DNS satisfaites directement à partir du cache. \\
+		\hline
+
+		cache\_misses\_ query & Requêtes & rndc & Nombre de requêtes DNS pour lesquelles aucune réponse valide n'a été trouvée dans le cache. \\
+		\hline
+
+		\makecell[l]{cache\_tree\_\\memory} & Octets & rndc & Quantité de mémoire utilisée par la structure arborescente du cache DNS. \\
+		\hline
+
+		\makecell[l]{cache\_heap\_\\memory} & Octets & rndc & Quantité de mémoire utilisée par la structure de tas du cache DNS. \\
+		\hline
+
+		cache\_mem\_ exhaust & Entrées & rndc & Nombre d'entrées du cache ayant expiré par manque de mémoire disponible pour le cache. \\
+		\hline
+
+		cache\_ttl\_expired & Entrées & rndc & Nombre d'entrées du cache ayant expiré en raison de l'expiration de leur TTL. \\
+		\hline
+
 
 		Avg\_MHz & MHz & turbostat & Fréquence moyenne des cœurs du processeur durant l'intervalle de mesure. \\
 		\hline
