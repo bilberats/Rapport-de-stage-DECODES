@@ -30,9 +30,6 @@
 
 \usepackage[acronym]{glossaries}
 
-\renewcommand*{\genacrfullformat}[2]{%
-  \textit{\glsentrylong{#1}\space(\firstacronymfont{\glsentryshort{#1}})}#2%
-}
 \makeglossaries
 
 \input{biblatex.cfg}
@@ -70,8 +67,7 @@
 \setutbmcompanytutor{MAROT Michel et TUNCER Daphné}
 \setutbmschooltutor{BAALA CANALDA Oumaya}
 \setutbmabstract{
-	Le Domain Name System (\gls{dns}) est une infrastructure essentielle d'Internet dont la 
-	consommation énergétique reste encore peu étudiée. Ce stage, réalisé dans le cadre du projet \gls{decodes} à Télécom SudParis, vise à mieux comprendre et modéliser la consommation énergétique d'un résolveur \gls{dns}, en se concentrant sur l'implémentation \gls{bind9}.
+	Le Domain Name System (\gls{dns}) est une infrastructure essentielle d'Internet dont la consommation énergétique reste encore peu étudiée. Ce stage, réalisé dans le cadre du projet \gls{decodes} à Télécom SudParis, vise à mieux comprendre et modéliser la consommation énergétique d'un résolveur \gls{dns}, en se concentrant sur l'implémentation \gls{bind9}.
 
 	Pour atteindre cet objectif, un environnement expérimental a été conçu afin de mesurer la consommation énergétique du résolveur sous différentes configurations (protocoles, utilisation du cache et charge). Les données collectées ont permis d'analyser l'influence de ces paramètres sur la consommation énergétique, d'étudier la complexité algorithmique de \gls{bind9} et de développer deux approches de modélisation : un modèle de machine learning basé sur des métriques système et un modèle analytique fondé sur les réseaux de files d'attente. En parallèle, une analyse de la complexité algorithmique de \gls{bind9} a été réalisée afin de mieux comprendre les facteurs logiciels influençant cette consommation.
 
@@ -121,7 +117,7 @@
 \newacronym{itut}{ITU-T}{International Telecommunication Union Telecommunication Standardization Sector}
 \newacronym{ietf}{IETF}{Internet Engineering Task Force}
 \newacronym{fai}{FAI}{Fournisseur d'Accès à Internet}
-\newacronym{afnic}{AFNIC}{Association Française pour le NommageInternet en Coopération}
+\newacronym{afnic}{AFNIC}{Association Française pour le Nommage Internet en Coopération}
 \newacronym{enpc}{ENPC}{École Nationale des Ponts et Chaussées}
 \newacronym{api}{API}{Application Programming Interface}
 \newacronym{snmp}{SNMP}{Simple Network Management Protocol}
@@ -151,10 +147,9 @@
 	\makeutbmfrontcover{}
  
 	\section*{Abstract}
-
-	Le \gls{dns} est une infrastructure essentielle d'Internet dont la 
-	consommation énergétique reste encore peu étudiée. Ce stage, réalisé dans le cadre du projet \gls{decodes} à Télécom SudParis, vise à mieux comprendre et \textbf{modéliser la consommation énergétique d'un résolveur \gls{dns}}, en se concentrant sur l'implémentation \gls{bind9}.
-
+	\sloppy	
+	\noindent Le \gls{dns} est une infrastructure essentielle d'Internet dont la consommation énergétique reste encore peu étudiée. Ce stage, réalisé dans le cadre du projet \gls{decodes} à Télécom SudParis, vise à mieux comprendre et \textbf{modéliser la consommation énergétique d'un résolveur \gls{dns}}, en se concentrant sur l'implémentation \gls{bind9}.
+	\fussy
 	Pour atteindre cet objectif, un environnement expérimental a été conçu afin de mesurer la consommation énergétique du résolveur sous différentes configurations (protocoles, utilisation du cache et charge). Les données collectées ont permis d'analyser l'influence de ces paramètres sur la consommation énergétique, d'étudier la complexité algorithmique de \gls{bind9} et de développer deux approches de modélisation : un modèle de \textbf{machine learning} basé sur des métriques système et un modèle analytique fondé sur les \textbf{réseaux de files d'attente}. En parallèle, une analyse de la \textbf{complexité algorithmique de \gls{bind9}} a été réalisée afin de mieux comprendre les facteurs logiciels influençant cette consommation.
 
 	Les résultats montrent qu'il est possible de prédire avec précision la consommation énergétique du résolveur à partir des métriques collectées, tout en mettant en évidence les principales composantes responsables de cette consommation. \textbf{Ces travaux constituent une première étape vers la modélisation énergétique de systèmes distribués plus complexes.}
@@ -1096,6 +1091,7 @@
 	
 	\begin{table}[H]
 		\centering
+		\small
 		\begin{tabular}{lccccc}
 			\hline
 			\textbf{Modèle} & \textbf{MSE} & \textbf{RMSE} & \textbf{MAE} & \textbf{MAPE (\%)} & \textbf{Temps d'entraînement (s)} \\
@@ -1231,7 +1227,7 @@
 	\end{table}
 
 	\vspace{0.25cm}
-	\noindent Pour notre étude énergétique, les deux seules paramètres impactants sont \verb+clients-per-query+ et \verb+recursive-clients+. La première a une valeur par défaut de 10
+	\noindent Pour notre étude énergétique, les deux seules paramètres impactants sont \texttt{clients-per- query} et \verb+recursive-clients+. La première a une valeur par défaut de 10
 	mais est adaptée dynamiquement. Elle est donc estimée dans la suite de ce document. La seconde est fixe, à 1000 par défaut. \verb+clients-per-query+ limite le nombre de requêtes
 	correspondant à une même demande client. Puisqu'il y a nécessairement plusieurs noms résolus simultanément, il y a donc plusieurs blocs de \verb+clients-per-query+ serveurs.
 	Notons qu'il faudrait revoir le débit entrant dans chacun de ces blocs et fixer les taux de services en conséquence mais comme n'intervient à ce niveau que la charge en Erlang
